@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Case Study: Saratoga Public Lighting Proposal — How Diego Quinde turned a weak bid into a technically solid, regulation-compliant proposal for public parks lighting in Saratoga, Utah.">
+    <meta name="theme-color" content="#0D1117">
+
+    <meta property="og:title" content="Case Study: Saratoga Public Lighting Proposal · Diego Quinde">
+    <meta property="og:description" content="Weak proposal → technically solid bid. Municipal standards analysis + data-backed redesign for public parks lighting in Saratoga Springs, Utah.">
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://diegoquinde.com/saratoga">
+    <meta property="og:image" content="https://diegoquinde.com/assets/projects/submittal-sample.png">
+
+    <title>Case Study: Saratoga Public Lighting Proposal · Diego Quinde</title>
+
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚡</text></svg>">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'] },
+                    colors: {
+                        electric: '#1E90FF',
+                        dark: '#0D1117',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        * { box-sizing: border-box; }
+        body { background: #0D1117; color: white; font-family: 'Inter', sans-serif; }
+
+        :root { --electric: #1E90FF; }
+
+        .gradient-text {
+            background: linear-gradient(135deg, #ffffff 30%, var(--electric) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .navbar {
+            position: fixed; top: 0; left: 0; right: 0; z-index: 50;
+            background: rgba(13, 17, 23, 0.85);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .step-card {
+            background: rgba(22, 27, 34, 0.6);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 24px;
+            padding: 2rem;
+            transition: border-color 0.3s ease;
+        }
+        .step-card:hover { border-color: rgba(30, 144, 255, 0.3); }
+
+        .step-number {
+            width: 48px; height: 48px;
+            display: flex; align-items: center; justify-content: center;
+            background: rgba(30, 144, 255, 0.1);
+            border: 1px solid rgba(30, 144, 255, 0.3);
+            border-radius: 50%;
+            font-size: 1.1rem;
+            font-weight: 900;
+            color: var(--electric);
+            flex-shrink: 0;
+        }
+
+        .result-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 1.25rem 1.5rem;
+            background: rgba(34, 197, 94, 0.05);
+            border: 1px solid rgba(34, 197, 94, 0.15);
+            border-radius: 16px;
+        }
+
+        .tool-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 14px;
+            background: rgba(30, 144, 255, 0.08);
+            border: 1px solid rgba(30, 144, 255, 0.2);
+            border-radius: 999px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            color: rgba(255,255,255,0.8);
+        }
+
+        .divider {
+            width: 64px; height: 3px;
+            background: var(--electric);
+            border-radius: 2px;
+            margin-bottom: 1.5rem;
+        }
+
+        .scroll-animate {
+            opacity: 0;
+            transform: translateY(24px);
+            transition: opacity 0.7s ease-out, transform 0.7s ease-out;
+        }
+        .scroll-animate.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Background Meshes -->
+    <div class="fixed inset-0 pointer-events-none opacity-30 z-[-1]">
+        <div class="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] rounded-full bg-electric blur-[120px] animate-pulse"></div>
+        <div class="absolute bottom-[-10%] right-[-10%] w-[35%] h-[35%] rounded-full bg-blue-600 blur-[120px] animate-pulse" style="animation-delay: 2s"></div>
+    </div>
+
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-20">
+                <a href="/" class="text-2xl font-black tracking-tighter gradient-text">DQ</a>
+                <a href="/#projects" class="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-white/50 hover:text-electric transition-colors">
+                    <i data-lucide="arrow-left" class="w-4 h-4"></i>
+                    All Projects
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero -->
+    <section class="pt-40 pb-20 px-4 sm:px-6 lg:px-8">
+        <div class="max-w-5xl mx-auto">
+            <div class="flex flex-wrap items-center gap-3 mb-8">
+                <span class="inline-flex items-center gap-2 px-4 py-1.5 text-xs font-bold tracking-widest text-electric uppercase bg-electric/10 border border-electric/20 rounded-full">
+                    <i data-lucide="lightbulb" class="w-3.5 h-3.5"></i>
+                    Case Study · Lighting Industry
+                </span>
+                <span class="inline-flex items-center gap-2 px-4 py-1.5 text-xs font-bold tracking-widest text-white/40 uppercase bg-white/5 border border-white/10 rounded-full">
+                    Saratoga Springs, Utah · USA
+                </span>
+            </div>
+
+            <h1 class="text-5xl sm:text-6xl md:text-7xl font-black mb-8 leading-tight tracking-tight">
+                Saratoga <span class="gradient-text">Public Lighting</span><br>Proposal
+            </h1>
+
+            <p class="text-xl sm:text-2xl text-gray-400 max-w-3xl leading-relaxed font-light mb-12">
+                A weak lighting bid with no regulatory backing became a technically solid, compliance-ready proposal for Saratoga Springs' public parks — giving the client a real competitive edge in the tender.
+            </p>
+
+            <!-- Quick stats -->
+            <div class="grid grid-cols-3 gap-4 max-w-xl">
+                <div class="bg-white/5 border border-white/10 rounded-2xl p-4 text-center">
+                    <div class="text-2xl font-black text-white mb-1">3</div>
+                    <div class="text-xs uppercase tracking-widest font-bold text-gray-500">Standards reviewed</div>
+                </div>
+                <div class="bg-white/5 border border-white/10 rounded-2xl p-4 text-center">
+                    <div class="text-2xl font-black text-white mb-1">100%</div>
+                    <div class="text-xs uppercase tracking-widest font-bold text-gray-500">Municipal compliant</div>
+                </div>
+                <div class="bg-white/5 border border-white/10 rounded-2xl p-4 text-center">
+                    <div class="text-2xl font-black text-white mb-1">1</div>
+                    <div class="text-xs uppercase tracking-widest font-bold text-gray-500">Winning bid</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Hero image -->
+    <div class="px-4 sm:px-6 lg:px-8 mb-24">
+        <div class="max-w-5xl mx-auto">
+            <div class="relative rounded-3xl overflow-hidden border border-white/10 shadow-2xl group">
+                <img src="assets/projects/submittal-sample.png" alt="Saratoga public lighting proposal submittal" class="w-full object-cover max-h-[500px] object-top group-hover:scale-[1.01] transition-transform duration-700">
+                <div class="absolute inset-0 bg-gradient-to-t from-dark/60 to-transparent pointer-events-none"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main content -->
+    <div class="px-4 sm:px-6 lg:px-8">
+        <div class="max-w-5xl mx-auto space-y-24">
+
+            <!-- Context -->
+            <section class="scroll-animate">
+                <div class="divider"></div>
+                <h2 class="text-3xl md:text-4xl font-bold mb-6">The Context</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 text-gray-400 text-lg leading-relaxed">
+                    <p>
+                        A lighting contractor was bidding on a public parks illumination project for Saratoga Springs, Utah. The initial proposal existed — but it was thin: product specs from a datasheet, a rough layout, and no engagement with the city's actual requirements.
+                    </p>
+                    <p>
+                        Municipal public lighting tenders in the US require more than product specs. They need compliance with local ordinances, IES (Illuminating Engineering Society) photometric standards, and often NFPA electrical codes. Without that, a bid reads as amateur — regardless of product quality.
+                    </p>
+                </div>
+            </section>
+
+            <!-- The Problem -->
+            <section class="scroll-animate">
+                <div class="divider"></div>
+                <h2 class="text-3xl md:text-4xl font-bold mb-8">The Problem</h2>
+                <div class="bg-red-500/5 border border-red-500/20 rounded-3xl p-8">
+                    <div class="flex items-start gap-4 mb-6">
+                        <i data-lucide="alert-triangle" class="w-8 h-8 text-red-400 flex-shrink-0 mt-1"></i>
+                        <div>
+                            <h3 class="text-xl font-bold text-white mb-2">A proposal that couldn't win</h3>
+                            <p class="text-gray-400 leading-relaxed">The original submittal had no reference to Saratoga Springs' municipal lighting ordinances, no photometric analysis, and no structured compliance argument. Against competitors who include these elements, it had no chance of standing out.</p>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-4">
+                        <div class="flex items-start gap-3 text-sm text-gray-500">
+                            <i data-lucide="x-circle" class="w-4 h-4 text-red-400 flex-shrink-0 mt-0.5"></i>
+                            No municipal ordinance analysis
+                        </div>
+                        <div class="flex items-start gap-3 text-sm text-gray-500">
+                            <i data-lucide="x-circle" class="w-4 h-4 text-red-400 flex-shrink-0 mt-0.5"></i>
+                            No technical compliance argument
+                        </div>
+                        <div class="flex items-start gap-3 text-sm text-gray-500">
+                            <i data-lucide="x-circle" class="w-4 h-4 text-red-400 flex-shrink-0 mt-0.5"></i>
+                            Visually undifferentiated from generic bids
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Process -->
+            <section class="scroll-animate">
+                <div class="divider"></div>
+                <h2 class="text-3xl md:text-4xl font-bold mb-10">The Process</h2>
+                <div class="space-y-6">
+
+                    <div class="step-card flex gap-6">
+                        <div class="step-number">01</div>
+                        <div class="flex-1">
+                            <h3 class="text-xl font-bold mb-2">Municipal standards research</h3>
+                            <p class="text-gray-400 leading-relaxed mb-4">Used Claude Code to research and extract Saratoga Springs' specific municipal lighting ordinances, cross-referencing with IES RP-8 (roadway & parking lighting) and NFPA 70 (NEC) electrical requirements for outdoor public installations.</p>
+                            <div class="flex flex-wrap gap-2">
+                                <span class="tool-chip"><i data-lucide="sparkles" class="w-3 h-3"></i> Claude Code</span>
+                                <span class="tool-chip"><i data-lucide="file-search" class="w-3 h-3"></i> Municipal Ordinances</span>
+                                <span class="tool-chip"><i data-lucide="book-open" class="w-3 h-3"></i> IES / NFPA Standards</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="step-card flex gap-6" style="transition-delay: 100ms">
+                        <div class="step-number">02</div>
+                        <div class="flex-1">
+                            <h3 class="text-xl font-bold mb-2">Product data mapping & compliance alignment</h3>
+                            <p class="text-gray-400 leading-relaxed mb-4">Built an Excel model mapping each product's technical specs (lumen output, CCT, CRI, IP rating, wattage) against the specific ordinance requirements for each park zone. This created the compliance evidence layer that the original proposal lacked entirely.</p>
+                            <div class="flex flex-wrap gap-2">
+                                <span class="tool-chip"><i data-lucide="table-2" class="w-3 h-3"></i> Excel</span>
+                                <span class="tool-chip"><i data-lucide="check-circle" class="w-3 h-3"></i> Compliance Matrix</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="step-card flex gap-6" style="transition-delay: 200ms">
+                        <div class="step-number">03</div>
+                        <div class="flex-1">
+                            <h3 class="text-xl font-bold mb-2">Visual redesign with data integration</h3>
+                            <p class="text-gray-400 leading-relaxed mb-4">Redesigned the full submittal in Adobe Illustrator — structured as a professional tender document with a clear compliance argument: ordinance requirement → product spec → justification. Every visual decision was made to reduce friction for the evaluating committee.</p>
+                            <div class="flex flex-wrap gap-2">
+                                <span class="tool-chip"><i data-lucide="pen-tool" class="w-3 h-3"></i> Adobe Illustrator</span>
+                                <span class="tool-chip"><i data-lucide="layout" class="w-3 h-3"></i> Technical Layout</span>
+                                <span class="tool-chip"><i data-lucide="file-text" class="w-3 h-3"></i> Submittal Design</span>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </section>
+
+            <!-- Results -->
+            <section class="scroll-animate">
+                <div class="divider"></div>
+                <h2 class="text-3xl md:text-4xl font-bold mb-8">The Results</h2>
+                <div class="space-y-4">
+                    <div class="result-item">
+                        <i data-lucide="check-circle" class="w-6 h-6 text-green-400 flex-shrink-0 mt-0.5"></i>
+                        <div>
+                            <div class="font-bold text-white mb-1">Fully compliant with Saratoga Springs municipal standards</div>
+                            <div class="text-sm text-gray-400">Every product selection and installation detail referenced the applicable local ordinance — the proposal could be evaluated against specific criteria, not vague claims.</div>
+                        </div>
+                    </div>
+                    <div class="result-item">
+                        <i data-lucide="check-circle" class="w-6 h-6 text-green-400 flex-shrink-0 mt-0.5"></i>
+                        <div>
+                            <div class="font-bold text-white mb-1">Data-backed visual submittal that reads as professional</div>
+                            <div class="text-sm text-gray-400">Redesigned in Adobe Illustrator with integrated compliance data — the committee receives a document that looks and reads like the work of a serious contractor, not a product catalog printout.</div>
+                        </div>
+                    </div>
+                    <div class="result-item">
+                        <i data-lucide="check-circle" class="w-6 h-6 text-green-400 flex-shrink-0 mt-0.5"></i>
+                        <div>
+                            <div class="font-bold text-white mb-1">Client enters the bid with a real technical edge</div>
+                            <div class="text-sm text-gray-400">Where competitors submitted generic proposals, this one addressed the municipality's specific requirements directly. Technical credibility is the differentiator in public tenders.</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Tools used -->
+            <section class="scroll-animate">
+                <div class="divider"></div>
+                <h2 class="text-3xl md:text-4xl font-bold mb-8">Tools Used</h2>
+                <div class="flex flex-wrap gap-3">
+                    <span class="tool-chip"><i data-lucide="sparkles" class="w-3.5 h-3.5 text-electric"></i> Claude Code</span>
+                    <span class="tool-chip"><i data-lucide="pen-tool" class="w-3.5 h-3.5 text-electric"></i> Adobe Illustrator</span>
+                    <span class="tool-chip"><i data-lucide="table-2" class="w-3.5 h-3.5 text-electric"></i> Excel</span>
+                    <span class="tool-chip"><i data-lucide="book-open" class="w-3.5 h-3.5 text-electric"></i> IES Standards</span>
+                    <span class="tool-chip"><i data-lucide="shield" class="w-3.5 h-3.5 text-electric"></i> NFPA 70 / NEC</span>
+                    <span class="tool-chip"><i data-lucide="map-pin" class="w-3.5 h-3.5 text-electric"></i> Municipal Ordinances</span>
+                </div>
+            </section>
+
+            <!-- CTA -->
+            <section class="scroll-animate pb-24">
+                <div class="bg-electric/5 border border-electric/20 rounded-3xl p-10 text-center">
+                    <h2 class="text-3xl md:text-4xl font-bold mb-4">Need a technical proposal that wins?</h2>
+                    <p class="text-gray-400 text-lg mb-8 max-w-xl mx-auto">
+                        If you're working on a lighting bid, submittal, or compliance catalog for the US market — I can help you build the technical argument that separates you from the competition.
+                    </p>
+                    <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                        <a href="mailto:diegoaquinde@gmail.com?subject=Lighting%20Proposal%20Inquiry"
+                           class="inline-flex items-center justify-center gap-2 bg-electric text-white px-8 py-4 rounded-2xl font-bold text-lg hover:bg-blue-500 transition-colors shadow-2xl">
+                            <i data-lucide="mail" class="w-5 h-5"></i>
+                            Get in Touch
+                        </a>
+                        <a href="/#projects"
+                           class="inline-flex items-center justify-center gap-2 border border-white/20 text-white px-8 py-4 rounded-2xl font-bold text-lg hover:border-electric/50 hover:text-electric transition-colors">
+                            <i data-lucide="arrow-left" class="w-5 h-5"></i>
+                            All Projects
+                        </a>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="border-t border-white/5 py-8 px-4 text-center">
+        <p class="text-gray-700 text-xs uppercase tracking-[0.4em]">
+            © 2026 DIEGO QUINDE · <a href="/" class="hover:text-electric transition-colors">diegoquinde.com</a>
+        </p>
+    </footer>
+
+    <script>
+        lucide.createIcons();
+
+        const scrollObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) entry.target.classList.add('visible');
+            });
+        }, { threshold: 0.08 });
+
+        document.querySelectorAll('.scroll-animate').forEach(el => scrollObserver.observe(el));
+    </script>
+</body>
+</html>

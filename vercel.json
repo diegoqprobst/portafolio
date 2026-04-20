@@ -1,0 +1,7 @@
+{
+  "outputDirectory": ".",
+  "rewrites": [
+    { "source": "/saratoga", "destination": "/saratoga-case-study.html" },
+    { "source": "/(.*)", "destination": "/index.html" }
+  ]
+}

@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GridLights — Sell Sheet Concept</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: #080810;
+    color: #fff;
+    width: 1122px; /* A4 landscape at 120dpi */
+    min-height: 794px;
+    overflow-x: hidden;
+  }
+
+  /* ── GRID LOGO SVG ── */
+  .logo-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3px;
+    width: 36px;
+    height: 36px;
+    flex-shrink: 0;
+  }
+  .logo-grid span {
+    border-radius: 3px;
+    display: block;
+  }
+  .logo-grid span:nth-child(1) { background: #E8453C; }
+  .logo-grid span:nth-child(2) { background: #B8D44A; }
+  .logo-grid span:nth-child(3) { background: #3B8FE8; }
+  .logo-grid span:nth-child(4) { background: #3EC87A; }
+
+  /* ── LAYOUT ── */
+  .sheet {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    min-height: 794px;
+    position: relative;
+  }
+
+  /* ── LEFT PANEL ── */
+  .left {
+    position: relative;
+    background: #060608;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 48px;
+  }
+
+  /* Ceiling light simulation */
+  .ceiling-grid {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+    gap: 6px;
+    padding: 32px;
+    opacity: 0.18;
+  }
+  .ceiling-cell {
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 4px;
+    position: relative;
+    overflow: hidden;
+  }
+  .ceiling-cell::after {
+    content: '';
+    position: absolute;
+    inset: -20%;
+    border-radius: 50%;
+    filter: blur(20px);
+    opacity: 0.9;
+  }
+  .c1::after { background: #4FC3F7; }
+  .c2::after { background: #FFB347; }
+  .c3::after { background: #4FC3F7; }
+  .c4::after { background: #3EC87A; }
+  .c5::after { background: #E040FB; }
+  .c6::after { background: #FFB347; }
+  .c7::after { background: #3EC87A; }
+  .c8::after { background: #4FC3F7; }
+  .c9::after { background: #FFB347; }
+  .c10::after { background: #E040FB; }
+  .c11::after { background: #3EC87A; }
+  .c12::after { background: #4FC3F7; }
+
+  /* Ambient glow pools below */
+  .glow-pool {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(80px);
+    pointer-events: none;
+  }
+  .glow-teal   { width: 300px; height: 200px; background: rgba(79,195,247,0.25); bottom: 120px; left: -40px; }
+  .glow-amber  { width: 260px; height: 180px; background: rgba(255,179,71,0.2);  bottom: 80px;  right: -20px; }
+  .glow-purple { width: 200px; height: 150px; background: rgba(224,64,251,0.15); bottom: 200px; left: 120px; }
+
+  .left-content {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    justify-content: space-between;
+  }
+
+  .logo-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .logo-wordmark {
+    font-size: 14px;
+    font-weight: 800;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: #fff;
+  }
+
+  .hero-text {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 48px 0 32px;
+  }
+
+  .eyebrow {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: rgba(79,195,247,0.8);
+    margin-bottom: 20px;
+  }
+
+  .hero-headline {
+    font-size: 46px;
+    font-weight: 900;
+    line-height: 1.0;
+    letter-spacing: -0.03em;
+    color: #fff;
+    margin-bottom: 24px;
+  }
+  .hero-headline em {
+    font-style: normal;
+    background: linear-gradient(90deg, #4FC3F7, #B8D44A, #FFB347);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .hero-sub {
+    font-size: 15px;
+    font-weight: 400;
+    line-height: 1.65;
+    color: rgba(255,255,255,0.5);
+    max-width: 320px;
+  }
+
+  /* Venue tags */
+  .venue-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 32px;
+  }
+  .venue-tag {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    padding: 6px 12px;
+    border-radius: 99px;
+    border: 1px solid rgba(255,255,255,0.15);
+    color: rgba(255,255,255,0.6);
+  }
+  .venue-tag.active {
+    background: rgba(79,195,247,0.15);
+    border-color: rgba(79,195,247,0.4);
+    color: #4FC3F7;
+  }
+
+  /* Ceiling label */
+  .ceiling-label {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.2);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .ceiling-label::before {
+    content: '';
+    display: block;
+    width: 24px;
+    height: 1px;
+    background: rgba(255,255,255,0.2);
+  }
+
+  /* ── RIGHT PANEL ── */
+  .right {
+    background: #0E0E1A;
+    padding: 48px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    border-left: 1px solid rgba(255,255,255,0.06);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .right::before {
+    content: '';
+    position: absolute;
+    top: -100px;
+    right: -100px;
+    width: 400px;
+    height: 400px;
+    background: radial-gradient(circle, rgba(60,200,122,0.08) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .section-label {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.25);
+    margin-bottom: 24px;
+  }
+
+  /* Modes */
+  .modes-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 36px;
+  }
+  .mode-card {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 12px;
+    padding: 18px;
+    position: relative;
+    overflow: hidden;
+  }
+  .mode-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    border-radius: 2px 2px 0 0;
+  }
+  .mode-card.teal::before   { background: linear-gradient(90deg, #4FC3F7, transparent); }
+  .mode-card.amber::before  { background: linear-gradient(90deg, #FFB347, transparent); }
+  .mode-card.green::before  { background: linear-gradient(90deg, #3EC87A, transparent); }
+  .mode-card.purple::before { background: linear-gradient(90deg, #E040FB, transparent); }
+
+  .mode-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    margin-bottom: 10px;
+  }
+  .teal   .mode-dot { background: #4FC3F7; box-shadow: 0 0 8px #4FC3F7; }
+  .amber  .mode-dot { background: #FFB347; box-shadow: 0 0 8px #FFB347; }
+  .green  .mode-dot { background: #3EC87A; box-shadow: 0 0 8px #3EC87A; }
+  .purple .mode-dot { background: #E040FB; box-shadow: 0 0 8px #E040FB; }
+
+  .mode-name {
+    font-size: 12px;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 4px;
+  }
+  .mode-desc {
+    font-size: 11px;
+    color: rgba(255,255,255,0.4);
+    line-height: 1.5;
+  }
+
+  /* Features */
+  .features-list {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    margin-bottom: 36px;
+  }
+  .feature-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+  }
+  .feature-icon {
+    width: 32px;
+    height: 32px;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    font-size: 14px;
+  }
+  .feature-text strong {
+    display: block;
+    font-size: 12px;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 2px;
+  }
+  .feature-text span {
+    font-size: 11px;
+    color: rgba(255,255,255,0.4);
+    line-height: 1.4;
+  }
+
+  /* The proof stat */
+  .stat-bar {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 12px;
+    padding: 20px 24px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    margin-bottom: 32px;
+  }
+  .stat-number {
+    font-size: 36px;
+    font-weight: 900;
+    letter-spacing: -0.04em;
+    background: linear-gradient(135deg, #4FC3F7, #3EC87A);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    flex-shrink: 0;
+  }
+  .stat-text {
+    font-size: 12px;
+    color: rgba(255,255,255,0.5);
+    line-height: 1.5;
+  }
+  .stat-divider {
+    width: 1px;
+    height: 40px;
+    background: rgba(255,255,255,0.1);
+    flex-shrink: 0;
+  }
+
+  /* CTA footer */
+  .cta-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-top: 24px;
+    border-top: 1px solid rgba(255,255,255,0.06);
+  }
+
+  .cta-url {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.3);
+  }
+  .cta-url strong {
+    color: rgba(255,255,255,0.7);
+  }
+
+  .cta-btn {
+    background: linear-gradient(135deg, #4FC3F7 0%, #3EC87A 100%);
+    color: #000;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 10px 20px;
+    border-radius: 99px;
+    text-decoration: none;
+    display: inline-block;
+  }
+
+  /* ── CONCEPT WATERMARK ── */
+  .concept-badge {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: rgba(255,255,255,0.07);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 99px;
+    padding: 6px 14px;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.3);
+  }
+
+  @media print {
+    body { width: 100%; }
+    .concept-badge { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<div class="sheet">
+
+  <!-- ═══════════ LEFT PANEL ═══════════ -->
+  <div class="left">
+
+    <!-- Ceiling grid simulation -->
+    <div class="ceiling-grid">
+      <div class="ceiling-cell c1"></div>
+      <div class="ceiling-cell c2"></div>
+      <div class="ceiling-cell c3"></div>
+      <div class="ceiling-cell c4"></div>
+      <div class="ceiling-cell c5"></div>
+      <div class="ceiling-cell c6"></div>
+      <div class="ceiling-cell c7"></div>
+      <div class="ceiling-cell c8"></div>
+      <div class="ceiling-cell c9"></div>
+      <div class="ceiling-cell c10"></div>
+      <div class="ceiling-cell c11"></div>
+      <div class="ceiling-cell c12"></div>
+    </div>
+
+    <!-- Ambient glows -->
+    <div class="glow-pool glow-teal"></div>
+    <div class="glow-pool glow-amber"></div>
+    <div class="glow-pool glow-purple"></div>
+
+    <div class="left-content">
+      <!-- Logo -->
+      <div class="logo-row">
+        <div class="logo-grid">
+          <span></span><span></span>
+          <span></span><span></span>
+        </div>
+        <span class="logo-wordmark">Grid Lights</span>
+      </div>
+
+      <!-- Hero -->
+      <div class="hero-text">
+        <p class="eyebrow">Commercial Ambient Lighting</p>
+        <h1 class="hero-headline">
+          The ceiling<br>that changes<br>how people <em>feel.</em>
+        </h1>
+        <p class="hero-sub">
+          A responsive LED system for commercial drop ceilings. Adjust the mood of your space in real time — from focused afternoon energy to late-night atmosphere — without touching a light switch.
+        </p>
+
+        <div class="venue-tags">
+          <span class="venue-tag active">Bars & Lounges</span>
+          <span class="venue-tag">Restaurants</span>
+          <span class="venue-tag">Hotels</span>
+          <span class="venue-tag">Retail</span>
+          <span class="venue-tag">Event Spaces</span>
+        </div>
+      </div>
+
+      <!-- Bottom label -->
+      <div class="ceiling-label">Drop ceiling, reimagined</div>
+    </div>
+  </div>
+
+  <!-- ═══════════ RIGHT PANEL ═══════════ -->
+  <div class="right">
+
+    <!-- Lighting modes -->
+    <div>
+      <p class="section-label">Lighting Modes</p>
+      <div class="modes-grid">
+        <div class="mode-card teal">
+          <div class="mode-dot"></div>
+          <div class="mode-name">Daytime Focus</div>
+          <div class="mode-desc">Crisp, cool light that keeps guests alert and productive.</div>
+        </div>
+        <div class="mode-card amber">
+          <div class="mode-dot"></div>
+          <div class="mode-name">Golden Hour</div>
+          <div class="mode-desc">Warm amber tones that slow people down and increase dwell time.</div>
+        </div>
+        <div class="mode-card green">
+          <div class="mode-dot"></div>
+          <div class="mode-name">Brand Color</div>
+          <div class="mode-desc">Match your brand palette for events, launches, or branded moments.</div>
+        </div>
+        <div class="mode-card purple">
+          <div class="mode-dot"></div>
+          <div class="mode-name">Night Mode</div>
+          <div class="mode-desc">Deep, dynamic colors that transform the space after dark.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Features -->
+    <div>
+      <p class="section-label">Why GridLights</p>
+      <div class="features-list">
+        <div class="feature-row">
+          <div class="feature-icon">🧲</div>
+          <div class="feature-text">
+            <strong>Magnetic, tool-free install</strong>
+            <span>Snaps into any standard drop ceiling tile. No electrician required.</span>
+          </div>
+        </div>
+        <div class="feature-row">
+          <div class="feature-icon">👁</div>
+          <div class="feature-text">
+            <strong>Motion-responsive intelligence</strong>
+            <span>The system reads the room and adjusts light to match occupancy and energy.</span>
+          </div>
+        </div>
+        <div class="feature-row">
+          <div class="feature-icon">📱</div>
+          <div class="feature-text">
+            <strong>Control from your phone</strong>
+            <span>Mobile app (iOS & Android) gives operators full control from the floor.</span>
+          </div>
+        </div>
+        <div class="feature-row">
+          <div class="feature-icon">🔓</div>
+          <div class="feature-text">
+            <strong>Open source at its core</strong>
+            <span>Powered by WLED — fully customizable, with a growing knowledge base.</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Stat -->
+    <div class="stat-bar">
+      <div class="stat-number">16M</div>
+      <div class="stat-divider"></div>
+      <div class="stat-text">
+        <strong style="color:#fff; font-size:13px">Colors. One ceiling.</strong><br>
+        Every mode, every brand color, every emotion — at the tap of a button.
+      </div>
+    </div>
+
+    <!-- CTA -->
+    <div class="cta-footer">
+      <div class="cta-url">
+        <strong>thegridlightsstore.com</strong><br>
+        info@gridlights.co
+      </div>
+      <a href="https://thegridlightsstore.com" class="cta-btn">Pre-order now →</a>
+    </div>
+
+  </div>
+</div>
+
+<div class="concept-badge">Concept · Diego Quinde · diegoquinde.com</div>
+
+</body>
+</html>
