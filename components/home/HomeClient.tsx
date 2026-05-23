@@ -1438,9 +1438,29 @@ function ProjectRow({
   caseStudyHref?: string;
   docHref?: string;
 }) {
+  const [isIn, setIsIn] = useState(false);
+  const rowRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const el = rowRef.current;
+    if (!el || isIn) return;
+    const obs = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsIn(true);
+          obs.disconnect();
+        }
+      },
+      { threshold: 0.07, rootMargin: "0px 0px -40px 0px" }
+    );
+    obs.observe(el);
+    return () => obs.disconnect();
+  }, [isIn]);
+
   return (
     <div
-      className={`project-row reveal${isOpen ? " open" : ""}`}
+      ref={rowRef}
+      className={`project-row reveal${isIn ? " in" : ""}${isOpen ? " open" : ""}`}
       id={`row-${id}`}
       style={delay ? { transitionDelay: delay } : undefined}
     >
