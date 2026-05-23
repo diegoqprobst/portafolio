@@ -662,6 +662,87 @@ export default function HomeClient() {
               imgSrc="/assets/projects/revem.jpg"
               imgAlt="Revem operations"
             />
+
+            <ProjectRow
+              id="p6"
+              num="06"
+              title="Wellness Commerce — Sales Deck"
+              tags={["B2B Sales Deck", "PowerPoint", "Healthcare", "Financial Modeling"]}
+              metricVal="$15.4M"
+              metricLbl={{ en: "Revenue model", es: "Modelo de ingresos" }}
+              isOpen={openProject === "p6"}
+              onToggle={() => toggleProject("p6")}
+              delay="300ms"
+              descEn="A health system needed a full 14-slide pitch deck to sell CFOs and CMOs on a wellness commerce platform — patient journey, revenue cascade, sensitivity analysis, and partner acquisition story. Built in PowerPoint with live chart data linked to the financial model."
+              descEs="Un sistema de salud necesitaba un deck de 14 slides para vender la plataforma de wellness commerce a CFOs y CMOs — patient journey, cascada de ingresos, análisis de sensibilidad e historia de adquisición de socios. Construido en PowerPoint con datos de gráficos vinculados al modelo financiero."
+              resultsEn={[
+                "14-slide deck with embedded financial charts",
+                "Revenue cascade: 1M patients → $15.4M sales → $3.9M earnings at 25% margin",
+                "Investor-ready with sensitivity grid and 5-year growth projection",
+              ]}
+              resultsEs={[
+                "Deck de 14 slides con gráficos financieros integrados",
+                "Cascada de ingresos: 1M pacientes → $15.4M ventas → $3.9M earnings al 25% de margen",
+                "Listo para inversores con grilla de sensibilidad y proyección de crecimiento a 5 años",
+              ]}
+              imgSrc="/assets/projects/wellnova-deck-cover.png"
+              imgAlt="Wellness commerce sales deck"
+              docHref="/wellnova-sales-deck.pdf"
+            />
+
+            <ProjectRow
+              id="p7"
+              num="07"
+              title="Wellness Commerce — Interactive Pro Forma"
+              tags={["Financial Modeling", "HTML/CSS", "Healthcare", "Data Visualization"]}
+              metricVal="26 pg"
+              metricLbl={{ en: "Interactive model", es: "Modelo interactivo" }}
+              isOpen={openProject === "p7"}
+              onToggle={() => toggleProject("p7")}
+              delay="360ms"
+              descEn="Designed and coded a 26-page interactive financial pro forma for a health system wellness commerce platform — six-filter revenue cascade, per-page sensitivity analysis, and three SVG data visualizations, built in HTML/CSS and rendered to print-ready PDFs."
+              descEs="Diseñé y codifiqué un pro forma financiero interactivo de 26 páginas para una plataforma de wellness commerce en sistemas de salud — cascada de ingresos de seis filtros, análisis de sensibilidad por página y tres visualizaciones SVG de datos, construido en HTML/CSS y renderizado a PDFs listos para imprimir."
+              resultsEn={[
+                "26-page document: 12-page wireframe + 14-page charts version",
+                "Six-filter revenue model fully coherent end-to-end",
+                "SVG charts re-coordinated to match model figures exactly",
+              ]}
+              resultsEs={[
+                "26 páginas: wireframe de 12 páginas + versión de gráficos de 14 páginas",
+                "Modelo de ingresos de seis filtros completamente coherente de punta a punta",
+                "Gráficos SVG re-coordinados para coincidir exactamente con las cifras del modelo",
+              ]}
+              imgSrc="/assets/projects/wellnova-proforma-cover.png"
+              imgAlt="Wellness commerce pro forma wireframe"
+              docHref="/wellnova-proforma.pdf"
+            />
+
+            <ProjectRow
+              id="p8"
+              num="08"
+              title="Healthcare IT — Agile Leadership Series"
+              tags={["Editorial Design", "Healthcare IT", "Content Strategy", "HTML/CSS"]}
+              metricVal="13 pg"
+              metricLbl={{ en: "Leadership guide", es: "Guía de liderazgo" }}
+              isOpen={openProject === "p8"}
+              onToggle={() => toggleProject("p8")}
+              delay="420ms"
+              descEn="Reconstructed a 10-chapter leadership guide on Agile transformation in healthcare IT as a polished 13-page editorial publication — two health-system case studies with quantified outcomes, executive narrative, and an austere charcoal/white/ochre design system built from scratch in HTML/CSS."
+              descEs="Reconstruí una guía de liderazgo de 10 capítulos sobre transformación Agile en TI de salud como una publicación editorial de 13 páginas — dos casos de estudio de sistemas de salud con resultados cuantificados, narrativa ejecutiva y un sistema de diseño austero carbón/blanco/ocre construido desde cero en HTML/CSS."
+              resultsEn={[
+                "13-page editorial publication built from raw source content",
+                "Two enterprise case studies with quantified turnaround outcomes",
+                "Design system aligned to executive brand aesthetic (charcoal + ochre)",
+              ]}
+              resultsEs={[
+                "Publicación editorial de 13 páginas construida desde contenido fuente crudo",
+                "Dos casos de estudio empresariales con resultados de transformación cuantificados",
+                "Sistema de diseño alineado a estética de marca ejecutiva (carbón + ocre)",
+              ]}
+              imgSrc="/assets/projects/agile-cover.png"
+              imgAlt="Healthcare IT agile leadership guide"
+              docHref="/agile-transformation.pdf"
+            />
           </div>
         </div>
       </section>
@@ -1337,6 +1418,7 @@ function ProjectRow({
   imgSrc,
   imgAlt,
   caseStudyHref,
+  docHref,
 }: {
   id: string;
   num: string;
@@ -1354,6 +1436,7 @@ function ProjectRow({
   imgSrc: string;
   imgAlt: string;
   caseStudyHref?: string;
+  docHref?: string;
 }) {
   return (
     <div
@@ -1415,6 +1498,24 @@ function ProjectRow({
                 <a href={caseStudyHref} className="project-link">
                   <span data-en="">Read full case study</span>
                   <span data-es="">Leer caso de estudio completo</span>
+                  <svg
+                    width="14"
+                    height="14"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    viewBox="0 0 24 24"
+                  >
+                    <line x1="5" y1="12" x2="19" y2="12" />
+                    <polyline points="12 5 19 12 12 19" />
+                  </svg>
+                </a>
+              )}
+              {docHref && (
+                <a href={docHref} className="project-link" target="_blank" rel="noopener noreferrer">
+                  <span data-en="">View full document</span>
+                  <span data-es="">Ver documento completo</span>
                   <svg
                     width="14"
                     height="14"
