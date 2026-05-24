@@ -219,6 +219,37 @@ export const projects: Project[] = [
       },
     ],
   },
+  {
+    id: "p6",
+    number: "06",
+    title: "Wedding Studio PDF Proposal System",
+    tags: ["Claude Design", "Claude Code", "HTML/CSS"],
+    summary: {
+      es: "Sistema completo para generar propuestas PDF personalizadas para un estudio de fotografía de bodas de lujo. Diseñado en Claude Design: template HTML + archivo de datos por cliente → PDF listo para imprimir.",
+      en: "Complete system to generate personalized PDF proposals for a luxury wedding photography studio. Built in Claude Design: HTML template + per-client data file → print-ready PDF.",
+    },
+    image: "/assets/projects/6.jpg",
+    imageAlt: "Wedding studio 6-page investment guide PDF",
+    problem: {
+      es: "Estudio de fotografía necesitaba propuestas con nombre, paquete y precio personalizados por cliente, sin retocar el diseño. El equipo no-técnico debía poder operar el sistema de principio a fin.",
+      en: "Photography studio needed proposals with personalized name, package, and price per client, without touching the design. Non-technical staff had to be able to run the system end to end.",
+    },
+    results: [
+      {
+        es: "Guía de inversión de 6 páginas: Cover → Studio → Collections → Experience → Testimonial → Investment",
+        en: "6-page investment guide: Cover → Studio → Collections → Experience → Testimonial → Investment",
+      },
+      {
+        es: "Sistema data-field: un archivo de texto por cliente → PDF personalizado sin tocar el HTML",
+        en: "data-field system: one plain-text file per client → personalized PDF without touching the HTML",
+      },
+      {
+        es: "Design tokens reutilizables: cualquier variante futura hereda el branding automáticamente",
+        en: "Reusable design tokens: any future variant inherits the branding automatically",
+      },
+    ],
+    caseStudyHref: "https://github.com/diegoqprobst/wedding-proposal-pdf-system",
+  },
 ];
 
 export const services: Service[] = [
@@ -319,6 +350,32 @@ export const services: Service[] = [
       },
     ],
     mailSubject: "Technical Design + Automation Inquiry",
+  },
+  {
+    icon: "FileText",
+    title: {
+      es: "Sistemas de Propuestas con IA",
+      en: "AI-Powered Proposal Systems",
+    },
+    blurb: {
+      es: "Configuro Claude Design para que tu equipo genere propuestas, cotizaciones o contratos con tu branding — sin tocar el diseño, sin desarrolladores.",
+      en: "I configure Claude Design so your team can generate branded proposals, quotes, or contracts — no design edits, no developers.",
+    },
+    deliverables: [
+      {
+        es: "Sistema de diseño en Claude Design (tokens, tipografía, colores de marca)",
+        en: "Design system in Claude Design (brand tokens, typography, colors)",
+      },
+      {
+        es: "Template HTML imprimible con placeholders por cliente",
+        en: "Printable HTML template with per-client data placeholders",
+      },
+      {
+        es: "Guía de uso: archivo de texto por cliente → PDF listo para imprimir",
+        en: "Usage guide: plain-text file per client → print-ready PDF",
+      },
+    ],
+    mailSubject: "AI Proposal System Inquiry",
   },
 ];
 
