@@ -228,7 +228,7 @@ export const projects: Project[] = [
       es: "Sistema completo para generar propuestas PDF personalizadas para un estudio de fotografía de bodas de lujo. Diseñado en Claude Design: template HTML + archivo de datos por cliente → PDF listo para imprimir.",
       en: "Complete system to generate personalized PDF proposals for a luxury wedding photography studio. Built in Claude Design: HTML template + per-client data file → print-ready PDF.",
     },
-    image: "/assets/projects/6.jpg",
+    image: "/assets/projects/6.png",
     imageAlt: "Wedding studio 6-page investment guide PDF",
     problem: {
       es: "Estudio de fotografía necesitaba propuestas con nombre, paquete y precio personalizados por cliente, sin retocar el diseño. El equipo no-técnico debía poder operar el sistema de principio a fin.",
