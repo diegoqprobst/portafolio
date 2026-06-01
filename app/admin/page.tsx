@@ -1,6 +1,14 @@
-import { Home, FolderOpen, FileText } from "lucide-react";
+import { Home, FolderOpen, FileText, LayoutDashboard } from "lucide-react";
 
 const cards = [
+  {
+    href: "/admin/business",
+    icon: LayoutDashboard,
+    title: "Panel de Negocio",
+    desc: "Metas, clientes, proyectos, finanzas e identidad de tu negocio",
+    color: "from-electric/10 to-transparent",
+    border: "border-electric/30",
+  },
   {
     href: "/admin/home",
     icon: Home,
@@ -37,7 +45,7 @@ export default function AdminDashboard() {
         </p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {cards.map(({ href, icon: Icon, title, desc, color, border }) => (
           <a
             key={href}

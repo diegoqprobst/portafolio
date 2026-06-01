@@ -29,6 +29,29 @@
   --nav-h: 68px;
 }
 
+/* ─── ADMIN / BUSINESS OS UTILITIES ──────────────────────── */
+.gradient-text {
+  background: linear-gradient(120deg, #1E90FF 0%, #6FD3FF 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+}
+.input {
+  width: 100%;
+  padding: 10px 14px;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  font-family: var(--font-body);
+  font-size: 14px;
+  color: #fff;
+  outline: none;
+  transition: border-color 0.2s;
+}
+.input::placeholder { color: rgba(255, 255, 255, 0.25); }
+.input:focus { border-color: rgba(30, 144, 255, 0.5); }
+
 /* ─── RESET ───────────────────────────────────────────────── */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 html { scroll-behavior: smooth; }
