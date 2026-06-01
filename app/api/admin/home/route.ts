@@ -1,8 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 import { insforge } from "@/lib/insforge";
 import { revalidatePath } from "next/cache";
+import { requireAdmin } from "@/lib/require-admin";
 
 export async function GET() {
+  const unauthorized = await requireAdmin();
+  if (unauthorized) return unauthorized;
+
   const { data, error } = await insforge.database
     .from("home_content")
     .select("*")
@@ -12,6 +16,9 @@ export async function GET() {
 }
 
 export async function PUT(req: NextRequest) {
+  const unauthorized = await requireAdmin();
+  if (unauthorized) return unauthorized;
+
   const body = await req.json();
   const { error } = await insforge.database
     .from("home_content")

@@ -1,7 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import { insforge } from "@/lib/insforge";
+import { requireAdmin } from "@/lib/require-admin";
 
 export async function GET() {
+  const unauthorized = await requireAdmin();
+  if (unauthorized) return unauthorized;
+
   const { data, error } = await insforge.database
     .from("business_profile")
     .select("*")
@@ -11,6 +15,9 @@ export async function GET() {
 }
 
 export async function PUT(req: NextRequest) {
+  const unauthorized = await requireAdmin();
+  if (unauthorized) return unauthorized;
+
   const body = await req.json();
   delete body.id;
   const { error } = await insforge.database

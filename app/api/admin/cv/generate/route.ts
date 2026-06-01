@@ -3,9 +3,13 @@ import { generateCv, type AiProvider } from "@/lib/ai";
 import { insforge } from "@/lib/insforge";
 import { renderToBuffer, type DocumentProps } from "@react-pdf/renderer";
 import { CvTemplate } from "@/lib/cv-template";
+import { requireAdmin } from "@/lib/require-admin";
 import React from "react";
 
 export async function POST(req: NextRequest) {
+  const unauthorized = await requireAdmin();
+  if (unauthorized) return unauthorized;
+
   const { job_title, company, job_description, provider } = await req.json();
   if (!job_description?.trim()) {
     return NextResponse.json({ error: "job_description required" }, { status: 400 });
