@@ -2,8 +2,21 @@
 
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
+import type { HomeContent } from "@/lib/home-content";
 
-export default function HomeClient() {
+// Métricas de fallback (idénticas al diseño actual). Se usan cuando la DB no
+// devuelve métricas — así la home nunca se ve vacía ni regresa contenido.
+const FALLBACK_METRICS = [
+  { value: "200+", label_en: "Documents built", label_es: "Documentos generados" },
+  { value: "3", label_en: "Countries served", label_es: "Países atendidos" },
+  { value: "4+", label_en: "Years lighting", label_es: "Años en iluminación" },
+  { value: "99%", label_en: "Data integrity", label_es: "Integridad de datos" },
+];
+
+export default function HomeClient({ content }: { content?: HomeContent | null }) {
+  const metrics =
+    content?.metrics && content.metrics.length > 0 ? content.metrics : FALLBACK_METRICS;
+
   const [lang, setLangState] = useState<"en" | "es">("en");
   const [mobileOpen, setMobileOpen] = useState(false);
   const [openProject, setOpenProject] = useState<string | null>(null);
@@ -482,21 +495,16 @@ export default function HomeClient() {
               </div>
 
               <div className="metric-grid">
-                {[
-                  { val: "200+", en: "Documents built", es: "Documentos generados", delay: "60ms" },
-                  { val: "3", en: "Countries served", es: "Países atendidos", delay: "120ms" },
-                  { val: "4+", en: "Years lighting", es: "Años en iluminación", delay: "180ms" },
-                  { val: "99%", en: "Data integrity", es: "Integridad de datos", delay: "240ms" },
-                ].map((m) => (
+                {metrics.map((m, i) => (
                   <div
-                    key={m.val + m.en}
+                    key={m.value + m.label_en + i}
                     className="metric-sm reveal"
-                    style={{ transitionDelay: m.delay }}
+                    style={{ transitionDelay: `${60 + i * 60}ms` }}
                   >
-                    <div className="val">{m.val}</div>
+                    <div className="val">{m.value}</div>
                     <div className="lbl">
-                      <span data-en="">{m.en}</span>
-                      <span data-es="">{m.es}</span>
+                      <span data-en="">{m.label_en}</span>
+                      <span data-es="">{m.label_es}</span>
                     </div>
                   </div>
                 ))}

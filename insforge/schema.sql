@@ -35,10 +35,10 @@ VALUES (
   'Ingeniero con más de 4 años de experiencia combinando automatización, análisis de datos e inteligencia artificial para optimizar procesos en industrias como construcción, retail y e-commerce.',
   'Engineer with 4+ years combining automation, data analysis and AI to optimize processes across construction, retail and e-commerce.',
   '[
-    {"value": "4+", "label_es": "Años de experiencia", "label_en": "Years experience"},
-    {"value": "3",  "label_es": "Países",               "label_en": "Countries"},
-    {"value": "10+","label_es": "Proyectos",             "label_en": "Projects"},
-    {"value": "3",  "label_es": "Industrias",            "label_en": "Industries"}
+    {"value": "200+", "label_es": "Documentos generados", "label_en": "Documents built"},
+    {"value": "3",    "label_es": "Países atendidos",      "label_en": "Countries served"},
+    {"value": "4+",   "label_es": "Años en iluminación",   "label_en": "Years lighting"},
+    {"value": "99%",  "label_es": "Integridad de datos",   "label_en": "Data integrity"}
   ]',
   '[]',
   '[]'
