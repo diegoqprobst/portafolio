@@ -10,7 +10,7 @@ import {
   ArrowDownRight,
 } from "lucide-react";
 import { useCollection } from "@/components/admin/useCollection";
-import { Loading, Progress } from "@/components/admin/ui";
+import { Loading, ErrorState, Progress } from "@/components/admin/ui";
 import {
   Client,
   BusinessProject,
@@ -30,6 +30,14 @@ export default function BusinessDashboard() {
 
   const loading =
     clients.loading || projects.loading || goals.loading || finance.loading;
+  const error =
+    clients.error || projects.error || goals.error || finance.error;
+  const reloadAll = () => {
+    clients.load();
+    projects.load();
+    goals.load();
+    finance.load();
+  };
 
   const stats = useMemo(() => {
     const activeClients = clients.items.filter((c) => c.status === "active").length;
@@ -90,6 +98,7 @@ export default function BusinessDashboard() {
   }, [finance.items]);
 
   if (loading) return <Loading />;
+  if (error) return <ErrorState message={error} onRetry={reloadAll} />;
 
   const empty =
     clients.items.length === 0 &&

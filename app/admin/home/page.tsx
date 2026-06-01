@@ -27,8 +27,12 @@ export default function HomeEditor() {
 
   useEffect(() => {
     fetch("/api/admin/home")
-      .then((r) => r.json())
+      .then((r) => (r.ok ? r.json() : null))
       .then((d) => { if (d) setData(d); })
+      .catch(() => {
+        // Si falla la carga, el editor queda con los valores por defecto
+        // (no rompe la página). El error boundary cubre fallos de render.
+      })
       .finally(() => setLoading(false));
   }, []);
 

@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { Plus, Trash2, Edit2, Loader2, Save, Calendar } from "lucide-react";
 import { useCollection } from "@/components/admin/useCollection";
-import { Loading, PageHeader, Modal, Field, Progress, StatusBadge } from "@/components/admin/ui";
+import { Loading, ErrorState, PageHeader, Modal, Field, Progress, StatusBadge } from "@/components/admin/ui";
 import { BusinessProject, Client, PROJECT_STATUS, money } from "@/lib/business";
 
 const EMPTY: BusinessProject = {
@@ -19,7 +19,7 @@ const EMPTY: BusinessProject = {
 };
 
 export default function ProjectsPage() {
-  const { items, loading, create, update, remove } = useCollection<BusinessProject>("projects");
+  const { items, loading, error, load, create, update, remove } = useCollection<BusinessProject>("projects");
   const clients = useCollection<Client>("clients");
   const [editing, setEditing] = useState<BusinessProject | null>(null);
   const [saving, setSaving] = useState(false);
@@ -38,6 +38,16 @@ export default function ProjectsPage() {
     clients.items.find((c) => c.id === id)?.name ?? "";
 
   if (loading) return <Loading />;
+  if (error || clients.error)
+    return (
+      <ErrorState
+        message={error ?? clients.error}
+        onRetry={() => {
+          load();
+          clients.load();
+        }}
+      />
+    );
 
   return (
     <div>

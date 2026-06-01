@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { Plus, Trash2, Edit2, Loader2, Save } from "lucide-react";
 import { useCollection } from "@/components/admin/useCollection";
-import { Loading, PageHeader, Progress, Modal, Field } from "@/components/admin/ui";
+import { Loading, ErrorState, PageHeader, Progress, Modal, Field } from "@/components/admin/ui";
 import { Goal, HORIZONS, GOAL_CATEGORIES, pct } from "@/lib/business";
 
 const EMPTY: Goal = {
@@ -25,7 +25,7 @@ const STATUS_LABEL: Record<Goal["status"], string> = {
 };
 
 export default function GoalsPage() {
-  const { items, loading, create, update, remove } = useCollection<Goal>("goals");
+  const { items, loading, error, load, create, update, remove } = useCollection<Goal>("goals");
   const [editing, setEditing] = useState<Goal | null>(null);
   const [saving, setSaving] = useState(false);
 
@@ -39,6 +39,7 @@ export default function GoalsPage() {
   }
 
   if (loading) return <Loading />;
+  if (error) return <ErrorState message={error} onRetry={load} />;
 
   return (
     <div>

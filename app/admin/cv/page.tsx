@@ -45,9 +45,14 @@ export default function CvGenerator() {
   const [showPreview, setShowPreview] = useState(false);
 
   async function loadHistory() {
-    const res = await fetch("/api/admin/cv/history");
-    const data = await res.json();
-    setHistory(data);
+    try {
+      const res = await fetch("/api/admin/cv/history");
+      if (!res.ok) return;
+      const data = await res.json();
+      setHistory(Array.isArray(data) ? data : []);
+    } catch {
+      // Historial es secundario; si falla, simplemente no se muestra.
+    }
   }
 
   useEffect(() => { loadHistory(); }, []);

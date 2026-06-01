@@ -3,7 +3,7 @@
 import { useMemo, useState } from "react";
 import { Plus, Trash2, Edit2, Loader2, Save, Mail, Phone, Building2 } from "lucide-react";
 import { useCollection } from "@/components/admin/useCollection";
-import { Loading, PageHeader, Modal, Field, StatusBadge } from "@/components/admin/ui";
+import { Loading, ErrorState, PageHeader, Modal, Field, StatusBadge } from "@/components/admin/ui";
 import { Client, CLIENT_STATUS, money } from "@/lib/business";
 
 const EMPTY: Client = {
@@ -19,7 +19,7 @@ const EMPTY: Client = {
 };
 
 export default function ClientsPage() {
-  const { items, loading, create, update, remove } = useCollection<Client>("clients");
+  const { items, loading, error, load, create, update, remove } = useCollection<Client>("clients");
   const [editing, setEditing] = useState<Client | null>(null);
   const [saving, setSaving] = useState(false);
   const [filter, setFilter] = useState<string>("all");
@@ -44,6 +44,7 @@ export default function ClientsPage() {
   }
 
   if (loading) return <Loading />;
+  if (error) return <ErrorState message={error} onRetry={load} />;
 
   return (
     <div>

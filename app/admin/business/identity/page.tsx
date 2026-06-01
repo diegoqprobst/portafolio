@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { Save, Loader2, Plus, Trash2, Upload } from "lucide-react";
-import { Loading, Field } from "@/components/admin/ui";
+import { Loading, ErrorState, Field } from "@/components/admin/ui";
 import { BusinessProfile } from "@/lib/business";
 
 const EMPTY: BusinessProfile = {
@@ -21,17 +21,32 @@ const EMPTY: BusinessProfile = {
 export default function IdentityPage() {
   const [data, setData] = useState<BusinessProfile>(EMPTY);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
   const [uploading, setUploading] = useState(false);
 
-  useEffect(() => {
+  function loadProfile() {
+    setLoading(true);
+    setError(null);
     fetch("/api/admin/business/profile")
-      .then((r) => r.json())
+      .then((r) => {
+        if (!r.ok) throw new Error(`HTTP ${r.status}`);
+        return r.json();
+      })
       .then((d) => {
         if (d) setData({ ...EMPTY, ...d, values: d.values ?? [] });
       })
+      .catch(() =>
+        setError(
+          "No se pudo cargar la identidad. Revisa tu conexión o el estado del backend."
+        )
+      )
       .finally(() => setLoading(false));
+  }
+
+  useEffect(() => {
+    loadProfile();
   }, []);
 
   async function save() {
@@ -57,6 +72,7 @@ export default function IdentityPage() {
   }
 
   if (loading) return <Loading />;
+  if (error) return <ErrorState message={error} onRetry={loadProfile} />;
 
   return (
     <div className="max-w-3xl">

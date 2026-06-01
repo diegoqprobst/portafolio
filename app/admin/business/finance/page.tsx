@@ -3,7 +3,7 @@
 import { useMemo, useState } from "react";
 import { Plus, Trash2, Loader2, Save, ArrowUpRight, ArrowDownRight } from "lucide-react";
 import { useCollection } from "@/components/admin/useCollection";
-import { Loading, PageHeader, Modal, Field } from "@/components/admin/ui";
+import { Loading, ErrorState, PageHeader, Modal, Field } from "@/components/admin/ui";
 import { FinanceEntry, money } from "@/lib/business";
 
 function today() {
@@ -19,7 +19,7 @@ const EMPTY: FinanceEntry = {
 };
 
 export default function FinancePage() {
-  const { items, loading, create, remove } = useCollection<FinanceEntry>("finance");
+  const { items, loading, error, load, create, remove } = useCollection<FinanceEntry>("finance");
   const [editing, setEditing] = useState<FinanceEntry | null>(null);
   const [saving, setSaving] = useState(false);
 
@@ -42,6 +42,7 @@ export default function FinancePage() {
   }
 
   if (loading) return <Loading />;
+  if (error) return <ErrorState message={error} onRetry={load} />;
 
   return (
     <div>

@@ -1,6 +1,6 @@
 "use client";
 
-import { Loader2 } from "lucide-react";
+import { Loader2, AlertTriangle, RefreshCw } from "lucide-react";
 
 export function PageHeader({
   title,
@@ -26,6 +26,33 @@ export function Loading() {
   return (
     <div className="flex items-center gap-2 text-white/30">
       <Loader2 className="w-4 h-4 animate-spin" /> Cargando...
+    </div>
+  );
+}
+
+export function ErrorState({
+  message,
+  onRetry,
+}: {
+  message?: string | null;
+  onRetry?: () => void;
+}) {
+  return (
+    <div className="flex flex-col items-start gap-3 bg-red-500/5 border border-red-500/20 rounded-2xl p-6 max-w-lg">
+      <div className="flex items-center gap-2 text-red-400 font-bold">
+        <AlertTriangle className="w-4 h-4" /> Algo salió mal
+      </div>
+      <p className="text-white/50 text-sm">
+        {message ?? "No se pudo cargar la información."}
+      </p>
+      {onRetry && (
+        <button
+          onClick={onRetry}
+          className="btn-primary px-4 py-2 rounded-lg text-sm font-bold flex items-center gap-2"
+        >
+          <RefreshCw className="w-4 h-4" /> Reintentar
+        </button>
+      )}
     </div>
   );
 }

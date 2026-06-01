@@ -49,15 +49,26 @@ const EMPTY_PROJECT: Project = {
 export default function ProjectsAdmin() {
   const [projects, setProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [editing, setEditing] = useState<Project | null>(null);
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
 
   async function load() {
-    const res = await fetch("/api/admin/projects");
-    const data = await res.json();
-    setProjects(data);
-    setLoading(false);
+    setLoading(true);
+    setError(null);
+    try {
+      const res = await fetch("/api/admin/projects");
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const data = await res.json();
+      setProjects(Array.isArray(data) ? data : []);
+    } catch {
+      setError(
+        "No se pudieron cargar los proyectos. Revisa tu conexión o el estado del backend."
+      );
+    } finally {
+      setLoading(false);
+    }
   }
 
   useEffect(() => { load(); }, []);
@@ -99,6 +110,20 @@ export default function ProjectsAdmin() {
     return (
       <div className="flex items-center gap-2 text-white/30">
         <Loader2 className="w-4 h-4 animate-spin" /> Cargando...
+      </div>
+    );
+
+  if (error)
+    return (
+      <div className="flex flex-col items-start gap-3 bg-red-500/5 border border-red-500/20 rounded-2xl p-6 max-w-lg">
+        <p className="text-red-400 font-bold">Algo salió mal</p>
+        <p className="text-white/50 text-sm">{error}</p>
+        <button
+          onClick={load}
+          className="btn-primary px-4 py-2 rounded-lg text-sm font-bold"
+        >
+          Reintentar
+        </button>
       </div>
     );
 
