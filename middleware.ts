@@ -3,7 +3,11 @@ import { jwtVerify } from "jose";
 
 export const runtime = "nodejs";
 
-const secret = new TextEncoder().encode(process.env.JWT_SECRET ?? "dev-secret-change-me");
+const JWT_SECRET = process.env.JWT_SECRET;
+if (!JWT_SECRET || JWT_SECRET.length < 16) {
+  throw new Error("JWT_SECRET is required and must be at least 16 characters");
+}
+const secret = new TextEncoder().encode(JWT_SECRET);
 
 const PUBLIC = ["/admin/login", "/api/auth/login"];
 
