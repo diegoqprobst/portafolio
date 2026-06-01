@@ -3,19 +3,18 @@
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import type { HomeContent } from "@/lib/home-content";
-
-// Métricas de fallback (idénticas al diseño actual). Se usan cuando la DB no
-// devuelve métricas — así la home nunca se ve vacía ni regresa contenido.
-const FALLBACK_METRICS = [
-  { value: "200+", label_en: "Documents built", label_es: "Documentos generados" },
-  { value: "3", label_en: "Countries served", label_es: "Países atendidos" },
-  { value: "4+", label_en: "Years lighting", label_es: "Años en iluminación" },
-  { value: "99%", label_en: "Data integrity", label_es: "Integridad de datos" },
-];
+import { DEFAULT_METRICS, DEFAULT_SERVICES, DEFAULT_ABOUT } from "@/lib/home-defaults";
 
 export default function HomeClient({ content }: { content?: HomeContent | null }) {
+  // Cada campo cae a su default si la DB no tiene contenido → la home se ve
+  // idéntica a antes hasta que se edite desde /admin/home.
   const metrics =
-    content?.metrics && content.metrics.length > 0 ? content.metrics : FALLBACK_METRICS;
+    content?.metrics && content.metrics.length > 0 ? content.metrics : DEFAULT_METRICS;
+  const services =
+    content?.services && content.services.length > 0 ? content.services : DEFAULT_SERVICES;
+  const about = content?.about ?? DEFAULT_ABOUT;
+  const aboutParasEn = about.body_en.split(/\n{2,}/).map((s) => s.trim()).filter(Boolean);
+  const aboutParasEs = about.body_es.split(/\n{2,}/).map((s) => s.trim()).filter(Boolean);
 
   const [lang, setLangState] = useState<"en" | "es">("en");
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -366,40 +365,16 @@ export default function HomeClient({ content }: { content?: HomeContent | null }
           <div className="about-grid">
             <div>
               <div className="about-body reveal">
-                <p>
-                  <span data-en="">
-                    I build automation systems and data pipelines from scratch —
-                    complete workflows that connect APIs, process data, and
-                    generate ready-to-use outputs. My stack is{" "}
-                    <strong>Claude Code + n8n + Antigravity</strong>, built
-                    specifically around the documentation workflows lighting
-                    manufacturers need.
-                  </span>
-                  <span data-es="">
-                    Construyo sistemas de automatización desde cero — flujos
-                    completos que conectan APIs, procesan datos y generan outputs
-                    listos para usar. Mi stack es{" "}
-                    <strong>Claude Code + n8n + Antigravity</strong>, construido
-                    específicamente para los flujos de documentación que
-                    necesitan los fabricantes de iluminación.
-                  </span>
-                </p>
-                <p>
-                  <span data-en="">
-                    Trained clinical psychologist — I understand cognitive
-                    friction as well as LED driver circuits. Teams in France,
-                    UAE, and the Americas trust me to translate technical
-                    complexity into commercial clarity,{" "}
-                    <strong>100% remote</strong>.
-                  </span>
-                  <span data-es="">
-                    Psicólogo clínico de formación — entiendo la fricción
-                    cognitiva igual que los circuitos de un driver LED. Equipos
-                    en Francia, Emiratos Árabes y las Américas me confían la
-                    traducción de complejidad técnica en claridad comercial,{" "}
-                    <strong>100% remoto</strong>.
-                  </span>
-                </p>
+                <div data-en="">
+                  {aboutParasEn.map((p, i) => (
+                    <p key={i}>{p}</p>
+                  ))}
+                </div>
+                <div data-es="">
+                  {aboutParasEs.map((p, i) => (
+                    <p key={i}>{p}</p>
+                  ))}
+                </div>
               </div>
 
               <div className="about-highlights">
@@ -782,196 +757,37 @@ export default function HomeClient({ content }: { content?: HomeContent | null }
           </div>
 
           <div className="services-grid">
-            <div className="service-card reveal">
-              <span className="service-badge">
-                <span data-en="">Most requested</span>
-                <span data-es="">Más solicitado</span>
-              </span>
-              <div className="service-icon">⚡</div>
-              <div className="service-title">
-                <span data-en="">Product Data Pipeline</span>
-                <span data-es="">Pipeline de Datos de Producto</span>
+            {services.map((s, i) => (
+              <div
+                key={s.title_en + i}
+                className="service-card reveal"
+                style={i > 0 ? { transitionDelay: `${i * 80}ms` } : undefined}
+              >
+                {(s.badge_en || s.badge_es) && (
+                  <span className="service-badge">
+                    <span data-en="">{s.badge_en}</span>
+                    <span data-es="">{s.badge_es}</span>
+                  </span>
+                )}
+                <div className="service-icon">{s.icon}</div>
+                <div className="service-title">
+                  <span data-en="">{s.title_en}</span>
+                  <span data-es="">{s.title_es}</span>
+                </div>
+                <p className="service-desc">
+                  <span data-en="">{s.desc_en}</span>
+                  <span data-es="">{s.desc_es}</span>
+                </p>
+                <ul className="service-deliverables">
+                  {s.deliverables.map((d, j) => (
+                    <li key={j}>
+                      <span data-en="">{d.en}</span>
+                      <span data-es="">{d.es}</span>
+                    </li>
+                  ))}
+                </ul>
               </div>
-              <p className="service-desc">
-                <span data-en="">
-                  Supplier PDFs → structured, branded, e-commerce-ready product
-                  data. Automated from day one.
-                </span>
-                <span data-es="">
-                  PDFs de proveedor → datos de producto estructurados, con
-                  branding, listos para e-commerce. Automatizado desde el primer
-                  día.
-                </span>
-              </p>
-              <ul className="service-deliverables">
-                <li>
-                  <span data-en="">Spec extraction from any supplier format</span>
-                  <span data-es="">
-                    Extracción de specs de cualquier formato de proveedor
-                  </span>
-                </li>
-                <li>
-                  <span data-en="">SEO product descriptions (EN + ES)</span>
-                  <span data-es="">Descripciones de producto SEO (EN + ES)</span>
-                </li>
-                <li>
-                  <span data-en="">
-                    Platform schema mapping (Shopify, WooCommerce, etc.)
-                  </span>
-                  <span data-es="">
-                    Mapeo a esquemas de plataforma (Shopify, WooCommerce, etc.)
-                  </span>
-                </li>
-                <li>
-                  <span data-en="">
-                    Automated image renaming + metadata tagging
-                  </span>
-                  <span data-es="">
-                    Renombrado de imágenes + etiquetado de metadata automatizado
-                  </span>
-                </li>
-              </ul>
-            </div>
-
-            <div className="service-card reveal" style={{ transitionDelay: "80ms" }}>
-              <div className="service-icon">📋</div>
-              <div className="service-title">
-                <span data-en="">NFPA-Compliant Documentation</span>
-                <span data-es="">Documentación Conforme NFPA</span>
-              </div>
-              <p className="service-desc">
-                <span data-en="">
-                  Lab reports and raw specs converted into distribution-ready
-                  data sheets and catalogs for the US market.
-                </span>
-                <span data-es="">
-                  Reportes de laboratorio y specs crudos convertidos en fichas
-                  técnicas y catálogos listos para distribución en el mercado
-                  americano.
-                </span>
-              </p>
-              <ul className="service-deliverables">
-                <li>
-                  <span data-en="">NFPA 70 / NEC compliant data sheets</span>
-                  <span data-es="">Fichas técnicas conformes NFPA 70 / NEC</span>
-                </li>
-                <li>
-                  <span data-en="">IES photometric data interpretation</span>
-                  <span data-es="">Interpretación de datos fotométricos IES</span>
-                </li>
-                <li>
-                  <span data-en="">Branded PDF catalogs (Adobe InDesign)</span>
-                  <span data-es="">Catálogos PDF con branding (Adobe InDesign)</span>
-                </li>
-                <li>
-                  <span data-en="">
-                    Spec sheets ready for US distributor approval
-                  </span>
-                  <span data-es="">
-                    Fichas listas para aprobación de distribuidores americanos
-                  </span>
-                </li>
-              </ul>
-            </div>
-
-            <div className="service-card reveal" style={{ transitionDelay: "160ms" }}>
-              <div className="service-icon">🤖</div>
-              <div className="service-title">
-                <span data-en="">Workflow Automation</span>
-                <span data-es="">Automatización de Flujos</span>
-              </div>
-              <p className="service-desc">
-                <span data-en="">
-                  Repetitive documentation processes replaced by n8n + Claude
-                  Code pipelines. From chaotic to predictable.
-                </span>
-                <span data-es="">
-                  Procesos de documentación repetitivos reemplazados por
-                  pipelines n8n + Claude Code. De caótico a predecible.
-                </span>
-              </p>
-              <ul className="service-deliverables">
-                <li>
-                  <span data-en="">
-                    Process audit and bottleneck identification
-                  </span>
-                  <span data-es="">
-                    Auditoría de proceso e identificación de cuellos de botella
-                  </span>
-                </li>
-                <li>
-                  <span data-en="">n8n workflow design + deployment</span>
-                  <span data-es="">
-                    Diseño + despliegue de flujos n8n
-                  </span>
-                </li>
-                <li>
-                  <span data-en="">
-                    AI-assisted data extraction and enrichment
-                  </span>
-                  <span data-es="">
-                    Extracción y enriquecimiento de datos asistido por IA
-                  </span>
-                </li>
-                <li>
-                  <span data-en="">
-                    Monitoring + documentation for your team
-                  </span>
-                  <span data-es="">
-                    Monitoreo + documentación para tu equipo
-                  </span>
-                </li>
-              </ul>
-            </div>
-
-            <div className="service-card reveal" style={{ transitionDelay: "240ms" }}>
-              <div className="service-icon">🏗️</div>
-              <div className="service-title">
-                <span data-en="">Technical Bid Proposals</span>
-                <span data-es="">Propuestas Técnicas de Licitación</span>
-              </div>
-              <p className="service-desc">
-                <span data-en="">
-                  Public and private lighting bids with regulatory analysis,
-                  compliance arguments, and professional submittals.
-                </span>
-                <span data-es="">
-                  Licitaciones de iluminación públicas y privadas con análisis
-                  normativo, argumentos de cumplimiento y submittals
-                  profesionales.
-                </span>
-              </p>
-              <ul className="service-deliverables">
-                <li>
-                  <span data-en="">
-                    Municipal ordinance and standards research
-                  </span>
-                  <span data-es="">
-                    Investigación de ordenanzas municipales y estándares
-                  </span>
-                </li>
-                <li>
-                  <span data-en="">
-                    Compliance matrix (product vs. requirements)
-                  </span>
-                  <span data-es="">
-                    Matriz de cumplimiento (producto vs. requerimientos)
-                  </span>
-                </li>
-                <li>
-                  <span data-en="">
-                    Visual submittal design (Illustrator / InDesign)
-                  </span>
-                  <span data-es="">
-                    Diseño de submittal visual (Illustrator / InDesign)
-                  </span>
-                </li>
-                <li>
-                  <span data-en="">Technical narrative and justification</span>
-                  <span data-es="">Narrativa técnica y justificación</span>
-                </li>
-              </ul>
-            </div>
+            ))}
           </div>
         </div>
       </section>

@@ -32,8 +32,9 @@ VALUES (
     'API & Claude AI Integration',
     'Technical Documentation with AI'
   ],
-  'Ingeniero con más de 4 años de experiencia combinando automatización, análisis de datos e inteligencia artificial para optimizar procesos en industrias como construcción, retail y e-commerce.',
-  'Engineer with 4+ years combining automation, data analysis and AI to optimize processes across construction, retail and e-commerce.',
+  '',
+  '',  -- about_es / about_en: vacíos a propósito → la home usa DEFAULT_ABOUT
+       -- (lib/home-defaults.ts) como fuente única hasta que se edite en /admin/home
   '[
     {"value": "200+", "label_es": "Documentos generados", "label_en": "Documents built"},
     {"value": "3",    "label_es": "Países atendidos",      "label_en": "Countries served"},

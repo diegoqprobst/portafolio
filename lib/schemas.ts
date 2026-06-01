@@ -127,7 +127,24 @@ export const homeContentUpdate = z.object({
     )
     .max(20)
     .optional(),
-  services: z.array(z.unknown()).max(40).optional(),
+  services: z
+    .array(
+      z.object({
+        icon: ShortText(8).default(""),
+        badge_en: ShortText(60).optional(),
+        badge_es: ShortText(60).optional(),
+        title_en: ShortText(120).default(""),
+        title_es: ShortText(120).default(""),
+        desc_en: LongText(600).default(""),
+        desc_es: LongText(600).default(""),
+        deliverables: z
+          .array(z.object({ en: ShortText(200).default(""), es: ShortText(200).default("") }))
+          .max(12)
+          .default([]),
+      })
+    )
+    .max(12)
+    .optional(),
   tech_stack: z.array(z.unknown()).max(80).optional(),
 });
 
