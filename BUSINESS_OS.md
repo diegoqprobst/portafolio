@@ -1,8 +1,14 @@
-# Business OS — Sistema para operar tu negocio
+# Business OS — Lumen Studio
 
-Un panel visual, integrado en tu sitio Next.js, para hacer crecer tu negocio:
-identidad de marca, metas con roadmap, clientes (CRM), proyectos y finanzas,
-con un panel de análisis que se calcula solo.
+Panel visual integrado en el sitio Next.js para operar **Lumen Studio**
+(estudio de documentación técnica y diseño para marcas de iluminación
+profesional y comercial): identidad de marca, metas con roadmap, clientes
+(CRM), proyectos y finanzas, con un panel de análisis que se calcula solo.
+
+El esquema semilla (`insforge/business.sql`) ya viene personalizado con la
+identidad de Lumen Studio, metas hacia ingreso recurrente y los clientes y
+proyectos reales de arranque (Can Wu / Saratoga, Luxarmonie). Todo es editable
+desde el panel.
 
 Vive dentro del área protegida `/admin/business` (misma autenticación que el
 resto del admin).

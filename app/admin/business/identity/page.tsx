@@ -11,9 +11,9 @@ const EMPTY: BusinessProfile = {
   mission: "",
   vision: "",
   values: [],
-  primary_color: "#1E90FF",
-  secondary_color: "#6FD3FF",
-  accent_color: "#22C55E",
+  primary_color: "#F5A623",
+  secondary_color: "#FFD27F",
+  accent_color: "#1E90FF",
   logo_url: "",
   brand_voice: "",
 };
