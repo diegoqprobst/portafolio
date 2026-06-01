@@ -22,7 +22,11 @@ export default function LoginPage() {
         body: JSON.stringify({ email, password }),
       });
       if (!res.ok) {
-        setError("Credenciales incorrectas");
+        if (res.status === 429) {
+          setError("Demasiados intentos. Espera unos minutos e inténtalo de nuevo.");
+        } else {
+          setError("Credenciales incorrectas");
+        }
         return;
       }
       router.push("/admin");
