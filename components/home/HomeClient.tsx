@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import type { HomeContent } from "@/lib/home-content";
 import { DEFAULT_METRICS, DEFAULT_SERVICES, DEFAULT_ABOUT } from "@/lib/home-defaults";
+import StorySection from "@/components/home/StorySection";
 
 export default function HomeClient({ content }: { content?: HomeContent | null }) {
   // Cada campo cae a su default si la DB no tiene contenido → la home se ve
@@ -410,6 +411,11 @@ export default function HomeClient({ content }: { content?: HomeContent | null }
           </div>
         </div>
       </div>
+
+      {/* ══════════ STORY (problema → conflicto → orden) ════════ */}
+      <StorySection />
+
+      <hr className="divider-line" />
 
       {/* ══════════ ABOUT ═══════════════════════════════════════ */}
       <section id="about">
