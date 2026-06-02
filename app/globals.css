@@ -98,8 +98,39 @@ body.lang-es [data-en] { display: none !important; }
   font-size: 22px; font-weight: 800;
   letter-spacing: -0.04em;
   color: var(--text);
+  display: inline-flex; align-items: center; gap: 9px;
 }
 .nav-logo span { color: var(--accent); }
+.nav-logo .wm-studio { color: var(--muted); font-weight: 500; }
+
+/* ─── LUMEN STUDIO BRAND ─────────────────────────────────── */
+.lumen-mark {
+  display: inline-block; width: 12px; height: 12px; border-radius: 50%;
+  background: var(--accent); flex-shrink: 0;
+  box-shadow: 0 0 0 3px oklch(72% 0.14 55 / 0.16), 0 0 16px 2px oklch(72% 0.14 55 / 0.6);
+}
+.hero-eyebrow {
+  display: inline-flex; align-items: center; gap: 9px;
+  font-family: var(--font-display); font-size: 13px; font-weight: 800;
+  letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--accent); margin-bottom: 18px;
+}
+.hero-eyebrow .lumen-mark { width: 9px; height: 9px; box-shadow: 0 0 0 2px oklch(72% 0.14 55 / 0.16), 0 0 12px 1px oklch(72% 0.14 55 / 0.55); }
+.hero-eyebrow .he-tag { color: var(--muted); font-weight: 600; letter-spacing: 0.02em; text-transform: none; }
+a.hero-badge { transition: border-color .2s, transform .2s; }
+a.hero-badge:hover { border-color: oklch(68% 0.18 155 / 0.5); transform: translateY(-1px); }
+.hero-badge .hb-arrow { opacity: 0.7; margin-left: 2px; }
+
+/* ─── CLIENTS BAND ───────────────────────────────────────── */
+.clients-band { background: var(--bg2); }
+.clients-inner {
+  max-width: 1160px; margin: 0 auto; padding: 30px 24px;
+  display: flex; align-items: center; gap: 36px; flex-wrap: wrap; justify-content: center;
+}
+.clients-label { font-size: 11px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted2); }
+.clients-list { display: flex; align-items: center; gap: 40px; flex-wrap: wrap; justify-content: center; }
+.client-name { font-family: var(--font-display); font-size: 18px; font-weight: 800; letter-spacing: -0.02em; color: var(--muted); line-height: 1.1; }
+.client-name small { display: block; font-size: 10px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted2); margin-top: 3px; }
 .nav-links {
   display: flex; align-items: center; gap: 32px;
   list-style: none;
@@ -905,6 +936,9 @@ footer {
   letter-spacing: -0.04em; color: var(--muted2);
 }
 .footer-logo span { color: var(--accent); }
+.footer-logo { display: inline-flex; align-items: center; gap: 8px; }
+.footer-logo .wm-studio { color: var(--muted2); font-weight: 500; }
+.footer-logo .lumen-mark { width: 10px; height: 10px; box-shadow: 0 0 0 2px oklch(72% 0.14 55 / 0.16), 0 0 12px 1px oklch(72% 0.14 55 / 0.5); }
 .footer-copy {
   font-size: 12px; color: var(--muted2);
   letter-spacing: 0.08em; text-transform: uppercase;

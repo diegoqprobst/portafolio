@@ -37,78 +37,78 @@ export type HomeAbout = {
 export const DEFAULT_METRICS: HomeMetric[] = [
   { value: "200+", label_en: "Documents built", label_es: "Documentos generados" },
   { value: "3", label_en: "Countries served", label_es: "Países atendidos" },
-  { value: "4+", label_en: "Years lighting", label_es: "Años en iluminación" },
+  { value: "4+", label_en: "Years in industry", label_es: "Años en la industria" },
   { value: "99%", label_en: "Data integrity", label_es: "Integridad de datos" },
 ];
 
 export const DEFAULT_ABOUT: HomeAbout = {
   body_en:
-    "I build automation systems and data pipelines from scratch — complete workflows that connect APIs, process data, and generate ready-to-use outputs. My stack is Claude Code + n8n + Antigravity, built specifically around the documentation workflows lighting manufacturers need.\n\nTrained clinical psychologist — I understand cognitive friction as well as LED driver circuits. Teams in France, UAE, and the Americas trust me to translate technical complexity into commercial clarity, 100% remote.",
+    "I build automation systems and data pipelines from scratch — complete workflows that connect data, process it, and generate ready-to-use catalogs and spec sheets. My stack pairs Adobe InDesign with Python, data merge, and GREP styles, built around the documentation workflows product brands actually need.\n\nTrained clinical psychologist — I understand cognitive friction as well as LED driver circuits. Teams in France, UAE, and the Americas trust me to translate technical complexity into commercial clarity, 100% remote.",
   body_es:
-    "Construyo sistemas de automatización desde cero — flujos completos que conectan APIs, procesan datos y generan outputs listos para usar. Mi stack es Claude Code + n8n + Antigravity, construido específicamente para los flujos de documentación que necesitan los fabricantes de iluminación.\n\nPsicólogo clínico de formación — entiendo la fricción cognitiva igual que los circuitos de un driver LED. Equipos en Francia, Emiratos Árabes y las Américas me confían la traducción de complejidad técnica en claridad comercial, 100% remoto.",
+    "Construyo sistemas de automatización y pipelines de datos desde cero — flujos completos que conectan datos, los procesan y generan catálogos y fichas listos para usar. Mi stack combina Adobe InDesign con Python, data merge y estilos GREP, construido para los flujos de documentación que las marcas de producto realmente necesitan.\n\nPsicólogo clínico de formación — entiendo la fricción cognitiva igual que los circuitos de un driver LED. Equipos en Francia, Emiratos Árabes y las Américas me confían la traducción de complejidad técnica en claridad comercial, 100% remoto.",
 };
 
 export const DEFAULT_SERVICES: HomeService[] = [
   {
-    icon: "⚡",
+    icon: "📘",
     badge_en: "Most requested",
     badge_es: "Más solicitado",
-    title_en: "Product Data Pipeline",
-    title_es: "Pipeline de Datos de Producto",
+    title_en: "Product Catalogs (InDesign)",
+    title_es: "Catálogos de Producto (InDesign)",
     desc_en:
-      "Supplier PDFs → structured, branded, e-commerce-ready product data. Automated from day one.",
+      "Print- and digital-ready product catalogs — from scratch or refining an 80%-done file. Clean grids, accurate spec tables, perfectly consistent across 100+ pages.",
     desc_es:
-      "PDFs de proveedor → datos de producto estructurados, con branding, listos para e-commerce. Automatizado desde el primer día.",
+      "Catálogos de producto listos para impresión y digital — desde cero o refinando un archivo a medias. Grids limpios, tablas de specs precisas, consistencia perfecta en más de 100 páginas.",
     deliverables: [
-      { en: "Spec extraction from any supplier format", es: "Extracción de specs de cualquier formato de proveedor" },
-      { en: "SEO product descriptions (EN + ES)", es: "Descripciones de producto SEO (EN + ES)" },
-      { en: "Platform schema mapping (Shopify, WooCommerce, etc.)", es: "Mapeo a esquemas de plataforma (Shopify, WooCommerce, etc.)" },
-      { en: "Automated image renaming + metadata tagging", es: "Renombrado de imágenes + etiquetado de metadata automatizado" },
+      { en: "Master grid + style system", es: "Master grid + sistema de estilos" },
+      { en: "Accurate specification tables", es: "Tablas de especificaciones precisas" },
+      { en: "Print + digital PDF", es: "PDF print + digital" },
+      { en: "Packaged InDesign source file", es: "Archivo InDesign empaquetado" },
     ],
   },
   {
-    icon: "📋",
-    title_en: "NFPA-Compliant Documentation",
-    title_es: "Documentación Conforme NFPA",
+    icon: "📄",
+    title_en: "Spec & Data Sheets",
+    title_es: "Fichas Técnicas y Data Sheets",
     desc_en:
-      "Lab reports and raw specs converted into distribution-ready data sheets and catalogs for the US market.",
+      "A branded, data-merge-ready master template — generate dozens of accurate spec sheets without touching the layout.",
     desc_es:
-      "Reportes de laboratorio y specs crudos convertidos en fichas técnicas y catálogos listos para distribución en el mercado americano.",
+      "Una plantilla maestra con branding y lista para data-merge — genera docenas de fichas precisas sin tocar la maquetación.",
     deliverables: [
-      { en: "NFPA 70 / NEC compliant data sheets", es: "Fichas técnicas conformes NFPA 70 / NEC" },
-      { en: "IES photometric data interpretation", es: "Interpretación de datos fotométricos IES" },
-      { en: "Branded PDF catalogs (Adobe InDesign)", es: "Catálogos PDF con branding (Adobe InDesign)" },
-      { en: "Spec sheets ready for US distributor approval", es: "Fichas listas para aprobación de distribuidores americanos" },
+      { en: "Parameterized template", es: "Plantilla parametrizada" },
+      { en: "Data-merge setup", es: "Setup de data-merge" },
+      { en: "NFPA / IES ready", es: "Lista para NFPA / IES" },
+      { en: "Your team generates unlimited sheets", es: "Tu equipo genera fichas ilimitadas" },
     ],
   },
   {
-    icon: "🤖",
-    title_en: "Workflow Automation",
-    title_es: "Automatización de Flujos",
+    icon: "🧹",
+    title_en: "Document Standardization",
+    title_es: "Estandarización de Documentos",
     desc_en:
-      "Repetitive documentation processes replaced by n8n + Claude Code pipelines. From chaotic to predictable.",
+      "A readability + consistency pass on your existing InDesign or PDF. Same design, fixed and aligned — I follow your brief exactly, no surprise redesigns.",
     desc_es:
-      "Procesos de documentación repetitivos reemplazados por pipelines n8n + Claude Code. De caótico a predecible.",
+      "Un pase de legibilidad + consistencia sobre tu InDesign o PDF existente. Mismo diseño, corregido y alineado — sigo tu brief al pie de la letra, sin rediseños sorpresa.",
     deliverables: [
-      { en: "Process audit and bottleneck identification", es: "Auditoría de proceso e identificación de cuellos de botella" },
-      { en: "n8n workflow design + deployment", es: "Diseño + despliegue de flujos n8n" },
-      { en: "AI-assisted data extraction and enrichment", es: "Extracción y enriquecimiento de datos asistido por IA" },
-      { en: "Monitoring + documentation for your team", es: "Monitoreo + documentación para tu equipo" },
+      { en: "Typography & spacing", es: "Tipografía y espaciado" },
+      { en: "Table consistency", es: "Consistencia de tablas" },
+      { en: "Page-by-page QA", es: "QA página por página" },
+      { en: "Desktop + mobile review", es: "Revisión desktop + móvil" },
     ],
   },
   {
-    icon: "🏗️",
-    title_en: "Technical Bid Proposals",
-    title_es: "Propuestas Técnicas de Licitación",
+    icon: "⚙️",
+    title_en: "Production Automation",
+    title_es: "Automatización de Producción",
     desc_en:
-      "Public and private lighting bids with regulatory analysis, compliance arguments, and professional submittals.",
+      "Data merge, GREP styles, batch image processing, and Python pipelines that turn supplier data into branded product docs — the volume and consistency manual work can't match.",
     desc_es:
-      "Licitaciones de iluminación públicas y privadas con análisis normativo, argumentos de cumplimiento y submittals profesionales.",
+      "Data merge, estilos GREP, procesamiento de imágenes por lotes y pipelines en Python que convierten datos de proveedor en documentos de producto con branding — el volumen y la consistencia que el trabajo manual no iguala.",
     deliverables: [
-      { en: "Municipal ordinance and standards research", es: "Investigación de ordenanzas municipales y estándares" },
-      { en: "Compliance matrix (product vs. requirements)", es: "Matriz de cumplimiento (producto vs. requerimientos)" },
-      { en: "Visual submittal design (Illustrator / InDesign)", es: "Diseño de submittal visual (Illustrator / InDesign)" },
-      { en: "Technical narrative and justification", es: "Narrativa técnica y justificación" },
+      { en: "Supplier data → structured data", es: "Datos de proveedor → datos estructurados" },
+      { en: "Automated layout", es: "Maquetación automatizada" },
+      { en: "Batch image processing", es: "Procesamiento de imágenes en lote" },
+      { en: "Reusable system", es: "Sistema reutilizable" },
     ],
   },
 ];

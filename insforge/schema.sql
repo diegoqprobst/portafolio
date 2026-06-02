@@ -38,7 +38,7 @@ VALUES (
   '[
     {"value": "200+", "label_es": "Documentos generados", "label_en": "Documents built"},
     {"value": "3",    "label_es": "Países atendidos",      "label_en": "Countries served"},
-    {"value": "4+",   "label_es": "Años en iluminación",   "label_en": "Years lighting"},
+    {"value": "4+",   "label_es": "Años en la industria",  "label_en": "Years in industry"},
     {"value": "99%",  "label_es": "Integridad de datos",   "label_en": "Data integrity"}
   ]',
   '[]',

@@ -1,21 +1,23 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
 
+const TITLE = "Lumen Studio · Technical Product Catalogs & Spec Sheets in InDesign";
+const DESCRIPTION =
+  "Lumen Studio (Diego Quinde) builds print- and digital-ready product catalogs, spec sheets, and submittals in Adobe InDesign — automated for speed and consistency, for lighting and industrial brands.";
+
 export const metadata: Metadata = {
-  title: "Diego Quinde · Product Data & Automation for Lighting Manufacturers",
-  description:
-    "I turn your product data into US-ready catalogs that sell. Automation pipelines, NFPA-compliant docs, and e-commerce product data for lighting manufacturers.",
+  title: TITLE,
+  description: DESCRIPTION,
   openGraph: {
-    title:
-      "Diego Quinde · Product Data & Automation for Lighting Manufacturers",
-    description:
-      "I turn your product data into US-ready catalogs that sell. Automation pipelines, NFPA-compliant docs, and e-commerce product data for lighting manufacturers.",
+    title: TITLE,
+    description: DESCRIPTION,
     url: "https://diegoquinde.com/",
     images: ["https://diegoquinde.com/IMG_6290.JPG"],
     type: "website",
   },
   icons: {
-    icon: "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚡</text></svg>",
+    // Lumen mark — amber radiant dot.
+    icon: "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='34' fill='%23F5A623'/></svg>",
   },
 };
 

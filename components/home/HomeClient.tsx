@@ -86,7 +86,9 @@ export default function HomeClient({ content }: { content?: HomeContent | null }
       <nav className="nav">
         <div className="nav-inner">
           <a href="#hero" className="nav-logo">
-            D<span>Q</span>
+            <span className="lumen-mark" />
+            {"Lumen "}
+            <span className="wm-studio">Studio</span>
           </a>
           <ul className="nav-links">
             <li>
@@ -191,39 +193,52 @@ export default function HomeClient({ content }: { content?: HomeContent | null }
         </div>
         <div className="hero-inner">
           <div>
-            <div className="hero-badge">
-              <div className="hero-badge-dot" />
-              <span data-en="">Available for new projects</span>
-              <span data-es="">Disponible para nuevos proyectos</span>
+            <div className="hero-eyebrow">
+              <span className="lumen-mark" />
+              Lumen Studio
+              <span className="he-tag">
+                <span data-en="">— Technical clarity for product brands</span>
+                <span data-es="">— Claridad técnica para marcas de producto</span>
+              </span>
             </div>
+
+            <a
+              href="https://www.upwork.com/freelancers/diegoquinde"
+              className="hero-badge"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <div className="hero-badge-dot" />
+              <span data-en="">Available on Upwork · Project Catalog</span>
+              <span data-es="">Disponible en Upwork · Project Catalog</span>
+              <span className="hb-arrow">↗</span>
+            </a>
 
             <h1 className="hero-h1">
               <span data-en="">
-                I turn your product data into <em>US-ready</em> catalogs that
-                sell.
+                Technical product catalogs & spec sheets that stay{" "}
+                <em>perfectly consistent.</em>
               </span>
               <span data-es="">
-                Convierto tus datos de producto en catálogos{" "}
-                <em>listos para EE.UU.</em> que venden.
+                Catálogos y fichas técnicas de producto,{" "}
+                <em>perfectamente consistentes.</em>
               </span>
             </h1>
 
             <p className="hero-sub">
               <span data-en="">
-                Lighting and electrical manufacturers spend months translating
-                raw specs, lab reports, and supplier PDFs into
-                distribution-ready documentation.{" "}
-                <strong>I automate that entire pipeline</strong> — NFPA-compliant
-                data sheets, e-commerce product data, and branded catalogs,
-                delivered fast.
+                Lumen Studio turns raw specs, supplier PDFs, and half-finished
+                layouts into print- and digital-ready catalogs, spec sheets, and
+                submittals in <strong>Adobe InDesign</strong> — automated for
+                speed and consistency, for lighting and industrial brands selling
+                internationally.
               </span>
               <span data-es="">
-                Los fabricantes de iluminación y eléctricos pierden meses
-                convirtiendo specs crudos, reportes de laboratorio y PDFs de
-                proveedores en documentación lista para distribución.{" "}
-                <strong>Automatizo ese pipeline completo</strong> — fichas
-                técnicas NFPA, datos de producto para e-commerce y catálogos
-                con branding, entregados rápido.
+                Lumen Studio convierte specs crudos, PDFs de proveedor y maquetas
+                a medias en catálogos, fichas técnicas y submittals listos para
+                impresión y digital en <strong>Adobe InDesign</strong> —
+                automatizados para velocidad y consistencia, para marcas de
+                iluminación e industriales que venden en mercados internacionales.
               </span>
             </p>
 
@@ -277,15 +292,15 @@ export default function HomeClient({ content }: { content?: HomeContent | null }
               <div>
                 <div className="hero-stat-val">200+</div>
                 <div className="hero-stat-lbl">
-                  <span data-en="">Docs automated</span>
-                  <span data-es="">Docs automatizados</span>
+                  <span data-en="">Docs built</span>
+                  <span data-es="">Docs producidos</span>
                 </div>
               </div>
               <div>
-                <div className="hero-stat-val">4 yrs</div>
+                <div className="hero-stat-val">4+ yrs</div>
                 <div className="hero-stat-lbl">
-                  <span data-en="">Lighting industry</span>
-                  <span data-es="">Industria de iluminación</span>
+                  <span data-en="">In the industry</span>
+                  <span data-es="">En la industria</span>
                 </div>
               </div>
             </div>
@@ -326,7 +341,10 @@ export default function HomeClient({ content }: { content?: HomeContent | null }
               </div>
               <div className="hero-photo-badge-text">
                 <strong>Diego Quinde</strong>
-                <span>Product Data · Automation · Lighting</span>
+                <span>
+                  <span data-en="">Founder, Lumen Studio · InDesign &amp; Automation</span>
+                  <span data-es="">Fundador, Lumen Studio · InDesign y Automatización</span>
+                </span>
               </div>
             </div>
           </div>
@@ -335,29 +353,51 @@ export default function HomeClient({ content }: { content?: HomeContent | null }
 
       <hr className="divider-line" />
 
+      {/* ══════════ CLIENTS BAND ════════════════════════════════ */}
+      <div className="clients-band">
+        <div className="clients-inner reveal">
+          <span className="clients-label">
+            <span data-en="">Trusted by product brands</span>
+            <span data-es="">Marcas de producto que confían</span>
+          </span>
+          <div className="clients-list">
+            <div className="client-name">
+              Luxarmonie<small>France</small>
+            </div>
+            <div className="client-name">
+              Can Wu<small>United States</small>
+            </div>
+            <div className="client-name">
+              Revem<small>Ecuador</small>
+            </div>
+          </div>
+        </div>
+      </div>
+
       {/* ══════════ ABOUT ═══════════════════════════════════════ */}
       <section id="about">
         <div className="section">
           <div className="section-header reveal">
             <div className="section-label">
-              <span data-en="">About</span>
-              <span data-es="">Sobre mí</span>
+              <span data-en="">The studio</span>
+              <span data-es="">El estudio</span>
             </div>
             <h2 className="section-title">
-              <span data-en="">Built for the lighting industry</span>
-              <span data-es="">
-                Construido para la industria de la iluminación
-              </span>
+              <span data-en="">Order in the chaos of product data</span>
+              <span data-es="">Orden en el caos de los datos de producto</span>
             </h2>
             <p className="section-sub">
               <span data-en="">
-                I&apos;m not a generalist. I understand IES photometrics, NFPA
-                70, driver specs, and how US distributors evaluate products.
+                Lumen Studio is Diego Quinde. I build the systems behind
+                perfectly consistent documentation — it started in lighting (IES
+                photometrics, NFPA 70, driver specs) and now serves product
+                brands across industries.
               </span>
               <span data-es="">
-                No soy generalista. Entiendo fotometría IES, NFPA 70, specs de
-                drivers y cómo evalúan los productos los distribuidores
-                americanos.
+                Lumen Studio es Diego Quinde. Construyo los sistemas detrás de una
+                documentación perfectamente consistente — empezó en iluminación
+                (fotometría IES, NFPA 70, specs de drivers) y hoy sirve a marcas
+                de producto de cualquier industria.
               </span>
             </p>
           </div>
@@ -381,12 +421,12 @@ export default function HomeClient({ content }: { content?: HomeContent | null }
                 {[
                   {
                     icon: "📋",
-                    en: "NFPA / NEC Compliance",
-                    es: "Cumplimiento NFPA / NEC",
+                    en: "Standards-ready output",
+                    es: "Salida lista para estándares",
                     descEn:
-                      "Data sheets and catalogs that US distributors and inspectors can approve without back-and-forth.",
+                      "Catalogs and spec sheets that hold up to NFPA / IES and your own brand guidelines — no back-and-forth.",
                     descEs:
-                      "Fichas técnicas y catálogos que distribuidores e inspectores americanos aprueban sin ida y vuelta.",
+                      "Catálogos y fichas que cumplen NFPA / IES y tus propias guías de marca — sin ida y vuelta.",
                     delay: undefined,
                   },
                   {
@@ -394,19 +434,19 @@ export default function HomeClient({ content }: { content?: HomeContent | null }
                     en: "End-to-end Automation",
                     es: "Automatización de punta a punta",
                     descEn:
-                      "From raw supplier PDFs to branded, structured product data — no manual reformatting.",
+                      "From raw supplier PDFs to branded, structured product docs — the volume manual work can't match.",
                     descEs:
-                      "De PDFs crudos de proveedor a datos de producto estructurados y con branding — sin reformateo manual.",
+                      "De PDFs crudos de proveedor a documentos de producto estructurados y con branding — el volumen que el trabajo manual no iguala.",
                     delay: "80ms",
                   },
                   {
-                    icon: "🛒",
-                    en: "E-commerce Ready",
-                    es: "Listo para e-commerce",
+                    icon: "🎯",
+                    en: "I follow your brief, exactly",
+                    es: "Sigo tu brief al pie de la letra",
                     descEn:
-                      "Product data mapped to platform schemas — SEO descriptions, attributes, specs — ready to import.",
+                      "Reliability and consistency first — same design, fixed and aligned, no surprise redesigns.",
                     descEs:
-                      "Datos de producto mapeados a esquemas de plataforma — descripciones SEO, atributos, specs — listos para importar.",
+                      "Confiabilidad y consistencia primero — mismo diseño, corregido y alineado, sin rediseños sorpresa.",
                     delay: "160ms",
                   },
                 ].map((item) => (
@@ -434,14 +474,14 @@ export default function HomeClient({ content }: { content?: HomeContent | null }
 
               <div className="stack-chips reveal" style={{ marginTop: 28 }}>
                 {[
+                  "Adobe InDesign",
+                  "Data Merge",
+                  "GREP Styles",
+                  "Python",
                   "Claude Code",
                   "n8n",
-                  "Antigravity",
-                  "Python",
-                  "Adobe InDesign",
+                  "NFPA 70 / IES",
                   "Excel / Sheets",
-                  "NFPA 70",
-                  "IES Standards",
                 ].map((c) => (
                   <span key={c} className="chip">
                     {c}
@@ -896,46 +936,41 @@ export default function HomeClient({ content }: { content?: HomeContent | null }
               </div>
               <h2 className="lead-magnet-title">
                 <span data-en="">
-                  The Lighting E-commerce Product Data Checklist
+                  The Product Catalog &amp; Spec Sheet Prep Checklist
                 </span>
                 <span data-es="">
-                  El Checklist de Datos de Producto para E-commerce de
-                  Iluminación
+                  El Checklist de Preparación de Catálogos y Fichas Técnicas
                 </span>
               </h2>
               <p className="lead-magnet-desc">
                 <span data-en="">
-                  The exact 23-point checklist I use before any lighting product
-                  goes live on a US e-commerce platform. Covers spec
-                  completeness, image requirements, compliance flags, and SEO
-                  basics.
+                  The exact checklist I run before any product catalog or spec
+                  sheet goes to print or platform. Covers spec completeness,
+                  image requirements, table consistency, and brand alignment.
                 </span>
                 <span data-es="">
-                  El checklist exacto de 23 puntos que uso antes de que
-                  cualquier producto de iluminación entre en vivo en una
-                  plataforma de e-commerce americana. Cubre completitud de
-                  specs, requerimientos de imagen, banderas de cumplimiento y
-                  conceptos básicos de SEO.
+                  El checklist exacto que corro antes de que cualquier catálogo o
+                  ficha técnica vaya a impresión o plataforma. Cubre completitud
+                  de specs, requerimientos de imagen, consistencia de tablas y
+                  alineación de marca.
                 </span>
               </p>
               <div className="lead-magnet-items">
                 <div className="lead-magnet-item">
-                  <span data-en="">23 actionable checks, nothing generic</span>
-                  <span data-es="">23 verificaciones accionables, nada genérico</span>
-                </div>
-                <div className="lead-magnet-item">
-                  <span data-en="">US distributor approval criteria included</span>
-                  <span data-es="">
-                    Criterios de aprobación de distribuidores americanos incluidos
-                  </span>
+                  <span data-en="">Actionable checks, nothing generic</span>
+                  <span data-es="">Verificaciones accionables, nada genérico</span>
                 </div>
                 <div className="lead-magnet-item">
                   <span data-en="">
-                    Works with Shopify, Amazon, WooCommerce
+                    Works for catalogs, spec sheets &amp; submittals
                   </span>
                   <span data-es="">
-                    Funciona con Shopify, Amazon, WooCommerce
+                    Sirve para catálogos, fichas técnicas y submittals
                   </span>
+                </div>
+                <div className="lead-magnet-item">
+                  <span data-en="">Print + digital ready criteria</span>
+                  <span data-es="">Criterios listos para impresión y digital</span>
                 </div>
               </div>
             </div>
@@ -950,12 +985,12 @@ export default function HomeClient({ content }: { content?: HomeContent | null }
                   <span className="lead-cv-num">01</span>
                   <span className="lead-cv-text">
                     <span data-en="">
-                      Product name follows distributor naming convention (brand
-                      + series + wattage + CCT)
+                      Product naming follows one consistent convention (brand +
+                      series + key spec)
                     </span>
                     <span data-es="">
-                      Nombre de producto sigue convención de distribuidores
-                      (marca + serie + wattaje + CCT)
+                      El nombre de producto sigue una convención consistente
+                      (marca + serie + spec clave)
                     </span>
                   </span>
                 </div>
@@ -963,12 +998,12 @@ export default function HomeClient({ content }: { content?: HomeContent | null }
                   <span className="lead-cv-num">05</span>
                   <span className="lead-cv-text">
                     <span data-en="">
-                      CRI value declared and ≥80 for US residential / ≥90 for
-                      commercial specifications
+                      Every spec field has a source and a unit — no blanks, no
+                      guesses
                     </span>
                     <span data-es="">
-                      Valor CRI declarado y ≥80 para residencial / ≥90 para
-                      especificaciones comerciales USA
+                      Cada campo de spec tiene fuente y unidad — sin vacíos, sin
+                      suposiciones
                     </span>
                   </span>
                 </div>
@@ -976,21 +1011,21 @@ export default function HomeClient({ content }: { content?: HomeContent | null }
                   <span className="lead-cv-num">12</span>
                   <span className="lead-cv-text">
                     <span data-en="">
-                      IP/IK rating certified and referenced to IEC 60529
-                      standard in product listing
+                      Images meet resolution + crop rules and are named to match
+                      SKUs
                     </span>
                     <span data-es="">
-                      Certificación IP/IK declarada y referenciada a IEC 60529
-                      en el listado del producto
+                      Las imágenes cumplen reglas de resolución + recorte y se
+                      nombran según SKU
                     </span>
                   </span>
                 </div>
                 <div className="lead-cv-item" style={{ opacity: 0.4 }}>
                   <span className="lead-cv-num">…</span>
                   <span className="lead-cv-text">
-                    <span data-en="">20 more checks in the full document</span>
+                    <span data-en="">More checks in the full document</span>
                     <span data-es="">
-                      20 verificaciones más en el documento completo
+                      Más verificaciones en el documento completo
                     </span>
                   </span>
                 </div>
@@ -1093,16 +1128,18 @@ export default function HomeClient({ content }: { content?: HomeContent | null }
             <div>
               <p className="contact-body reveal">
                 <span data-en="">
-                  I work with lighting and electrical manufacturers who are
-                  serious about entering or scaling in the US market.{" "}
+                  I work with product brands — lighting, industrial and beyond —
+                  that need catalogs and spec sheets done right, consistent, and
+                  on time.{" "}
                   <strong>Tell me what you&apos;re building</strong> and I&apos;ll tell
-                  you how I can help.
+                  you how Lumen Studio can help.
                 </span>
                 <span data-es="">
-                  Trabajo con fabricantes de iluminación y eléctricos que son
-                  serios sobre entrar o escalar en el mercado americano.{" "}
+                  Trabajo con marcas de producto — iluminación, industriales y
+                  más — que necesitan catálogos y fichas técnicas bien hechos,
+                  consistentes y a tiempo.{" "}
                   <strong>Cuéntame qué estás construyendo</strong> y te diré
-                  cómo puedo ayudar.
+                  cómo Lumen Studio puede ayudar.
                 </span>
               </p>
               <div className="contact-options">
@@ -1168,11 +1205,11 @@ export default function HomeClient({ content }: { content?: HomeContent | null }
                   <option value="" disabled>
                     Project type…
                   </option>
-                  <option value="pipeline">Product Data Pipeline</option>
-                  <option value="nfpa">NFPA Documentation</option>
-                  <option value="automation">Workflow Automation</option>
-                  <option value="bid">Technical Bid Proposal</option>
-                  <option value="other">Other</option>
+                  <option value="catalog">Product Catalog (InDesign)</option>
+                  <option value="specsheet">Spec &amp; Data Sheets</option>
+                  <option value="standardization">Document Standardization</option>
+                  <option value="automation">Production Automation</option>
+                  <option value="other">Other / Otro</option>
                 </select>
                 <textarea placeholder="Tell me about your project…" />
                 <button type="submit" className="form-submit">
@@ -1201,9 +1238,13 @@ export default function HomeClient({ content }: { content?: HomeContent | null }
       <footer>
         <div className="footer-inner">
           <div className="footer-logo">
-            D<span>Q</span>
+            <span className="lumen-mark" />
+            {"Lumen "}
+            <span className="wm-studio">Studio</span>
           </div>
-          <div className="footer-copy">© 2026 Diego Quinde · diegoquinde.com</div>
+          <div className="footer-copy">
+            © 2026 Lumen Studio · Diego Quinde · diegoquinde.com
+          </div>
           <div className="footer-links">
             <a href="mailto:diegoaquinde@gmail.com">Email</a>
             <a
