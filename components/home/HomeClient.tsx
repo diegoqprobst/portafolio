@@ -203,7 +203,7 @@ export default function HomeClient({ content }: { content?: HomeContent | null }
             </div>
 
             <a
-              href="https://www.upwork.com/freelancers/diegoquinde"
+              href="https://www.upwork.com/freelancers/diegoaq?mp_source=share"
               className="hero-badge"
               target="_blank"
               rel="noopener noreferrer"
