@@ -67,7 +67,7 @@ export default function HomeClient({ content }: { content?: HomeContent | null }
       setLeadEmail("");
     } catch {
       alert(
-        "No se pudo enviar. Inténtalo de nuevo o escríbeme por WhatsApp/email."
+        "No se pudo enviar. Inténtalo de nuevo o escríbeme por email."
       );
     }
   }
@@ -100,26 +100,13 @@ export default function HomeClient({ content }: { content?: HomeContent | null }
       form.reset();
     } catch {
       alert(
-        "No se pudo enviar. Inténtalo de nuevo o escríbeme por WhatsApp/email."
+        "No se pudo enviar. Inténtalo de nuevo o escríbeme por email."
       );
     }
   }
 
   return (
     <>
-      {/* ── Sticky WhatsApp ─────────────────────────────────── */}
-      <a
-        href="https://wa.me/593987041418?text=Hi%20Diego%2C%20I%27d%20like%20to%20talk%20about%20a%20project"
-        className="whatsapp-btn"
-        aria-label="Contact via WhatsApp"
-        target="_blank"
-        rel="noopener noreferrer"
-      >
-        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-          <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
-        </svg>
-      </a>
-
       {/* ── Navbar ──────────────────────────────────────────── */}
       <nav className="nav">
         <div className="nav-inner">
@@ -176,12 +163,7 @@ export default function HomeClient({ content }: { content?: HomeContent | null }
                 ES
               </button>
             </div>
-            <a
-              href="https://wa.me/593987041418"
-              className="nav-cta"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
+            <a href="#contact" className="nav-cta">
               <span data-en="">Let&apos;s Talk</span>
               <span data-es="">Hablemos</span>
             </a>
@@ -281,12 +263,7 @@ export default function HomeClient({ content }: { content?: HomeContent | null }
             </p>
 
             <div className="hero-actions">
-              <a
-                href="https://wa.me/593987041418?text=Hi%20Diego"
-                className="btn-primary"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
+              <a href="#contact" className="btn-primary">
                 <svg
                   width="18"
                   height="18"
@@ -1106,10 +1083,14 @@ export default function HomeClient({ content }: { content?: HomeContent | null }
                 </button>
                 <p className="lead-form-note">
                   <span data-en="">
-                    No spam. One email with the PDF. Unsubscribe anytime.
+                    No spam. One email with the PDF. Unsubscribe anytime. By
+                    submitting you accept our{" "}
+                    <a href="/privacidad" className="lead-form-privacy">privacy policy</a>.
                   </span>
                   <span data-es="">
-                    Sin spam. Un email con el PDF. Cancela cuando quieras.
+                    Sin spam. Un email con el PDF. Cancela cuando quieras. Al
+                    enviar aceptas nuestra{" "}
+                    <a href="/privacidad" className="lead-form-privacy">política de privacidad</a>.
                   </span>
                 </p>
               </div>
@@ -1192,27 +1173,7 @@ export default function HomeClient({ content }: { content?: HomeContent | null }
                 </span>
               </p>
               <div className="contact-options">
-                <a
-                  href="https://wa.me/593987041418"
-                  className="contact-opt reveal"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  <div className="contact-opt-icon">💬</div>
-                  <div className="contact-opt-text">
-                    <strong>WhatsApp</strong>
-                    <span>
-                      +593 987 041 418 ·{" "}
-                      <span data-en="">Fastest response</span>
-                      <span data-es="">Respuesta más rápida</span>
-                    </span>
-                  </div>
-                </a>
-                <a
-                  href="mailto:diegoaquinde@gmail.com"
-                  className="contact-opt reveal"
-                  style={{ transitionDelay: "60ms" }}
-                >
+                <a href="mailto:diegoaquinde@gmail.com" className="contact-opt reveal">
                   <div className="contact-opt-icon">✉️</div>
                   <div className="contact-opt-text">
                     <strong>Email</strong>
@@ -1220,20 +1181,18 @@ export default function HomeClient({ content }: { content?: HomeContent | null }
                   </div>
                 </a>
                 <a
-                  href="/Diego_Quinde_Resume.pdf"
+                  href="https://www.upwork.com/freelancers/diegoaq?mp_source=share"
                   className="contact-opt reveal"
-                  style={{ transitionDelay: "120ms" }}
-                  download
+                  style={{ transitionDelay: "60ms" }}
+                  target="_blank"
+                  rel="noopener noreferrer"
                 >
-                  <div className="contact-opt-icon">📄</div>
+                  <div className="contact-opt-icon">💼</div>
                   <div className="contact-opt-text">
-                    <strong>
-                      <span data-en="">Download CV</span>
-                      <span data-es="">Descargar CV</span>
-                    </strong>
+                    <strong>Upwork</strong>
                     <span>
-                      <span data-en="">PDF · Updated 2026</span>
-                      <span data-es="">PDF · Actualizado 2026</span>
+                      <span data-en="">Hire me through Upwork</span>
+                      <span data-es="">Contrátame por Upwork</span>
                     </span>
                   </div>
                 </a>
@@ -1286,6 +1245,16 @@ export default function HomeClient({ content }: { content?: HomeContent | null }
                   <span data-en="">Send message</span>
                   <span data-es="">Enviar mensaje</span>
                 </button>
+                <p className="form-privacy-note">
+                  <span data-en="">
+                    By submitting you accept our{" "}
+                    <a href="/privacidad">privacy policy</a>.
+                  </span>
+                  <span data-es="">
+                    Al enviar aceptas nuestra{" "}
+                    <a href="/privacidad">política de privacidad</a>.
+                  </span>
+                </p>
               </form>
             </div>
           </div>
@@ -1306,15 +1275,19 @@ export default function HomeClient({ content }: { content?: HomeContent | null }
           <div className="footer-links">
             <a href="mailto:diegoaquinde@gmail.com">Email</a>
             <a
-              href="https://wa.me/593987041418"
+              href="https://www.upwork.com/freelancers/diegoaq?mp_source=share"
               target="_blank"
               rel="noopener noreferrer"
             >
-              WhatsApp
+              Upwork
             </a>
             <a href="/saratoga">
               <span data-en="">Case Study</span>
               <span data-es="">Caso de Estudio</span>
+            </a>
+            <a href="/privacidad">
+              <span data-en="">Privacy</span>
+              <span data-es="">Privacidad</span>
             </a>
           </div>
         </div>

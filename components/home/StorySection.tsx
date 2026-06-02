@@ -1,6 +1,7 @@
 "use client";
 
-import { motion, useReducedMotion } from "framer-motion";
+import { useEffect, useRef, useState } from "react";
+import { motion, useReducedMotion, useInView, animate } from "framer-motion";
 
 // ─────────────────────────────────────────────────────────────
 // StorySection v2 — la home como historia en 3 ESCENAS discretas
@@ -29,15 +30,48 @@ const FRAGMENTS = [
   { r: 6, x: 30, y: 6 },
 ];
 
+// Look de ficha técnica: banda de título, imagen y una mini-tabla de specs
+// (pares etiqueta/valor) — evoca un data sheet, no barras genéricas.
 function FragInner() {
   return (
     <>
       <div className="frag-band" />
-      <div className="frag-line" style={{ width: "82%" }} />
-      <div className="frag-line" style={{ width: "55%" }} />
       <div className="frag-img" />
-      <div className="frag-line" style={{ width: "70%" }} />
+      <div className="frag-rows">
+        <span />
+        <span />
+        <span />
+        <span />
+        <span />
+        <span />
+      </div>
     </>
+  );
+}
+
+// Número que cuenta al entrar en vista (JS, no scroll-timeline → robusto).
+function Counter({ to, suffix, reduced }: { to: number; suffix: string; reduced: boolean }) {
+  const ref = useRef<HTMLSpanElement>(null);
+  const inView = useInView(ref, { amount: 0.6 });
+  const [val, setVal] = useState(reduced ? to : 0);
+  useEffect(() => {
+    if (reduced) return;
+    if (!inView) {
+      setVal(0);
+      return;
+    }
+    const controls = animate(0, to, {
+      duration: 1.3,
+      ease: "easeOut",
+      onUpdate: (v) => setVal(Math.round(v)),
+    });
+    return () => controls.stop();
+  }, [inView, to, reduced]);
+  return (
+    <span ref={ref}>
+      {val}
+      {suffix}
+    </span>
   );
 }
 
@@ -172,6 +206,13 @@ export default function StorySection() {
             <span data-en="">And it&apos;s costing you.</span>
             <span data-es="">Y te está costando.</span>
           </h2>
+          <div className="cost-counter">
+            <Counter to={40} suffix="h" reduced={reduced} />
+          </div>
+          <span className="cost-counter-unit">
+            <span data-en="">/ month rebuilding the same docs</span>
+            <span data-es="">/ mes rehaciendo los mismos documentos</span>
+          </span>
           <div className="cost-row">
             {[
               { en: "40h/month rebuilding docs", es: "40h/mes rehaciendo docs" },
