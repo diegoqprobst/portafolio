@@ -940,6 +940,20 @@ footer {
 .footer-logo .wm-studio { color: var(--muted2); font-weight: 500; }
 .footer-logo .lumen-mark { width: 10px; height: 10px; box-shadow: 0 0 0 2px oklch(72% 0.14 55 / 0.16), 0 0 12px 1px oklch(72% 0.14 55 / 0.5); }
 
+/* ─── HERO scroll hint → historia ──────────────────────────── */
+.hero-scroll-hint {
+  display: inline-flex; align-items: center; gap: 8px; margin-top: 30px;
+  font-size: 12px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--muted2); transition: color 0.2s, gap 0.2s;
+}
+.hero-scroll-hint:hover { color: var(--accent); gap: 12px; }
+.hero-scroll-hint .hsh-arrow {
+  font-size: 14px; color: var(--accent);
+  animation: hsh-bob 1.8s ease-in-out infinite;
+}
+@keyframes hsh-bob { 0%,100% { transform: translateY(0); } 50% { transform: translateY(4px); } }
+@media (prefers-reduced-motion: reduce) { .hero-scroll-hint .hsh-arrow { animation: none; } }
+
 /* ─── STORY (3 escenas: problema → costo → orden) ──────────── */
 .story { background: var(--bg); }
 .scene {

@@ -342,6 +342,12 @@ export default function HomeClient({ content }: { content?: HomeContent | null }
                 </div>
               </div>
             </div>
+
+            <a href="#story" className="hero-scroll-hint">
+              <span data-en="">See how I work</span>
+              <span data-es="">Cómo trabajo</span>
+              <span className="hsh-arrow" aria-hidden="true">↓</span>
+            </a>
           </div>
 
           <div className="hero-photo-wrap">

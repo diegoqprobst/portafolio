@@ -45,29 +45,37 @@ function Frags({ ordered, reduced }: { ordered: boolean; reduced: boolean }) {
   return (
     <div className="scene-frags" aria-hidden="true">
       {FRAGMENTS.map((c, i) => {
-        // Escena ORDEN: animan de caos → celda al entrar (el payoff).
-        if (ordered && !reduced) {
+        // Reduced motion: posiciones estáticas (orden = grilla; caos = dispersos).
+        if (reduced) {
+          const style = ordered
+            ? undefined
+            : { transform: `translate(${c.x}px, ${c.y}px) rotate(${c.r}deg)` };
           return (
-            <motion.div
-              key={i}
-              className="frag frag--amber"
-              initial={{ x: c.x, y: c.y, rotate: c.r, opacity: 0.35 }}
-              whileInView={{ x: 0, y: 0, rotate: 0, opacity: 1 }}
-              viewport={{ once: false, amount: 0.3 }}
-              transition={{ duration: 0.85, ease: EASE, delay: i * 0.04 }}
-            >
+            <div key={i} className={`frag ${ordered ? "frag--amber" : ""}`} style={style}>
               <FragInner />
-            </motion.div>
+            </div>
           );
         }
-        // Escena PROBLEMA: dispersos (estáticos). Reduced motion: ordenados.
-        const style = reduced
-          ? undefined
-          : { transform: `translate(${c.x}px, ${c.y}px) rotate(${c.r}deg)` };
+        // ORDEN (Acto 3): de caos → celda alineada al entrar (el payoff).
+        // PROBLEMA (Acto 1): entran volando desde más lejos y se asientan
+        // en su posición dispersa — el caos cobra vida al scrollear.
+        const initial = ordered
+          ? { x: c.x, y: c.y, rotate: c.r, opacity: 0.35 }
+          : { x: c.x * 1.6, y: c.y * 1.6, rotate: c.r * 1.5, opacity: 0 };
+        const inView = ordered
+          ? { x: 0, y: 0, rotate: 0, opacity: 1 }
+          : { x: c.x, y: c.y, rotate: c.r, opacity: 1 };
         return (
-          <div key={i} className={`frag ${ordered ? "frag--amber" : ""}`} style={style}>
+          <motion.div
+            key={i}
+            className={`frag ${ordered ? "frag--amber" : ""}`}
+            initial={initial}
+            whileInView={inView}
+            viewport={{ once: false, amount: 0.3 }}
+            transition={{ duration: ordered ? 0.85 : 0.7, ease: EASE, delay: i * 0.05 }}
+          >
             <FragInner />
-          </div>
+          </motion.div>
         );
       })}
     </div>
@@ -165,18 +173,26 @@ export default function StorySection() {
             <span data-es="">Y te está costando.</span>
           </h2>
           <div className="cost-row">
-            <span className="cost-chip">
-              <span data-en="">40h/month rebuilding docs</span>
-              <span data-es="">40h/mes rehaciendo docs</span>
-            </span>
-            <span className="cost-chip">
-              <span data-en="">Errors reach distributors</span>
-              <span data-es="">Errores que llegan al distribuidor</span>
-            </span>
-            <span className="cost-chip">
-              <span data-en="">Deals stall, no catalog</span>
-              <span data-es="">Negocios frenados sin catálogo</span>
-            </span>
+            {[
+              { en: "40h/month rebuilding docs", es: "40h/mes rehaciendo docs" },
+              { en: "Errors reach distributors", es: "Errores que llegan al distribuidor" },
+              { en: "Deals stall, no catalog", es: "Negocios frenados sin catálogo" },
+            ].map((c, i) => {
+              const a = reduced
+                ? {}
+                : {
+                    initial: { opacity: 0, y: 16 },
+                    whileInView: { opacity: 1, y: 0 },
+                    viewport: { once: false, amount: 0.6 },
+                    transition: { delay: 0.15 + i * 0.13, duration: 0.5, ease: EASE },
+                  };
+              return (
+                <motion.span key={i} className="cost-chip" {...a}>
+                  <span data-en="">{c.en}</span>
+                  <span data-es="">{c.es}</span>
+                </motion.span>
+              );
+            })}
           </div>
         </motion.div>
       </div>
