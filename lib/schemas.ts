@@ -148,6 +148,26 @@ export const homeContentUpdate = z.object({
   tech_stack: z.array(z.unknown()).max(80).optional(),
 });
 
+// ── Public forms: contacto + lead magnet ──────────────────
+// Estos los envía CUALQUIER visitante (rutas públicas /api/contact, /api/lead),
+// así que el bound de longitud y el formato importan como primera defensa.
+export const contactMessageCreate = z.object({
+  name: ShortText(120),
+  company: ShortText(120).default(""),
+  email: z.string().email("Email inválido").max(200),
+  project_type: ShortText(40).default(""),
+  message: LongText(5000).default(""),
+});
+export const contactMessageUpdate = z
+  .object({ read: z.boolean() })
+  .partial();
+
+export const leadCreate = z.object({
+  email: z.string().email("Email inválido").max(200),
+  source: ShortText(40).default("lead-magnet"),
+});
+export const leadUpdate = leadCreate.partial();
+
 // ── CV generator input ─────────────────────────────────────
 export const cvGenerateInput = z.object({
   job_title: ShortText(200).default(""),

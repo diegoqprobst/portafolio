@@ -13,6 +13,7 @@ import {
   Users,
   Briefcase,
   Wallet,
+  Inbox,
 } from "lucide-react";
 
 const groups = [
@@ -25,6 +26,7 @@ const groups = [
       { href: "/admin/business/clients", icon: Users, label: "Clientes" },
       { href: "/admin/business/projects", icon: Briefcase, label: "Proyectos" },
       { href: "/admin/business/finance", icon: Wallet, label: "Finanzas" },
+      { href: "/admin/business/messages", icon: Inbox, label: "Mensajes" },
     ],
   },
   {

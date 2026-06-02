@@ -13,50 +13,70 @@ import { Redis } from "@upstash/redis";
 // Acepta tanto los nombres de Vercel KV (KV_REST_API_*) como los de Upstash
 // directo (UPSTASH_REDIS_REST_*), según cómo quede la integración.
 
-let cached: Ratelimit | null | undefined;
+let redis: Redis | null | undefined;
+const limiters = new Map<string, Ratelimit>();
 
-function getLimiter(): Ratelimit | null {
-  if (cached !== undefined) return cached;
-
+function getRedis(): Redis | null {
+  if (redis !== undefined) return redis;
   const url = process.env.KV_REST_API_URL ?? process.env.UPSTASH_REDIS_REST_URL;
   const token = process.env.KV_REST_API_TOKEN ?? process.env.UPSTASH_REDIS_REST_TOKEN;
-
   if (!url || !token) {
     if (process.env.NODE_ENV === "production") {
       console.warn(
-        "[rate-limit] Upstash/KV no configurado — el login NO está rate-limited. " +
+        "[rate-limit] Upstash/KV no configurado — los límites están inactivos. " +
           "Configura KV_REST_API_URL y KV_REST_API_TOKEN en Vercel."
       );
     }
-    cached = null;
-    return cached;
+    redis = null;
+    return redis;
   }
+  redis = new Redis({ url, token });
+  return redis;
+}
 
-  const redis = new Redis({ url, token });
-  cached = new Ratelimit({
-    redis,
-    // 5 intentos por ventana deslizante de 15 minutos, por IP.
-    limiter: Ratelimit.slidingWindow(5, "15 m"),
-    prefix: "rl:login",
+// Limitador con ventana deslizante, cacheado por prefijo. `window` usa la
+// sintaxis de @upstash/ratelimit, p.ej. "15 m", "1 h".
+function getLimiter(prefix: string, max: number, window: `${number} ${"s" | "m" | "h" | "d"}`): Ratelimit | null {
+  const cached = limiters.get(prefix);
+  if (cached) return cached;
+  const r = getRedis();
+  if (!r) return null;
+  const rl = new Ratelimit({
+    redis: r,
+    limiter: Ratelimit.slidingWindow(max, window),
+    prefix,
     analytics: false,
   });
-  return cached;
+  limiters.set(prefix, rl);
+  return rl;
 }
 
 export type RateLimitResult = { ok: boolean; retryAfter?: number };
 
-export async function checkLoginRateLimit(identifier: string): Promise<RateLimitResult> {
-  const limiter = getLimiter();
-  if (!limiter) return { ok: true }; // no configurado → permitir
-
+async function check(
+  prefix: string,
+  max: number,
+  window: `${number} ${"s" | "m" | "h" | "d"}`,
+  identifier: string
+): Promise<RateLimitResult> {
+  const limiter = getLimiter(prefix, max, window);
+  if (!limiter) return { ok: true }; // no configurado → permitir (fail-open)
   try {
     const { success, reset } = await limiter.limit(identifier);
     if (success) return { ok: true };
-    const retryAfter = Math.max(1, Math.ceil((reset - Date.now()) / 1000));
-    return { ok: false, retryAfter };
+    return { ok: false, retryAfter: Math.max(1, Math.ceil((reset - Date.now()) / 1000)) };
   } catch (e) {
-    // Si Redis falla, no bloqueamos el login (fail-open) pero lo registramos.
-    console.error("[rate-limit] error consultando el store:", e);
-    return { ok: true };
+    console.error(`[rate-limit:${prefix}] error consultando el store:`, e);
+    return { ok: true }; // fail-open ante fallo de infra
   }
+}
+
+// Login admin: 5 intentos / 15 min por IP.
+export function checkLoginRateLimit(identifier: string): Promise<RateLimitResult> {
+  return check("rl:login", 5, "15 m", identifier);
+}
+
+// Formularios públicos (contacto / lead magnet): 8 envíos / hora por IP.
+export function checkPublicFormRateLimit(identifier: string): Promise<RateLimitResult> {
+  return check("rl:form", 8, "1 h", identifier);
 }

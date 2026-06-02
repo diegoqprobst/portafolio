@@ -50,21 +50,58 @@ export default function HomeClient({ content }: { content?: HomeContent | null }
     setOpenProject((prev) => (prev === id ? null : id));
   }
 
-  function handleLeadSubmit() {
+  async function handleLeadSubmit() {
     if (!leadEmail || !leadEmail.includes("@")) {
-      alert("Please enter a valid email.");
+      alert("Please enter a valid email. / Ingresa un email válido.");
       return;
     }
-    alert(
-      "Thanks! Check your inbox shortly. (In production this connects to your email system.)"
-    );
-    setLeadEmail("");
+    try {
+      const res = await fetch("/api/lead", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: leadEmail, source: "lead-magnet" }),
+      });
+      if (!res.ok) throw new Error();
+      alert("¡Gracias! Te escribo pronto con el checklist. / Thanks! I'll send it shortly.");
+      setLeadEmail("");
+    } catch {
+      alert(
+        "No se pudo enviar. Inténtalo de nuevo o escríbeme por WhatsApp/email."
+      );
+    }
   }
 
-  function handleContactSubmit(e: React.FormEvent<HTMLFormElement>) {
+  async function handleContactSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    alert("Message sent! I'll get back to you within 24 hours.");
-    (e.target as HTMLFormElement).reset();
+    const form = e.currentTarget;
+    const fd = new FormData(form);
+    // Honeypot: si 'website' viene relleno, es un bot.
+    if (fd.get("website")) return;
+    const payload = {
+      name: String(fd.get("name") ?? ""),
+      company: String(fd.get("company") ?? ""),
+      email: String(fd.get("email") ?? ""),
+      project_type: String(fd.get("project_type") ?? ""),
+      message: String(fd.get("message") ?? ""),
+    };
+    if (!payload.name || !payload.email.includes("@")) {
+      alert("Completa tu nombre y un email válido. / Add your name and a valid email.");
+      return;
+    }
+    try {
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      if (!res.ok) throw new Error();
+      alert("¡Mensaje enviado! Te respondo en menos de 24h. / Message sent!");
+      form.reset();
+    } catch {
+      alert(
+        "No se pudo enviar. Inténtalo de nuevo o escríbeme por WhatsApp/email."
+      );
+    }
   }
 
   return (
@@ -1196,12 +1233,21 @@ export default function HomeClient({ content }: { content?: HomeContent | null }
                 className="contact-form reveal"
                 onSubmit={handleContactSubmit}
               >
+                {/* Honeypot anti-spam: oculto para humanos, los bots lo rellenan. */}
+                <input
+                  type="text"
+                  name="website"
+                  tabIndex={-1}
+                  autoComplete="off"
+                  aria-hidden="true"
+                  style={{ position: "absolute", left: "-9999px", width: 1, height: 1, opacity: 0 }}
+                />
                 <div className="form-row">
-                  <input type="text" placeholder="Name" required />
-                  <input type="text" placeholder="Company" />
+                  <input type="text" name="name" placeholder="Name" required />
+                  <input type="text" name="company" placeholder="Company" />
                 </div>
-                <input type="email" placeholder="Email" required />
-                <select defaultValue="">
+                <input type="email" name="email" placeholder="Email" required />
+                <select name="project_type" defaultValue="">
                   <option value="" disabled>
                     Project type…
                   </option>
@@ -1211,7 +1257,7 @@ export default function HomeClient({ content }: { content?: HomeContent | null }
                   <option value="automation">Production Automation</option>
                   <option value="other">Other / Otro</option>
                 </select>
-                <textarea placeholder="Tell me about your project…" />
+                <textarea name="message" placeholder="Tell me about your project…" />
                 <button type="submit" className="form-submit">
                   <svg
                     width="16"
