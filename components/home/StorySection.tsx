@@ -49,10 +49,12 @@ function Fragment({
   const x = useTransform(progress, [0.45, 0.85], [chaos.x, 0]);
   const y = useTransform(progress, [0.45, 0.85], [chaos.y, 0]);
   // Acento: rojo (tensión) en el conflicto → ámbar (orden) en la resolución.
+  // OJO: usar rgba (NO oklch) — Framer Motion no interpola oklch y lanza
+  // excepción en el cliente.
   const accent = useTransform(
     progress,
     [0.4, 0.55, 0.85],
-    ["rgba(255,255,255,.14)", "oklch(60% 0.18 25 / .5)", "oklch(72% 0.14 55 / .85)"]
+    ["rgba(255,255,255,0.14)", "rgba(216,64,64,0.55)", "rgba(245,166,35,0.9)"]
   );
 
   return (
