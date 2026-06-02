@@ -73,7 +73,10 @@ function Fragment({
 
 function Act({
   progress,
-  range,
+  opacityIn,
+  opacityOut,
+  yIn,
+  yOut,
   act,
   titleEn,
   titleEs,
@@ -83,7 +86,13 @@ function Act({
   cta,
 }: {
   progress: MotionValue<number>;
-  range: [number, number];
+  // Keyframes del scroll progress (0→1). DEBEN estar dentro de [0,1] y ser
+  // crecientes — si no, el navegador lanza "Offsets must be monotonically
+  // non-decreasing" al optimizar la animación con el scroll timeline (WAAPI).
+  opacityIn: number[];
+  opacityOut: number[];
+  yIn: number[];
+  yOut: number[];
   act: { en: string; es: string };
   titleEn: string;
   titleEs: string;
@@ -92,14 +101,8 @@ function Act({
   reduced: boolean;
   cta?: boolean;
 }) {
-  const [a, b] = range;
-  // Aparece al entrar a su tramo, desaparece al salir.
-  const opacity = useTransform(
-    progress,
-    [a - 0.08, a, b - 0.02, b + 0.06],
-    [0, 1, 1, 0]
-  );
-  const yMove = useTransform(progress, [a - 0.08, a, b + 0.06], [24, 0, -24]);
+  const opacity = useTransform(progress, opacityIn, opacityOut);
+  const yMove = useTransform(progress, yIn, yOut);
 
   return (
     <motion.div
@@ -148,7 +151,10 @@ export default function StorySection() {
         <div className="story-copy">
           <Act
             progress={scrollYProgress}
-            range={[0.0, 0.34]}
+            opacityIn={[0, 0.26, 0.32]}
+            opacityOut={[1, 1, 0]}
+            yIn={[0, 0.26, 0.32]}
+            yOut={[0, 0, -30]}
             act={{ en: "Act 1 · The problem", es: "Acto 1 · El problema" }}
             titleEn="Your product data is chaos."
             titleEs="Tus datos de producto son un caos."
@@ -158,7 +164,10 @@ export default function StorySection() {
           />
           <Act
             progress={scrollYProgress}
-            range={[0.34, 0.62]}
+            opacityIn={[0.34, 0.4, 0.58, 0.64]}
+            opacityOut={[0, 1, 1, 0]}
+            yIn={[0.34, 0.4, 0.64]}
+            yOut={[30, 0, -30]}
             act={{ en: "Act 2 · The cost", es: "Acto 2 · El costo" }}
             titleEn="And it's costing you."
             titleEs="Y te está costando."
@@ -168,7 +177,10 @@ export default function StorySection() {
           />
           <Act
             progress={scrollYProgress}
-            range={[0.66, 1.0]}
+            opacityIn={[0.66, 0.74, 1]}
+            opacityOut={[0, 1, 1]}
+            yIn={[0.66, 0.74, 1]}
+            yOut={[30, 0, 0]}
             act={{ en: "Act 3 · The order", es: "Acto 3 · El orden" }}
             titleEn="Lumen Studio brings order."
             titleEs="Lumen Studio pone orden."
