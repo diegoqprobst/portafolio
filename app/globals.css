@@ -940,21 +940,19 @@ footer {
 .footer-logo .wm-studio { color: var(--muted2); font-weight: 500; }
 .footer-logo .lumen-mark { width: 10px; height: 10px; box-shadow: 0 0 0 2px oklch(72% 0.14 55 / 0.16), 0 0 12px 1px oklch(72% 0.14 55 / 0.5); }
 
-/* ─── STORY (narrativa scroll: problema → conflicto → orden) ─ */
-.story { position: relative; height: 320vh; background: var(--bg); }
-.story--static { height: auto; }
-.story-sticky {
-  position: sticky; top: 0; min-height: 100vh;
-  display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center;
-  max-width: 1160px; margin: 0 auto; padding: 0 24px;
+/* ─── STORY (3 escenas: problema → costo → orden) ──────────── */
+.story { background: var(--bg); }
+.scene {
+  min-height: 100vh; max-width: 1160px; margin: 0 auto; padding: 90px 24px;
+  display: flex; align-items: center;
 }
-.story--static .story-sticky { position: static; min-height: 0; padding: 80px 24px; }
-.story-copy { position: relative; min-height: 320px; }
-.story--static .story-copy { min-height: 0; display: flex; flex-direction: column; gap: 56px; }
-.story:not(.story--static) .story-act {
-  position: absolute; inset: 0;
-  display: flex; flex-direction: column; justify-content: center;
+.scene--split {
+  display: grid; grid-template-columns: 1.05fr 0.95fr; gap: 64px; align-items: center;
 }
+.scene--center { flex-direction: column; justify-content: center; text-align: center; }
+.scene--order { background: radial-gradient(120% 80% at 80% 50%, oklch(72% 0.14 55 / 0.05), transparent 60%); }
+.scene-copy--center { max-width: 720px; }
+
 .story-eyebrow {
   font-size: 12px; font-weight: 800; letter-spacing: 0.14em; text-transform: uppercase;
   color: var(--accent); margin-bottom: 14px;
@@ -969,15 +967,23 @@ footer {
   line-height: 1.6; color: var(--muted); max-width: 460px;
 }
 .story-cta {
-  display: inline-flex; align-items: center; gap: 8px; margin-top: 24px;
-  font-size: 14px; font-weight: 700; color: var(--accent);
-  transition: gap 0.2s;
+  display: inline-flex; align-items: center; gap: 8px; margin-top: 26px;
+  font-size: 14px; font-weight: 700; color: var(--accent); transition: gap 0.2s;
 }
 .story-cta:hover { gap: 12px; }
-.story-stage { display: flex; align-items: center; justify-content: center; }
-.story-grid {
+
+/* Acto 2 — chips de costo (tensión) */
+.cost-row { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; margin-top: 26px; }
+.cost-chip {
+  padding: 10px 16px; border-radius: 999px;
+  background: oklch(60% 0.18 25 / 0.08); border: 1px solid oklch(60% 0.18 25 / 0.3);
+  color: oklch(72% 0.14 35); font-size: 13px; font-weight: 700;
+}
+
+/* Fragmentos de documento */
+.scene-frags {
   display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px;
-  width: 100%; max-width: 360px;
+  width: 100%; max-width: 360px; justify-self: end;
 }
 .frag {
   background: var(--bg3); border: 1px solid var(--border);
@@ -986,15 +992,15 @@ footer {
   box-shadow: 0 10px 30px rgba(0,0,0,.4); will-change: transform;
 }
 .frag-band { height: 6px; width: 60%; border-radius: 3px; background: rgba(255,255,255,.14); }
+.frag--amber .frag-band { background: rgba(245,166,35,0.9); }
 .frag-line { height: 4px; border-radius: 2px; background: rgba(255,255,255,.10); }
 .frag-img { flex: 1; border-radius: 4px; background: rgba(255,255,255,.04); margin: 3px 0; }
 
 @media (max-width: 860px) {
-  .story { height: 300vh; }
-  .story-sticky { grid-template-columns: 1fr; gap: 28px; text-align: center; }
-  .story:not(.story--static) .story-act { align-items: center; }
+  .scene { min-height: auto; padding: 64px 20px; }
+  .scene--split { grid-template-columns: 1fr; gap: 36px; text-align: center; }
   .story-sub { margin-left: auto; margin-right: auto; }
-  .story-grid { max-width: 260px; margin: 0 auto; }
+  .scene-frags { max-width: 240px; margin: 0 auto; justify-self: center; }
 }
 .footer-copy {
   font-size: 12px; color: var(--muted2);

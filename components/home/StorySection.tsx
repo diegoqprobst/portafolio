@@ -1,83 +1,82 @@
 "use client";
 
-import { useRef } from "react";
-import {
-  motion,
-  useScroll,
-  useTransform,
-  useReducedMotion,
-  type MotionValue,
-} from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 
 // ─────────────────────────────────────────────────────────────
-// StorySection — la home como historia: problema → conflicto →
-// resolución, con el momento de marca "orden en el caos":
-// fragmentos de documento que empiezan dispersos y se ALINEAN en
-// una grilla conforme scrolleas (scroll-scrubbed con Framer Motion).
+// StorySection v2 — la home como historia en 3 ESCENAS discretas
+// (problema → costo → orden). Sin scroll-scrubbing ("perilla"):
+// cada escena ocupa la pantalla y se ANIMA al entrar (gesto de
+// scroll = siguiente acto). El momento de marca "orden en el caos"
+// es el payoff del Acto 3: los fragmentos se asientan en una grilla
+// al llegar.
 //
-// Base v1 para iterar el "feel" después. SSR-safe, transform-only,
-// y respeta prefers-reduced-motion (cae a versión estática ordenada).
-// Bilingüe vía el sistema data-en/data-es del sitio.
+// Solo whileInView (sin useScroll/useTransform) → sin los crashes de
+// offsets del scroll-timeline. SSR-safe, respeta prefers-reduced-motion.
 // ─────────────────────────────────────────────────────────────
 
-// 9 fragmentos → grilla 3×3. Posición de caos (rotación + offset px)
-// hardcodeada para ser determinista (sin Math.random → SSR-safe).
+const EASE = [0.16, 1, 0.3, 1] as const;
+
+// Posiciones de caos (determinista, SSR-safe).
 const FRAGMENTS = [
-  { r: -13, x: -60, y: -34 },
-  { r: 10, x: 48, y: -56 },
-  { r: -7, x: 70, y: 20 },
-  { r: 15, x: -78, y: 30 },
-  { r: -18, x: 22, y: 64 },
-  { r: 8, x: -34, y: -70 },
-  { r: 19, x: 64, y: 58 },
-  { r: -10, x: -52, y: 66 },
-  { r: 6, x: 40, y: 8 },
+  { r: -13, x: -46, y: -28 },
+  { r: 10, x: 40, y: -44 },
+  { r: -7, x: 54, y: 16 },
+  { r: 15, x: -58, y: 24 },
+  { r: -16, x: 18, y: 50 },
+  { r: 8, x: -28, y: -54 },
+  { r: 17, x: 50, y: 46 },
+  { r: -10, x: -42, y: 52 },
+  { r: 6, x: 30, y: 6 },
 ];
 
-function Fragment({
-  progress,
-  chaos,
-  reduced,
-}: {
-  progress: MotionValue<number>;
-  chaos: { r: number; x: number; y: number };
-  reduced: boolean;
-}) {
-  // De caos (progress 0.45) a orden (progress 0.85). Antes del acto 3
-  // siguen dispersos; en el acto 3 se asientan en su celda.
-  const rotate = useTransform(progress, [0.45, 0.85], [chaos.r, 0]);
-  const x = useTransform(progress, [0.45, 0.85], [chaos.x, 0]);
-  const y = useTransform(progress, [0.45, 0.85], [chaos.y, 0]);
-  // Acento: rojo (tensión) en el conflicto → ámbar (orden) en la resolución.
-  // OJO: usar rgba (NO oklch) — Framer Motion no interpola oklch y lanza
-  // excepción en el cliente.
-  const accent = useTransform(
-    progress,
-    [0.4, 0.55, 0.85],
-    ["rgba(255,255,255,0.14)", "rgba(216,64,64,0.55)", "rgba(245,166,35,0.9)"]
-  );
-
+function FragInner() {
   return (
-    <motion.div
-      className="frag"
-      style={reduced ? undefined : { rotate, x, y }}
-    >
-      <motion.div className="frag-band" style={reduced ? undefined : { background: accent }} />
-      <div className="frag-line" style={{ width: "80%" }} />
+    <>
+      <div className="frag-band" />
+      <div className="frag-line" style={{ width: "82%" }} />
       <div className="frag-line" style={{ width: "55%" }} />
       <div className="frag-img" />
       <div className="frag-line" style={{ width: "70%" }} />
-    </motion.div>
+    </>
   );
 }
 
-function Act({
-  progress,
-  opacityIn,
-  opacityOut,
-  yIn,
-  yOut,
-  act,
+function Frags({ ordered, reduced }: { ordered: boolean; reduced: boolean }) {
+  return (
+    <div className="scene-frags" aria-hidden="true">
+      {FRAGMENTS.map((c, i) => {
+        // Escena ORDEN: animan de caos → celda al entrar (el payoff).
+        if (ordered && !reduced) {
+          return (
+            <motion.div
+              key={i}
+              className="frag frag--amber"
+              initial={{ x: c.x, y: c.y, rotate: c.r, opacity: 0.35 }}
+              whileInView={{ x: 0, y: 0, rotate: 0, opacity: 1 }}
+              viewport={{ once: false, amount: 0.3 }}
+              transition={{ duration: 0.85, ease: EASE, delay: i * 0.04 }}
+            >
+              <FragInner />
+            </motion.div>
+          );
+        }
+        // Escena PROBLEMA: dispersos (estáticos). Reduced motion: ordenados.
+        const style = reduced
+          ? undefined
+          : { transform: `translate(${c.x}px, ${c.y}px) rotate(${c.r}deg)` };
+        return (
+          <div key={i} className={`frag ${ordered ? "frag--amber" : ""}`} style={style}>
+            <FragInner />
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+function Copy({
+  eyebrowEn,
+  eyebrowEs,
   titleEn,
   titleEs,
   subEn,
@@ -85,15 +84,8 @@ function Act({
   reduced,
   cta,
 }: {
-  progress: MotionValue<number>;
-  // Keyframes del scroll progress (0→1). DEBEN estar dentro de [0,1] y ser
-  // crecientes — si no, el navegador lanza "Offsets must be monotonically
-  // non-decreasing" al optimizar la animación con el scroll timeline (WAAPI).
-  opacityIn: number[];
-  opacityOut: number[];
-  yIn: number[];
-  yOut: number[];
-  act: { en: string; es: string };
+  eyebrowEn: string;
+  eyebrowEs: string;
   titleEn: string;
   titleEs: string;
   subEn: string;
@@ -101,17 +93,19 @@ function Act({
   reduced: boolean;
   cta?: boolean;
 }) {
-  const opacity = useTransform(progress, opacityIn, opacityOut);
-  const yMove = useTransform(progress, yIn, yOut);
-
+  const anim = reduced
+    ? {}
+    : {
+        initial: { opacity: 0, y: 30 },
+        whileInView: { opacity: 1, y: 0 },
+        viewport: { once: false, amount: 0.6 },
+        transition: { duration: 0.7, ease: EASE },
+      };
   return (
-    <motion.div
-      className="story-act"
-      style={reduced ? undefined : { opacity, y: yMove }}
-    >
+    <motion.div className="scene-copy" {...anim}>
       <div className="story-eyebrow">
-        <span data-en="">{act.en}</span>
-        <span data-es="">{act.es}</span>
+        <span data-en="">{eyebrowEn}</span>
+        <span data-es="">{eyebrowEs}</span>
       </div>
       <h2 className="story-h">
         <span data-en="">{titleEn}</span>
@@ -133,71 +127,73 @@ function Act({
 }
 
 export default function StorySection() {
-  const ref = useRef<HTMLElement>(null);
   const reduced = useReducedMotion() ?? false;
-  const { scrollYProgress } = useScroll({
-    target: ref,
-    offset: ["start start", "end end"],
-  });
+  const costAnim = reduced
+    ? {}
+    : {
+        initial: { opacity: 0, y: 30 },
+        whileInView: { opacity: 1, y: 0 },
+        viewport: { once: false, amount: 0.6 },
+        transition: { duration: 0.7, ease: EASE },
+      };
 
   return (
-    <section
-      ref={ref}
-      id="story"
-      className={`story ${reduced ? "story--static" : ""}`}
-      aria-label="How Lumen Studio works"
-    >
-      <div className="story-sticky">
-        <div className="story-copy">
-          <Act
-            progress={scrollYProgress}
-            opacityIn={[0, 0.26, 0.32]}
-            opacityOut={[1, 1, 0]}
-            yIn={[0, 0.26, 0.32]}
-            yOut={[0, 0, -30]}
-            act={{ en: "Act 1 · The problem", es: "Acto 1 · El problema" }}
-            titleEn="Your product data is chaos."
-            titleEs="Tus datos de producto son un caos."
-            subEn="Supplier PDFs, mismatched specs, files everywhere, versions that don't agree."
-            subEs="PDFs de proveedor, specs que no cuadran, archivos por todos lados, versiones que no coinciden."
-            reduced={reduced}
-          />
-          <Act
-            progress={scrollYProgress}
-            opacityIn={[0.34, 0.4, 0.58, 0.64]}
-            opacityOut={[0, 1, 1, 0]}
-            yIn={[0.34, 0.4, 0.64]}
-            yOut={[30, 0, -30]}
-            act={{ en: "Act 2 · The cost", es: "Acto 2 · El costo" }}
-            titleEn="And it's costing you."
-            titleEs="Y te está costando."
-            subEn="40 hours a month rebuilding the same documents. Errors that reach distributors. Deals that stall because the catalog isn't ready."
-            subEs="40 horas al mes rehaciendo los mismos documentos. Errores que llegan a los distribuidores. Negocios que se frenan porque el catálogo no está listo."
-            reduced={reduced}
-          />
-          <Act
-            progress={scrollYProgress}
-            opacityIn={[0.66, 0.74, 1]}
-            opacityOut={[0, 1, 1]}
-            yIn={[0.66, 0.74, 1]}
-            yOut={[30, 0, 0]}
-            act={{ en: "Act 3 · The order", es: "Acto 3 · El orden" }}
-            titleEn="Lumen Studio brings order."
-            titleEs="Lumen Studio pone orden."
-            subEn="One system — data merge, styles, automation — turns the chaos into catalogs and spec sheets that stay perfectly consistent."
-            subEs="Un sistema — data merge, estilos, automatización — convierte el caos en catálogos y fichas perfectamente consistentes."
-            reduced={reduced}
-            cta
-          />
-        </div>
+    <section id="story" className="story" aria-label="How Lumen Studio works">
+      {/* Acto 1 — Problema */}
+      <div className="scene scene--split">
+        <Copy
+          eyebrowEn="Act 1 · The problem"
+          eyebrowEs="Acto 1 · El problema"
+          titleEn="Your product data is chaos."
+          titleEs="Tus datos de producto son un caos."
+          subEn="Supplier PDFs, mismatched specs, files everywhere, versions that don't agree."
+          subEs="PDFs de proveedor, specs que no cuadran, archivos por todos lados, versiones que no coinciden."
+          reduced={reduced}
+        />
+        <Frags ordered={false} reduced={reduced} />
+      </div>
 
-        <div className="story-stage" aria-hidden="true">
-          <div className="story-grid">
-            {FRAGMENTS.map((chaos, i) => (
-              <Fragment key={i} progress={scrollYProgress} chaos={chaos} reduced={reduced} />
-            ))}
+      {/* Acto 2 — Costo */}
+      <div className="scene scene--center">
+        <motion.div className="scene-copy scene-copy--center" {...costAnim}>
+          <div className="story-eyebrow">
+            <span data-en="">Act 2 · The cost</span>
+            <span data-es="">Acto 2 · El costo</span>
           </div>
-        </div>
+          <h2 className="story-h">
+            <span data-en="">And it&apos;s costing you.</span>
+            <span data-es="">Y te está costando.</span>
+          </h2>
+          <div className="cost-row">
+            <span className="cost-chip">
+              <span data-en="">40h/month rebuilding docs</span>
+              <span data-es="">40h/mes rehaciendo docs</span>
+            </span>
+            <span className="cost-chip">
+              <span data-en="">Errors reach distributors</span>
+              <span data-es="">Errores que llegan al distribuidor</span>
+            </span>
+            <span className="cost-chip">
+              <span data-en="">Deals stall, no catalog</span>
+              <span data-es="">Negocios frenados sin catálogo</span>
+            </span>
+          </div>
+        </motion.div>
+      </div>
+
+      {/* Acto 3 — Orden (payoff: caos → grilla) */}
+      <div className="scene scene--split scene--order">
+        <Copy
+          eyebrowEn="Act 3 · The order"
+          eyebrowEs="Acto 3 · El orden"
+          titleEn="Lumen Studio brings order."
+          titleEs="Lumen Studio pone orden."
+          subEn="One system — data merge, styles, automation — turns the chaos into catalogs and spec sheets that stay perfectly consistent."
+          subEs="Un sistema — data merge, estilos, automatización — convierte el caos en catálogos y fichas perfectamente consistentes."
+          reduced={reduced}
+          cta
+        />
+        <Frags ordered reduced={reduced} />
       </div>
     </section>
   );
