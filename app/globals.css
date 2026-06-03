@@ -970,6 +970,16 @@ footer {
 }
 .lead-consent a { color: var(--accent); text-decoration: underline; }
 
+/* Estado de éxito del lead magnet (entrega instantánea) */
+.lead-done { display: flex; flex-direction: column; align-items: flex-start; gap: 12px; }
+.lead-done-icon {
+  width: 40px; height: 40px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  background: oklch(68% 0.18 155 / 0.15); color: var(--green);
+  font-size: 20px; font-weight: 900;
+}
+.lead-done-title { font-size: 16px; font-weight: 700; color: var(--text); }
+
 /* ─── STORY (3 escenas: problema → costo → orden) ──────────── */
 .story { background: var(--bg); }
 

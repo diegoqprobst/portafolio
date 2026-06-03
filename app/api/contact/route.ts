@@ -3,6 +3,7 @@ import { ZodError } from "zod";
 import { insforge } from "@/lib/insforge";
 import { contactMessageCreate } from "@/lib/schemas";
 import { checkPublicFormRateLimit } from "@/lib/rate-limit";
+import { sendEmail } from "@/lib/email";
 
 // Ruta PÚBLICA (no la cubre el middleware admin). Recibe el formulario de
 // contacto de la home, lo valida y lo guarda en Insforge.
@@ -53,5 +54,20 @@ export async function POST(req: NextRequest) {
     console.error("[contact.insert]", error);
     return NextResponse.json({ error: "No se pudo enviar el mensaje." }, { status: 500 });
   }
+
+  // Notificación best-effort a Diego (no bloquea: el mensaje ya está guardado).
+  await sendEmail({
+    to: "diegoaquinde@gmail.com",
+    replyTo: data.email,
+    subject: `Lumen Studio — nuevo mensaje de ${data.name}`,
+    html: `<h2>Nuevo mensaje de contacto</h2>
+<p><b>Nombre:</b> ${data.name}<br/>
+<b>Empresa:</b> ${data.company || "—"}<br/>
+<b>Email:</b> ${data.email}<br/>
+<b>Tipo:</b> ${data.project_type || "—"}</p>
+<p><b>Mensaje:</b><br/>${(data.message || "").replace(/\n/g, "<br/>")}</p>
+<p style="color:#888;font-size:12px">Responde a este correo para contestarle directo.</p>`,
+  });
+
   return NextResponse.json({ ok: true });
 }

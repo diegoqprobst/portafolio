@@ -22,6 +22,7 @@ export default function HomeClient({ content }: { content?: HomeContent | null }
   const [openProject, setOpenProject] = useState<string | null>(null);
   const [leadEmail, setLeadEmail] = useState("");
   const [leadConsent, setLeadConsent] = useState(false);
+  const [leadDone, setLeadDone] = useState(false);
 
   useEffect(() => {
     const saved = (localStorage.getItem("lang") as "en" | "es") || "en";
@@ -70,9 +71,9 @@ export default function HomeClient({ content }: { content?: HomeContent | null }
         body: JSON.stringify({ email: leadEmail, source: "lead-magnet" }),
       });
       if (!res.ok) throw new Error();
-      alert("¡Gracias! Te escribo pronto con el checklist. / Thanks! I'll send it shortly.");
       setLeadEmail("");
       setLeadConsent(false);
+      setLeadDone(true);
     } catch {
       alert(
         "No se pudo enviar. Inténtalo de nuevo o escríbeme por email."
@@ -1065,52 +1066,70 @@ export default function HomeClient({ content }: { content?: HomeContent | null }
                 </div>
               </div>
 
-              <div className="lead-form">
-                <input
-                  type="email"
-                  placeholder="your@email.com"
-                  value={leadEmail}
-                  onChange={(e) => setLeadEmail(e.target.value)}
-                />
-                <label className="lead-consent">
+              {leadDone ? (
+                <div className="lead-done">
+                  <div className="lead-done-icon">✓</div>
+                  <p className="lead-done-title">
+                    <span data-en="">You&apos;re in — here&apos;s your checklist:</span>
+                    <span data-es="">¡Listo! Aquí está tu checklist:</span>
+                  </p>
+                  <a href="/checklist" className="lead-form-submit" target="_blank" rel="noopener">
+                    <span data-en="">Open the checklist</span>
+                    <span data-es="">Abrir el checklist</span>
+                  </a>
+                  <p className="lead-form-note">
+                    <span data-en="">We&apos;ll also email you a copy.</span>
+                    <span data-es="">También te enviamos una copia por email.</span>
+                  </p>
+                </div>
+              ) : (
+                <div className="lead-form">
                   <input
-                    type="checkbox"
-                    checked={leadConsent}
-                    onChange={(e) => setLeadConsent(e.target.checked)}
+                    type="email"
+                    placeholder="your@email.com"
+                    value={leadEmail}
+                    onChange={(e) => setLeadEmail(e.target.value)}
                   />
-                  <span>
-                    <span data-en="">
-                      I agree to receive the checklist by email and accept the{" "}
-                      <a href="/privacidad">privacy policy</a>.
+                  <label className="lead-consent">
+                    <input
+                      type="checkbox"
+                      checked={leadConsent}
+                      onChange={(e) => setLeadConsent(e.target.checked)}
+                    />
+                    <span>
+                      <span data-en="">
+                        I agree to receive the checklist by email and accept the{" "}
+                        <a href="/privacidad">privacy policy</a>.
+                      </span>
+                      <span data-es="">
+                        Acepto recibir el checklist por email y la{" "}
+                        <a href="/privacidad">política de privacidad</a>.
+                      </span>
                     </span>
-                    <span data-es="">
-                      Acepto recibir el checklist por email y la{" "}
-                      <a href="/privacidad">política de privacidad</a>.
-                    </span>
-                  </span>
-                </label>
-                <button className="lead-form-submit" onClick={handleLeadSubmit}>
-                  <svg
-                    width="16"
-                    height="16"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2.5"
-                    strokeLinecap="round"
-                    viewBox="0 0 24 24"
-                  >
-                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-                    <polyline points="7 10 12 15 17 10" />
-                    <line x1="12" y1="15" x2="12" y2="3" />
-                  </svg>
-                  <span data-en="">Send me the checklist</span>
-                  <span data-es="">Envíame el checklist</span>
-                </button>
-                <p className="lead-form-note">
-                  <span data-en="">No spam. One email with the PDF. Unsubscribe anytime.</span>
-                  <span data-es="">Sin spam. Un email con el PDF. Cancela cuando quieras.</span>
-                </p>
-              </div>
+                  </label>
+                  <button className="lead-form-submit" onClick={handleLeadSubmit}>
+                    <svg
+                      width="16"
+                      height="16"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2.5"
+                      strokeLinecap="round"
+                      viewBox="0 0 24 24"
+                    >
+                      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                      <polyline points="7 10 12 15 17 10" />
+                      <line x1="12" y1="15" x2="12" y2="3" />
+                    </svg>
+                    <span data-en="">Get the checklist</span>
+                    <span data-es="">Quiero el checklist</span>
+                  </button>
+                  <p className="lead-form-note">
+                    <span data-en="">No spam. Instant access + a copy by email.</span>
+                    <span data-es="">Sin spam. Acceso instantáneo + copia por email.</span>
+                  </p>
+                </div>
+              )}
             </div>
           </div>
         </div>
