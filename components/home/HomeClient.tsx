@@ -21,6 +21,7 @@ export default function HomeClient({ content }: { content?: HomeContent | null }
   const [mobileOpen, setMobileOpen] = useState(false);
   const [openProject, setOpenProject] = useState<string | null>(null);
   const [leadEmail, setLeadEmail] = useState("");
+  const [leadConsent, setLeadConsent] = useState(false);
 
   useEffect(() => {
     const saved = (localStorage.getItem("lang") as "en" | "es") || "en";
@@ -56,6 +57,12 @@ export default function HomeClient({ content }: { content?: HomeContent | null }
       alert("Please enter a valid email. / Ingresa un email válido.");
       return;
     }
+    if (!leadConsent) {
+      alert(
+        "Please check the consent box to continue. / Marca la casilla de consentimiento para continuar."
+      );
+      return;
+    }
     try {
       const res = await fetch("/api/lead", {
         method: "POST",
@@ -65,6 +72,7 @@ export default function HomeClient({ content }: { content?: HomeContent | null }
       if (!res.ok) throw new Error();
       alert("¡Gracias! Te escribo pronto con el checklist. / Thanks! I'll send it shortly.");
       setLeadEmail("");
+      setLeadConsent(false);
     } catch {
       alert(
         "No se pudo enviar. Inténtalo de nuevo o escríbeme por email."
@@ -1064,6 +1072,23 @@ export default function HomeClient({ content }: { content?: HomeContent | null }
                   value={leadEmail}
                   onChange={(e) => setLeadEmail(e.target.value)}
                 />
+                <label className="lead-consent">
+                  <input
+                    type="checkbox"
+                    checked={leadConsent}
+                    onChange={(e) => setLeadConsent(e.target.checked)}
+                  />
+                  <span>
+                    <span data-en="">
+                      I agree to receive the checklist by email and accept the{" "}
+                      <a href="/privacidad">privacy policy</a>.
+                    </span>
+                    <span data-es="">
+                      Acepto recibir el checklist por email y la{" "}
+                      <a href="/privacidad">política de privacidad</a>.
+                    </span>
+                  </span>
+                </label>
                 <button className="lead-form-submit" onClick={handleLeadSubmit}>
                   <svg
                     width="16"
@@ -1082,16 +1107,8 @@ export default function HomeClient({ content }: { content?: HomeContent | null }
                   <span data-es="">Envíame el checklist</span>
                 </button>
                 <p className="lead-form-note">
-                  <span data-en="">
-                    No spam. One email with the PDF. Unsubscribe anytime. By
-                    submitting you accept our{" "}
-                    <a href="/privacidad" className="lead-form-privacy">privacy policy</a>.
-                  </span>
-                  <span data-es="">
-                    Sin spam. Un email con el PDF. Cancela cuando quieras. Al
-                    enviar aceptas nuestra{" "}
-                    <a href="/privacidad" className="lead-form-privacy">política de privacidad</a>.
-                  </span>
+                  <span data-en="">No spam. One email with the PDF. Unsubscribe anytime.</span>
+                  <span data-es="">Sin spam. Un email con el PDF. Cancela cuando quieras.</span>
                 </p>
               </div>
             </div>
