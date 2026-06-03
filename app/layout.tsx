@@ -1,5 +1,32 @@
 import type { Metadata, Viewport } from "next";
+import { Analytics } from "@vercel/analytics/react";
 import "./globals.css";
+
+// JSON-LD structured data — ayuda a Google a entender que esto es un servicio
+// profesional (Lumen Studio) y quién lo opera. Contenido estático que yo
+// controlo (no input de usuario) → seguro en dangerouslySetInnerHTML.
+const JSON_LD = {
+  "@context": "https://schema.org",
+  "@type": "ProfessionalService",
+  name: "Lumen Studio",
+  description:
+    "Technical product catalogs, spec/data sheets, and product-data automation in Adobe InDesign — for lighting and industrial brands.",
+  url: "https://diegoquinde.com",
+  image: "https://diegoquinde.com/IMG_6290.JPG",
+  founder: { "@type": "Person", name: "Diego Quinde" },
+  email: "diegoaquinde@gmail.com",
+  areaServed: ["United States", "Europe", "Latin America"],
+  knowsAbout: [
+    "Adobe InDesign",
+    "Product catalogs",
+    "Spec sheets",
+    "Data merge",
+    "NFPA",
+    "IES",
+    "Technical documentation",
+  ],
+  sameAs: ["https://www.upwork.com/freelancers/diegoaq"],
+};
 
 const TITLE = "Lumen Studio · Technical Product Catalogs & Spec Sheets in InDesign";
 const DESCRIPTION =
@@ -8,11 +35,11 @@ const DESCRIPTION =
 export const metadata: Metadata = {
   title: TITLE,
   description: DESCRIPTION,
+  metadataBase: new URL("https://diegoquinde.com"),
   openGraph: {
     title: TITLE,
     description: DESCRIPTION,
     url: "https://diegoquinde.com/",
-    images: ["https://diegoquinde.com/IMG_6290.JPG"],
     type: "website",
   },
   icons: {
@@ -45,8 +72,15 @@ export default function RootLayout({
           href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,300&display=swap"
           rel="stylesheet"
         />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(JSON_LD) }}
+        />
       </head>
-      <body className="lang-en">{children}</body>
+      <body className="lang-en">
+        {children}
+        <Analytics />
+      </body>
     </html>
   );
 }
