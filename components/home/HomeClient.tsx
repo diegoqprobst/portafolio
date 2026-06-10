@@ -625,6 +625,7 @@ export default function HomeClient({ content }: { content?: HomeContent | null }
               ]}
               imgSrc="/assets/projects/1.jpg"
               imgAlt="Luxarmonie dashboard"
+              caseStudyHref="/luxarmonie"
             />
 
             <ProjectRow
