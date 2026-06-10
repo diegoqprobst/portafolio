@@ -1,115 +1,104 @@
-# Portfolio — Diego Quinde | Instrucciones
+# Portafolio + Business OS — Diego Quinde / Lumen Studio
 
-## Estructura de Carpetas
+Sitio personal de Diego Quinde (marca **Lumen Studio**: documentación técnica y
+diseño para marcas de iluminación) construido con **Next.js**, más un panel
+privado **Business OS** (`/admin`) para gestionar contenido del sitio, CRM,
+proyectos, finanzas y metas del negocio.
+
+## Stack
+
+- **Next.js 15** (App Router) + **React 19** + **TypeScript** (strict)
+- **Tailwind CSS 3** · **Framer Motion** (animaciones) · **lucide-react** (iconos)
+- **InsForge** (Postgres + storage + SDK) como backend
+- **jose** (JWT) + **bcryptjs** (auth admin) · **Zod** (validación) · **Upstash** (rate limit)
+- **@react-pdf/renderer** + Anthropic/OpenAI SDK (generador de CV con IA)
+- **Vercel** (hosting, git-conectado) + **Vercel Analytics** (cookieless)
+
+## Estructura
 
 ```
-/
-├── index.html                    ← Todo el frontend (HTML + CSS + JS vanilla)
-├── cv.pdf                        ← Tu CV descargable (cuando lo tengas listo)
-├── assets/
-│   ├── projects/
-│   │   ├── 1.jpg               ← Imágenes de CRE Reporting (automation showcase)
-│   │   ├── 2.jpg               ← Imágenes de CRE Reporting (problem statement)
-│   │   ├── 3.jpg               ← Imágenes de CRE Reporting (workflow diagram)
-│   │   ├── 4.jpg               ← Imágenes de resultados (opcional, no usado aún)
-│   │   ├── submittal-sample.png ← Ejemplo de submittal técnico (Boris Lighting)
-│   │   ├── Boris Saratoga_v1.pdf   ← PDF del submittal (descargable en futuro)
-│   │   └── Geometrio Ceiling Lamp.pdf ← Spec técnica (descargable en futuro)
-│   └── certs/
-│       └── (futuros certificados con imagen)
-├── README.md                    ← Este archivo
-└── CLAUDE.md                    ← Documentación del proyecto
+app/
+├── page.tsx                  Home pública (ISR, revalidate 300s)
+├── layout.tsx                Metadata, JSON-LD, next/font, Analytics
+├── saratoga/ luxarmonie/     Casos de estudio (estáticos)
+├── privacidad/ checklist/    Privacidad + lead magnet (noindex)
+├── admin/                    Panel privado (JWT) — dashboard, home, projects, cv
+│   └── business/             Business OS — identity, goals, clients, projects, finance, messages
+├── api/
+│   ├── contact, lead         Endpoints públicos (rate-limited + honeypot)
+│   ├── auth/                 login / logout
+│   └── admin/                CRUD protegido (incl. admin/business/*)
+├── robots.ts  sitemap.ts     SEO
+components/
+├── home/                     HomeClient, StorySection (sitio público)
+└── admin/                    UI del panel + useCollection (hook CRUD)
+lib/                          insforge, auth, crud, schemas, rate-limit, email, ai, business…
+insforge/
+├── schema.sql  business.sql  Esquema + semilla
+└── migrations/               Migraciones SQL (aplicación manual vía CLI)
 ```
 
-## Cómo Agregar Imágenes a Proyectos
+## Desarrollo local
 
-### Ejemplo: Agregar imagen al proyecto Luxarmonie
-
-1. Sube tu screenshot/imagen a `/assets/projects/`
-2. Nombra el archivo: `luxarmonie-validator.jpg` (o similar, sem espacios)
-3. En el HTML, dentro del `project-details` del proyecto, agrega:
-
-```html
-<div class="mt-4 pt-4 border-t border-gray-600">
-    <img src="/assets/projects/luxarmonie-validator.jpg" alt="Descripción de la imagen" class="project-image">
-</div>
-```
-
-Las imágenes se adaptarán automáticamente al ancho del contenedor.
-
-## Cómo Desplegar en Vercel
-
-### Primera vez:
 ```bash
-cd /mnt/d/portafolio
-vercel
-# Sigue el prompt, elige "create new project", cuando pregunte por framework di "Other"
+npm install
+cp .env.local.example .env.local   # y rellena los valores (ver abajo)
+npm run dev                         # http://localhost:3000
 ```
 
-### Futuras actualizaciones:
+Scripts: `dev`, `build`, `start`, `lint`, `typecheck` (`tsc --noEmit`).
+
+## Variables de entorno
+
+Ver [`.env.local.example`](.env.local.example) para la lista completa con notas.
+Las esenciales:
+
+| Variable | Para qué |
+|---|---|
+| `INSFORGE_URL` | URL del backend InsForge |
+| `INSFORGE_API_KEY` | **Admin key** (`project_admin`, bypassa RLS). El servidor la usa para todo acceso a DB. **Requerida** — sin ella, RLS deniega todo. `npx @insforge/cli secrets get API_KEY` |
+| `JWT_SECRET` | Firma de sesión admin (mín. 16 chars) |
+| `ADMIN_EMAIL` / `ADMIN_PASSWORD_HASH` | Credenciales del panel (`/admin/login`). Hash con bcryptjs |
+| `OPENAI_API_KEY` / `ANTHROPIC_API_KEY` | Generador de CV (opcional, al menos una) |
+| `RESEND_API_KEY` / `RESEND_FROM` | Email del lead magnet/contacto (opcional, degrada) |
+| `KV_REST_API_*` | Rate limiting Upstash (opcional, degrada) |
+
+## Base de datos (InsForge)
+
+Todo el acceso a la DB es **server-side**; el navegador nunca habla con InsForge.
+Todas las tablas tienen **RLS activado** (deny al rol `anon`), por eso el servidor
+usa `INSFORGE_API_KEY` (rol `project_admin`, que bypassa RLS).
+
+Migraciones: archivos SQL en `insforge/migrations/` (se aplican manualmente).
+
 ```bash
-vercel --prod    # Para deploy a producción
-# o simplemente
-vercel          # Para preview
+npx @insforge/cli db query "$(cat insforge/migrations/00X_nombre.sql)"
+npx @insforge/cli db tables      # inspeccionar esquema en vivo
 ```
 
-## Archivos Importantes
+> ⚠️ Si añades RLS o cambias el esquema, el orden importa: el servidor debe usar
+> `INSFORGE_API_KEY` **antes** de activar RLS, o el sitio en vivo (aún con la anon
+> key) queda denegado. Ver `insforge/migrations/007_rls_lockdown.sql`.
 
-- **index.html** — Único archivo HTML, contiene todo el código
-- **cv.pdf** — Sube tu CV aquí cuando esté listo (link descargable en hero)
-- **/assets** — Todas las imágenes y documentos
+## Panel admin / Business OS
 
-## Cómo Editar el Portfolio
+- `/admin/login` → `/admin` (protegido por middleware JWT).
+- Edita el contenido de la home (`/admin/home`), proyectos del portafolio y genera CVs.
+- **Business OS** (`/admin/business`): KPIs en vivo, CRM de clientes, proyectos,
+  finanzas, metas/roadmap y bandeja de mensajes de contacto.
 
-Todo el código está en `index.html`. Secciones principales:
+## Despliegue
 
-1. **Hero** — Título principal + typewriter
-2. **About** — "Orden en el caos" (tu identidad)
-3. **Certifications** — Cards de certificaciones
-4. **Projects** — 6 proyectos expandibles (donde van las imágenes)
-5. **Stack** — Grid de tecnologías
-6. **Experience** — Timeline vertical
-7. **Contact** — Email copiable + LinkedIn
+Vercel está **conectado al repo de GitHub**: un push a `master` despliega a
+producción automáticamente; los pushes de ramas generan preview deploys.
 
-## Números Reales Integrados
+- Las env vars deben existir en los scopes **Production** y **Preview** de Vercel
+  (gestiónalas con `npx vercel env ls/add` o el dashboard).
+- CI: `.github/workflows/ci.yml` corre `typecheck → lint → build` en cada push/PR.
 
-Del material de Upwork (1.jpg, 2.jpg, 3.jpg):
+## Seguridad
 
-- **95% Efficiency Gain** — Reclaim billable hours
-- **99% Absolute Accuracy** — Audit-ready documents
-- **+200 Instant Scaling** — 200+ reports capability
-
-Estos números están ya en la sección CRE Reporting del portfolio.
-
-## Dominio Futuro
-
-Cuando tengas dinero para `diegoquinde.com`:
-
-1. Compra en Namecheap/Porkbun (~$10/año)
-2. En Vercel > Settings > Domains, agrega el dominio
-3. Copia los 2 registros DNS en Namecheap
-4. Propagar en 24h
-
-## Checklist Deployment
-
-- [ ] `vercel` funciona sin errores
-- [ ] Portfolio accesible en `diego-quinde.vercel.app`
-- [ ] Imagen CRE Reporting carga bien
-- [ ] Imagen submittal carga bien
-- [ ] Email copy-to-clipboard funciona
-- [ ] Accordion de proyectos funciona
-- [ ] Links a LinkedIn funcionan
-- [ ] Mobile responsive se ve bien
-
-## Próximos Pasos
-
-1. **CV.pdf** — Sube cuando esté listo
-2. **Screenshots adicionales** — Agrega más imágenes a otros proyectos
-3. **Cover letter** — Redacta para North Highland
-4. **LinkedIn** — Actualiza con nuevas narrativas
-5. **Dominio** — Cuando tengas presupuesto
-
----
-
-**Construido con:** HTML + Tailwind CSS (CDN) + Google Fonts + JavaScript Vanilla  
-**Deploy:** Vercel (gratis, automático en cada push a GitHub)
+- Headers en `next.config.ts`: HSTS, **CSP**, X-Frame-Options, nosniff, Referrer-Policy, Permissions-Policy.
+- **RLS** en todas las tablas + admin key server-side.
+- Rate limiting (login + formularios) y honeypot anti-spam en endpoints públicos.
+- Validación Zod en todo el CRUD (previene mass-assignment).
