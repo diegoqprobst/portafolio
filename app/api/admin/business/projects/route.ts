@@ -6,4 +6,5 @@ export const { GET, POST } = listCreate({
   createSchema: businessProjectCreate,
   updateSchema: businessProjectUpdate,
   orderBy: { column: "created_at", ascending: false },
+  softDelete: true,
 });

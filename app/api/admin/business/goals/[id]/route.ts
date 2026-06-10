@@ -5,4 +5,5 @@ export const { PUT, DELETE } = updateDelete({
   table: "goals",
   createSchema: goalCreate,
   updateSchema: goalUpdate,
+  softDelete: true,
 });

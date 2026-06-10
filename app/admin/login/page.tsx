@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Zap, Loader2 } from "lucide-react";
 
@@ -41,9 +42,9 @@ export default function LoginPage() {
     <div className="min-h-screen bg-dark flex items-center justify-center px-4">
       <div className="w-full max-w-sm">
         <div className="text-center mb-8">
-          <a href="/" className="text-3xl font-black tracking-tighter gradient-text">
+          <Link href="/" className="text-3xl font-black tracking-tighter gradient-text">
             DQ
-          </a>
+          </Link>
           <div className="mt-4 flex items-center justify-center gap-2 text-xs text-white/30 uppercase tracking-widest">
             <Zap className="w-3 h-3 text-electric" />
             Admin

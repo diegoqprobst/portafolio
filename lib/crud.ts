@@ -18,10 +18,14 @@ export type CrudConfig<C, U> = {
   createSchema: ZodType<C>;
   updateSchema: ZodType<U>;
   orderBy?: { column: string; ascending?: boolean };
+  // Cuando es true, DELETE marca `deleted_at` en vez de borrar, y los listados
+  // excluyen las filas marcadas. Solo para tablas que tienen la columna
+  // `deleted_at` (clients, goals, business_projects, finance_entries).
+  softDelete?: boolean;
 };
 
 export function listCreate<C, U>(config: CrudConfig<C, U>) {
-  const { table, createSchema, orderBy } = config;
+  const { table, createSchema, orderBy, softDelete } = config;
 
   return {
     async GET() {
@@ -29,6 +33,7 @@ export function listCreate<C, U>(config: CrudConfig<C, U>) {
       if (unauthorized) return unauthorized;
 
       let q = insforge.database.from(table).select("*");
+      if (softDelete) q = q.is("deleted_at", null);
       if (orderBy) q = q.order(orderBy.column, { ascending: orderBy.ascending ?? true });
       const { data, error } = await q;
       if (error) return dbError(`${table}.list`, error);
@@ -55,7 +60,7 @@ export function listCreate<C, U>(config: CrudConfig<C, U>) {
 }
 
 export function updateDelete<C, U>(config: CrudConfig<C, U>) {
-  const { table, updateSchema } = config;
+  const { table, updateSchema, softDelete } = config;
 
   return {
     async PUT(req: NextRequest, ctx: { params: Promise<{ id: string }> }) {
@@ -82,7 +87,12 @@ export function updateDelete<C, U>(config: CrudConfig<C, U>) {
       if (unauthorized) return unauthorized;
 
       const { id } = await ctx.params;
-      const { error } = await insforge.database.from(table).delete().eq("id", id);
+      const { error } = softDelete
+        ? await insforge.database
+            .from(table)
+            .update({ deleted_at: new Date().toISOString() })
+            .eq("id", id)
+        : await insforge.database.from(table).delete().eq("id", id);
       if (error) return dbError(`${table}.delete`, error);
       return NextResponse.json({ ok: true });
     },

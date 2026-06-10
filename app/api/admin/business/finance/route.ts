@@ -6,4 +6,5 @@ export const { GET, POST } = listCreate({
   createSchema: financeEntryCreate,
   updateSchema: financeEntryUpdate,
   orderBy: { column: "entry_date", ascending: false },
+  softDelete: true,
 });

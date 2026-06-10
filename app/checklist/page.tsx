@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 
 export const metadata: Metadata = {
   title: "Catalog & Spec Sheet Prep Checklist · Lumen Studio",
@@ -78,9 +79,9 @@ export default function ChecklistPage() {
         lineHeight: 1.6,
       }}
     >
-      <a href="/" style={{ color: "var(--accent)", fontWeight: 700, fontSize: 14 }}>
+      <Link href="/" style={{ color: "var(--accent)", fontWeight: 700, fontSize: 14 }}>
         ← Lumen Studio
-      </a>
+      </Link>
 
       <p style={{ color: "var(--accent)", fontWeight: 800, fontSize: 12, letterSpacing: "0.14em", textTransform: "uppercase", margin: "28px 0 6px" }}>
         Free resource · Recurso gratuito
@@ -150,12 +151,12 @@ export default function ChecklistPage() {
           automated. / Lumen Studio convierte este checklist en un catálogo
           terminado y consistente — automatizado.
         </p>
-        <a
+        <Link
           href="/#contact"
           style={{ color: "var(--accent)", fontWeight: 700, textDecoration: "underline" }}
         >
           Start a conversation → / Iniciar conversación →
-        </a>
+        </Link>
       </div>
     </main>
   );

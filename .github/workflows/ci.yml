@@ -1,0 +1,36 @@
+name: CI
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Build
+        run: npm run build
+        env:
+          # Dummy secrets so the build evaluates server modules without real
+          # credentials. lib/auth.ts throws at import if JWT_SECRET is unset;
+          # data fetches fall back to static defaults when the DB is unreachable.
+          JWT_SECRET: ci-placeholder-secret-not-used-in-prod
+          ADMIN_PASSWORD_HASH: $2a$10$ciplaceholderhashvaluethatisnotusedxxxxxxxxxxxxxxxxxxx

@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 
 export const metadata: Metadata = {
   title: "Privacidad · Lumen Studio",
@@ -19,12 +20,12 @@ export default function PrivacyPage() {
         lineHeight: 1.7,
       }}
     >
-      <a
+      <Link
         href="/"
         style={{ color: "var(--accent)", fontWeight: 700, fontSize: 14 }}
       >
         ← Lumen Studio
-      </a>
+      </Link>
 
       {/* ───── Español ───── */}
       <h1 style={{ fontSize: 32, fontWeight: 800, margin: "28px 0 8px" }}>

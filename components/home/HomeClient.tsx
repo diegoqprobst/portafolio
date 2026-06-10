@@ -23,6 +23,8 @@ export default function HomeClient({ content }: { content?: HomeContent | null }
   const [leadEmail, setLeadEmail] = useState("");
   const [leadConsent, setLeadConsent] = useState(false);
   const [leadDone, setLeadDone] = useState(false);
+  const [leadError, setLeadError] = useState("");
+  const [contactStatus, setContactStatus] = useState<{ kind: "ok" | "error"; msg: string } | null>(null);
 
   useEffect(() => {
     const saved = (localStorage.getItem("lang") as "en" | "es") || "en";
@@ -55,15 +57,16 @@ export default function HomeClient({ content }: { content?: HomeContent | null }
 
   async function handleLeadSubmit() {
     if (!leadEmail || !leadEmail.includes("@")) {
-      alert("Please enter a valid email. / Ingresa un email válido.");
+      setLeadError("Please enter a valid email. / Ingresa un email válido.");
       return;
     }
     if (!leadConsent) {
-      alert(
+      setLeadError(
         "Please check the consent box to continue. / Marca la casilla de consentimiento para continuar."
       );
       return;
     }
+    setLeadError("");
     try {
       const res = await fetch("/api/lead", {
         method: "POST",
@@ -75,8 +78,8 @@ export default function HomeClient({ content }: { content?: HomeContent | null }
       setLeadConsent(false);
       setLeadDone(true);
     } catch {
-      alert(
-        "No se pudo enviar. Inténtalo de nuevo o escríbeme por email."
+      setLeadError(
+        "No se pudo enviar. Inténtalo de nuevo o escríbeme por email. / Couldn't send. Try again or email me."
       );
     }
   }
@@ -95,9 +98,13 @@ export default function HomeClient({ content }: { content?: HomeContent | null }
       message: String(fd.get("message") ?? ""),
     };
     if (!payload.name || !payload.email.includes("@")) {
-      alert("Completa tu nombre y un email válido. / Add your name and a valid email.");
+      setContactStatus({
+        kind: "error",
+        msg: "Completa tu nombre y un email válido. / Add your name and a valid email.",
+      });
       return;
     }
+    setContactStatus(null);
     try {
       const res = await fetch("/api/contact", {
         method: "POST",
@@ -105,12 +112,16 @@ export default function HomeClient({ content }: { content?: HomeContent | null }
         body: JSON.stringify(payload),
       });
       if (!res.ok) throw new Error();
-      alert("¡Mensaje enviado! Te respondo en menos de 24h. / Message sent!");
+      setContactStatus({
+        kind: "ok",
+        msg: "¡Mensaje enviado! Te respondo en menos de 24h. / Message sent — I'll reply within 24h.",
+      });
       form.reset();
     } catch {
-      alert(
-        "No se pudo enviar. Inténtalo de nuevo o escríbeme por email."
-      );
+      setContactStatus({
+        kind: "error",
+        msg: "No se pudo enviar. Inténtalo de nuevo o escríbeme por email. / Couldn't send. Try again or email me.",
+      });
     }
   }
 
@@ -1067,7 +1078,7 @@ export default function HomeClient({ content }: { content?: HomeContent | null }
               </div>
 
               {leadDone ? (
-                <div className="lead-done">
+                <div className="lead-done" role="status">
                   <div className="lead-done-icon">✓</div>
                   <p className="lead-done-title">
                     <span data-en="">You&apos;re in — here&apos;s your checklist:</span>
@@ -1128,6 +1139,11 @@ export default function HomeClient({ content }: { content?: HomeContent | null }
                     <span data-en="">No spam. Instant access + a copy by email.</span>
                     <span data-es="">Sin spam. Acceso instantáneo + copia por email.</span>
                   </p>
+                  {leadError && (
+                    <p className="form-status form-status-error" role="alert">
+                      {leadError}
+                    </p>
+                  )}
                 </div>
               )}
             </div>
@@ -1281,6 +1297,14 @@ export default function HomeClient({ content }: { content?: HomeContent | null }
                   <span data-en="">Send message</span>
                   <span data-es="">Enviar mensaje</span>
                 </button>
+                <p
+                  className={`form-status ${contactStatus?.kind === "error" ? "form-status-error" : "form-status-ok"}`}
+                  role={contactStatus?.kind === "error" ? "alert" : "status"}
+                  aria-live="polite"
+                  style={contactStatus ? undefined : { display: "none" }}
+                >
+                  {contactStatus?.msg}
+                </p>
                 <p className="form-privacy-note">
                   <span data-en="">
                     By submitting you accept our{" "}

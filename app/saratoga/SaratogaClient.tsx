@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
+import Link from "next/link";
 import {
   AlertTriangle,
   ArrowLeft,
@@ -49,19 +50,19 @@ export default function SaratogaClient() {
       <nav className="saratoga-navbar">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-20">
-            <a
+            <Link
               href="/"
               className="text-2xl font-black tracking-tighter gradient-text"
             >
               DQ
-            </a>
-            <a
+            </Link>
+            <Link
               href="/#projects"
               className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-white/50 hover:text-electric transition-colors"
             >
               <ArrowLeft className="w-4 h-4" />
               All Projects
-            </a>
+            </Link>
           </div>
         </div>
       </nav>
@@ -290,13 +291,13 @@ export default function SaratogaClient() {
                   <Mail className="w-5 h-5" />
                   Get in Touch
                 </a>
-                <a
+                <Link
                   href="/#projects"
                   className="inline-flex items-center justify-center gap-2 border border-white/20 text-white px-8 py-4 rounded-2xl font-bold text-lg hover:border-electric/50 hover:text-electric transition-colors"
                 >
                   <ArrowLeft className="w-5 h-5" />
                   All Projects
-                </a>
+                </Link>
               </div>
             </div>
           </section>
@@ -306,9 +307,9 @@ export default function SaratogaClient() {
       <footer className="border-t border-white/5 py-8 px-4 text-center">
         <p className="text-gray-700 text-xs uppercase tracking-[0.4em]">
           © 2026 DIEGO QUINDE ·{" "}
-          <a href="/" className="hover:text-electric transition-colors">
+          <Link href="/" className="hover:text-electric transition-colors">
             diegoquinde.com
-          </a>
+          </Link>
         </p>
       </footer>
     </div>

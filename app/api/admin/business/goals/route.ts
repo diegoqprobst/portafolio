@@ -6,4 +6,5 @@ export const { GET, POST } = listCreate({
   createSchema: goalCreate,
   updateSchema: goalUpdate,
   orderBy: { column: "sort_order", ascending: true },
+  softDelete: true,
 });

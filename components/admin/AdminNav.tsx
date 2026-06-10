@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useRouter, usePathname } from "next/navigation";
 import {
   Home,
@@ -52,9 +53,9 @@ export default function AdminNav() {
   return (
     <aside className="fixed top-0 left-0 h-full w-64 bg-white/5 border-r border-white/10 flex flex-col z-50 overflow-y-auto">
       <div className="p-6 border-b border-white/10">
-        <a href="/" className="text-2xl font-black tracking-tighter gradient-text">
+        <Link href="/" className="text-2xl font-black tracking-tighter gradient-text">
           DQ
-        </a>
+        </Link>
         <div className="flex items-center gap-1.5 mt-1 text-[10px] text-white/30 uppercase tracking-widest">
           <Zap className="w-3 h-3 text-electric" />
           Business OS

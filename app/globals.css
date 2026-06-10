@@ -23,8 +23,8 @@
   --r-lg:  24px;
   --r-xl:  32px;
 
-  --font-display: 'Nunito', sans-serif;
-  --font-body:    'Nunito', sans-serif;
+  --font-display: var(--font-nunito), 'Nunito', sans-serif;
+  --font-body:    var(--font-nunito), 'Nunito', sans-serif;
 
   --nav-h: 68px;
 }
@@ -51,6 +51,21 @@
 }
 .input::placeholder { color: rgba(255, 255, 255, 0.25); }
 .input:focus { border-color: rgba(30, 144, 255, 0.5); }
+
+/* ─── ACCESSIBILITY: visible focus ring for keyboard users ── */
+/* Higher specificity than the per-component `outline: none` rules, so
+   keyboard focus stays visible without showing a ring on mouse/touch. */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible,
+summary:focus-visible,
+[tabindex]:focus-visible {
+  outline: 2px solid var(--accent2);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
 
 /* ─── RESET ───────────────────────────────────────────────── */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -893,6 +908,23 @@ a.hero-badge:hover { border-color: oklch(68% 0.18 155 / 0.5); transform: transla
 .contact-form input:focus,
 .contact-form textarea:focus,
 .contact-form select:focus { border-color: var(--accent); }
+.form-status {
+  font-size: 13px;
+  line-height: 1.5;
+  padding: 10px 14px;
+  border-radius: var(--r-sm);
+  border: 1px solid transparent;
+}
+.form-status-ok {
+  color: var(--green);
+  background: color-mix(in oklch, var(--green) 12%, transparent);
+  border-color: color-mix(in oklch, var(--green) 30%, transparent);
+}
+.form-status-error {
+  color: var(--red);
+  background: color-mix(in oklch, var(--red) 12%, transparent);
+  border-color: color-mix(in oklch, var(--red) 30%, transparent);
+}
 .contact-form select {
   appearance: none; cursor: pointer;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' fill='none'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23fff' stroke-opacity='.3' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E");
