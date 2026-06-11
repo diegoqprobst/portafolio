@@ -269,7 +269,7 @@ export default function LumenCalculator() {
             Real projects need point-by-point calculations (DIALux / AGi32) and a
             compliant submittal.
           </p>
-          <Link href="/#contact" className="lc-cta">
+          <Link href="/lumen#contact" className="lc-cta">
             Need a real photometric study or spec sheet? <ArrowRight className="w-4 h-4" />
           </Link>
         </div>

@@ -22,7 +22,7 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
 
   const { error } = await insforge.database.from("projects").update(body).eq("id", id);
   if (error) return dbError("projects.update", error);
-  revalidatePath("/");
+  revalidatePath("/lumen");
   return NextResponse.json({ ok: true });
 }
 
@@ -38,6 +38,6 @@ export async function DELETE(_: NextRequest, { params }: { params: Promise<{ id:
     .update({ published: false })
     .eq("id", id);
   if (error) return dbError("projects.unpublish", error);
-  revalidatePath("/");
+  revalidatePath("/lumen");
   return NextResponse.json({ ok: true });
 }

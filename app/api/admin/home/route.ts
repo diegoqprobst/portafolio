@@ -32,6 +32,6 @@ export async function PUT(req: NextRequest) {
 
   const { error } = await insforge.database.from("home_content").update(body).eq("id", 1);
   if (error) return dbError("home_content.update", error);
-  revalidatePath("/");
+  revalidatePath("/lumen");
   return NextResponse.json({ ok: true });
 }

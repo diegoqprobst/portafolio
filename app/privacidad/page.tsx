@@ -21,7 +21,7 @@ export default function PrivacyPage() {
       }}
     >
       <Link
-        href="/"
+        href="/lumen"
         style={{ color: "var(--accent)", fontWeight: 700, fontSize: 14 }}
       >
         ← Lumen Studio

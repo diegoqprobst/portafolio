@@ -58,7 +58,7 @@ export default function LuxarmonieClient() {
               DQ
             </Link>
             <Link
-              href="/#projects"
+              href="/lumen#projects"
               className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-white/50 hover:text-electric transition-colors"
             >
               <ArrowLeft className="w-4 h-4" />
@@ -308,7 +308,7 @@ export default function LuxarmonieClient() {
                   Get in Touch
                 </a>
                 <Link
-                  href="/#projects"
+                  href="/lumen#projects"
                   className="inline-flex items-center justify-center gap-2 border border-white/20 text-white px-8 py-4 rounded-2xl font-bold text-lg hover:border-electric/50 hover:text-electric transition-colors"
                 >
                   <ArrowLeft className="w-5 h-5" />

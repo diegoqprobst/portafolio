@@ -89,7 +89,7 @@ export default function Page() {
               DQ
             </Link>
             <Link
-              href="/"
+              href="/lumen"
               className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-white/50 hover:text-electric transition-colors"
             >
               <ArrowLeft className="w-4 h-4" />
@@ -174,7 +174,7 @@ export default function Page() {
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link
-              href="/#contact"
+              href="/lumen#contact"
               className="inline-flex items-center justify-center gap-2 bg-electric text-white px-7 py-3.5 rounded-2xl font-bold hover:bg-blue-500 transition-colors"
             >
               Work with Lumen Studio

@@ -79,7 +79,7 @@ export default function ChecklistPage() {
         lineHeight: 1.6,
       }}
     >
-      <Link href="/" style={{ color: "var(--accent)", fontWeight: 700, fontSize: 14 }}>
+      <Link href="/lumen" style={{ color: "var(--accent)", fontWeight: 700, fontSize: 14 }}>
         ← Lumen Studio
       </Link>
 
@@ -152,7 +152,7 @@ export default function ChecklistPage() {
           terminado y consistente — automatizado.
         </p>
         <Link
-          href="/#contact"
+          href="/lumen#contact"
           style={{ color: "var(--accent)", fontWeight: 700, textDecoration: "underline" }}
         >
           Start a conversation → / Iniciar conversación →

@@ -12,35 +12,40 @@ const nunito = Nunito({
   style: ["normal", "italic"],
 });
 
-// JSON-LD structured data — ayuda a Google a entender que esto es un servicio
-// profesional (Lumen Studio) y quién lo opera. Contenido estático que yo
-// controlo (no input de usuario) → seguro en dangerouslySetInnerHTML.
+// JSON-LD del dominio: una Person multi-rol (psicólogo clínico construyendo IA
+// para salud mental + fundador de Lumen Studio). El ProfessionalService del
+// estudio vive en /lumen. Contenido estático que yo controlo (no input de
+// usuario) → seguro en dangerouslySetInnerHTML.
 const JSON_LD = {
   "@context": "https://schema.org",
-  "@type": "ProfessionalService",
-  name: "Lumen Studio",
-  description:
-    "Technical product catalogs, spec/data sheets, and product-data automation in Adobe InDesign — for lighting and industrial brands.",
+  "@type": "Person",
+  name: "Diego Quinde",
   url: "https://diegoquinde.com",
   image: "https://diegoquinde.com/IMG_6290.JPG",
-  founder: { "@type": "Person", name: "Diego Quinde" },
   email: "diegoaquinde@gmail.com",
-  areaServed: ["United States", "Europe", "Latin America"],
+  jobTitle: "Clinical Psychologist & AI Developer",
+  description:
+    "Clinical psychologist building AI for mental health: open-source evals for psychotherapy, a brief-therapy simulator, and a game about peace conflicts. Founder of Lumen Studio (technical documentation for lighting brands).",
   knowsAbout: [
-    "Adobe InDesign",
-    "Product catalogs",
-    "Spec sheets",
-    "Data merge",
-    "NFPA",
-    "IES",
+    "Psychotherapy",
+    "Brief therapy",
+    "Systemic therapy",
+    "AI evaluation",
+    "LLM safety",
     "Technical documentation",
+    "Adobe InDesign",
   ],
+  brand: {
+    "@type": "Organization",
+    name: "Lumen Studio",
+    url: "https://diegoquinde.com/lumen",
+  },
   sameAs: ["https://www.upwork.com/freelancers/diegoaq"],
 };
 
-const TITLE = "Lumen Studio · Technical Product Catalogs & Spec Sheets in InDesign";
+const TITLE = "Diego Quinde — Clinical Psychologist Building AI for Mental Health";
 const DESCRIPTION =
-  "Lumen Studio (Diego Quinde) builds print- and digital-ready product catalogs, spec sheets, and submittals in Adobe InDesign — automated for speed and consistency, for lighting and industrial brands.";
+  "Clinical psychologist building AI for mental health: open-source evals for psychotherapy, a brief-therapy simulator, a game about peace conflicts — and Lumen Studio, technical documentation for lighting brands.";
 
 export const metadata: Metadata = {
   title: TITLE,

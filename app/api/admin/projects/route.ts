@@ -31,6 +31,6 @@ export async function POST(req: NextRequest) {
 
   const { data, error } = await insforge.database.from("projects").insert([body]);
   if (error) return dbError("projects.insert", error);
-  revalidatePath("/");
+  revalidatePath("/lumen");
   return NextResponse.json(data?.[0] ?? {}, { status: 201 });
 }
