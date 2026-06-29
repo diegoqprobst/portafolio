@@ -1,15 +1,40 @@
 import type { Metadata, Viewport } from "next";
-import { Nunito } from "next/font/google";
+import { Nunito, Fraunces, Hanken_Grotesk, JetBrains_Mono } from "next/font/google";
 import { Analytics } from "@vercel/analytics/react";
 import "./globals.css";
 
 // Self-hosted via next/font: sin round-trip a Google (mejor LCP + privacidad).
 // Nunito es variable → un solo archivo cubre todos los pesos 300–900.
+// Sigue alimentando /lumen y /admin (no se tocan en este cambio de base).
 const nunito = Nunito({
   subsets: ["latin"],
   display: "swap",
   variable: "--font-nunito",
   style: ["normal", "italic"],
+});
+
+// Sistema tipográfico de la raíz umbrella ("una mente encendida por dentro"):
+// pareja por eje de contraste, no por similitud. Fraunces = display serif
+// óptico y humano (psicología); Hanken Grotesk = cuerpo neutro legible;
+// JetBrains Mono = la textura técnica (el que construye IA). Variables CSS
+// consumidas solo bajo `.umbra` en app/umbrella.css.
+const fraunces = Fraunces({
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-fraunces",
+  style: ["normal", "italic"],
+});
+
+const hanken = Hanken_Grotesk({
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-hanken",
+});
+
+const jbmono = JetBrains_Mono({
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-jbmono",
 });
 
 // JSON-LD del dominio: una Person multi-rol (psicólogo clínico construyendo IA
@@ -58,8 +83,8 @@ export const metadata: Metadata = {
     type: "website",
   },
   icons: {
-    // Lumen mark — amber radiant dot.
-    icon: "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='34' fill='%23F5A623'/></svg>",
+    // Colibrí de marca (manual de marca), trazo engrosado para que lea a 16px.
+    icon: "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 -9 114 114' fill='none' stroke='%23F5A623' stroke-width='5.5' stroke-linecap='round' stroke-linejoin='round'><path d='M6 42 L42 48'/><path d='M42 48 Q52 38 64 44 Q78 51 76 62 Q73 70 60 68 Q47 65 42 48 Z'/><circle cx='49' cy='46' r='2.4' fill='%23F5A623' stroke='none'/><path d='M60 50 Q66 24 96 16 Q78 38 68 56'/><path d='M76 62 L106 64'/><path d='M76 64 L108 74'/><path d='M74 66 L100 80'/></svg>",
   },
 };
 
@@ -75,7 +100,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={nunito.variable}>
+    <html
+      lang="en"
+      className={`${nunito.variable} ${fraunces.variable} ${hanken.variable} ${jbmono.variable}`}
+    >
       <head>
         <script
           type="application/ld+json"

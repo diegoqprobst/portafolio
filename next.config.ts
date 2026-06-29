@@ -28,11 +28,19 @@ import type { NextConfig } from "next";
 //   - img-src https: data: blob:          → project images come from InsForge storage.
 //   - object-src 'none', base-uri 'self', form-action 'self', frame-ancestors 'none'
 //     → kill plugin embeds, <base> hijacking, form exfiltration, and clickjacking.
-// No 'unsafe-eval' (React/Framer Motion don't need it in prod). If a stricter
-// script policy is ever wanted, it requires moving to dynamic rendering + nonces.
+// No 'unsafe-eval' in production (React/Framer Motion don't need it). If a
+// stricter script policy is ever wanted, it requires moving to dynamic
+// rendering + nonces.
+//
+// Dev only: Next's HMR / React Refresh evaluate code via eval(), so without
+// 'unsafe-eval' the dev server serves HTML that never hydrates (the client
+// bundle is silently blocked). We relax script-src for `next dev` exclusively;
+// the production header stays exactly as above.
+const isDev = process.env.NODE_ENV !== "production";
+
 const csp = [
   "default-src 'self'",
-  "script-src 'self' 'unsafe-inline'",
+  `script-src 'self' 'unsafe-inline'${isDev ? " 'unsafe-eval'" : ""}`,
   "style-src 'self' 'unsafe-inline'",
   "img-src 'self' data: blob: https:",
   "font-src 'self'",

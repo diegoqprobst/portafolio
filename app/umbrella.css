@@ -1,0 +1,629 @@
+/* ============================================================================
+   UMBRELLA — sistema de diseño de la raíz (diegoquinde.com)
+   Concepto: "una mente encendida por dentro". Superficie drenched de tinta
+   índigo + una luz cálida que la habita; cada mundo (psicoterapia·IA / estudio /
+   juego) tiene su luz de firma sobre la misma tinta constante.
+
+   Scope: todo vive bajo `.umbra` para no filtrarse a /lumen ni /admin (que
+   siguen con globals.css). Los tokens `--u-*` se declaran en :root a propósito,
+   listos para que el resto del sitio los herede en una pasada futura.
+   ========================================================================== */
+
+:root {
+  /* — Tinta drenched (índigo profundo, claramente de color, no negro) — */
+  --u-ink-0: oklch(13% 0.045 278);
+  --u-ink-1: oklch(18.5% 0.055 278);
+  --u-ink-2: oklch(23% 0.062 277);
+
+  /* — Hairlines (separación sin cards) — */
+  --u-hair:   oklch(82% 0.04 280 / 0.13);
+  --u-hair-2: oklch(82% 0.04 280 / 0.26);
+
+  /* — Texto: blanco cálido para sentirse humano, no frío.
+       Contrastes verificados sobre --u-ink-1 (≥ 4.5:1 en cuerpo). — */
+  --u-paper:      oklch(96% 0.01 85);    /* ~14:1  títulos / cuerpo fuerte */
+  --u-paper-dim:  oklch(80% 0.022 280);  /* ~8:1   cuerpo                  */
+  --u-paper-mute: oklch(68.5% 0.03 280); /* ~5.6:1 secundario / meta       */
+
+  /* — Las luces. Una cálida primaria + una firma por mundo. — */
+  --u-light:      oklch(82% 0.15 75);    /* ámbar: la chispa, Lumen, lo humano */
+  --u-light-deep: oklch(72% 0.15 62);
+  --u-ai:         oklch(84% 0.12 200);   /* fósforo frío: la máquina         */
+  --u-play:       oklch(74% 0.19 8);     /* coral: el juego                  */
+
+  /* Luz del mundo en foco (la anima el observer de scroll). */
+  --u-glow: var(--u-light);
+
+  /* — Radios contenidos (cards topan en 12–16px; nada de 32px) — */
+  --u-r: 14px;
+
+  /* — Motion — */
+  --u-ease: cubic-bezier(0.16, 1, 0.3, 1);
+
+  --u-maxw: 1080px;
+  --u-nav-h: 76px;
+}
+
+/* La raíz umbrella NO usa el scroll-snap de la historia de Lumen (definido en
+   globals.css sobre `html`): aquí no hay `.scene` a las que anclar, así que solo
+   produce jank. Lo neutralizamos en cualquier página que monte `.umbra`. */
+html:has(.umbra) { scroll-snap-type: none; }
+
+/* ── Raíz ──────────────────────────────────────────────────────────────── */
+.umbra {
+  position: relative;
+  min-height: 100vh;
+  background: var(--u-ink-1);
+  color: var(--u-paper);
+  font-family: var(--font-hanken), system-ui, sans-serif;
+  font-size: 17px;
+  line-height: 1.6;
+  letter-spacing: -0.005em;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* Grano: materializa la tinta para que el drench no se lea plano/muerto. */
+.umbra::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0.045;
+  mix-blend-mode: soft-light;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* Aura: la luz que sigue al cursor + se tiñe del mundo en foco.
+   --u-mx/--u-my las setea JS (rAF). Crossfade del color via transition. */
+.u-aura {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(
+      40vw 40vw at var(--u-mx, 50%) var(--u-my, 16%),
+      oklch(from var(--u-glow) l c h / 0.16),
+      transparent 60%
+    ),
+    radial-gradient(
+      55vw 50vw at 92% 4%,
+      oklch(from var(--u-glow) l c h / 0.10),
+      transparent 55%
+    );
+  transition: background 1.2s var(--u-ease);
+}
+
+.umbra > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* Tipografía de marca */
+.u-serif { font-family: var(--font-fraunces), Georgia, serif; font-optical-sizing: auto; }
+.u-mono {
+  font-family: var(--font-jbmono), ui-monospace, monospace;
+  font-size: 0.72rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+.u-lit { color: var(--u-light); }
+
+/* ── Nav ───────────────────────────────────────────────────────────────── */
+.u-nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 50;
+  height: var(--u-nav-h);
+  display: flex;
+  align-items: center;
+  background: oklch(18.5% 0.055 278 / 0.72);
+  backdrop-filter: blur(18px) saturate(140%);
+  -webkit-backdrop-filter: blur(18px) saturate(140%);
+  border-bottom: 1px solid var(--u-hair);
+}
+.u-nav-inner {
+  max-width: var(--u-maxw);
+  width: 100%;
+  margin: 0 auto;
+  padding: 0 28px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+}
+.u-mark {
+  display: inline-flex;
+  align-items: center;
+  gap: 11px;
+  font-family: var(--font-fraunces), serif;
+  font-size: 1.18rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: var(--u-paper);
+}
+/* El colibrí de marca, teñido con la luz del tema (currentColor → ámbar) y con
+   un halo suave que lo encaja en el concepto "una mente encendida por dentro". */
+.u-colibri {
+  height: 26px;
+  width: auto;
+  color: var(--u-light);
+  flex-shrink: 0;
+  filter: drop-shadow(0 0 7px oklch(from var(--u-light) l c h / 0.45));
+}
+.u-colibri--sm { height: 15px; filter: none; }
+.u-footer-brand { display: inline-flex; align-items: center; gap: 11px; }
+.u-nav-links {
+  display: flex;
+  align-items: center;
+  gap: 26px;
+}
+.u-nav-link {
+  font-family: var(--font-jbmono), monospace;
+  font-size: 0.7rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--u-paper-mute);
+  transition: color 0.25s var(--u-ease);
+}
+.u-nav-link:hover { color: var(--u-paper); }
+.u-nav-link--lumen { color: var(--u-light); }
+.u-nav-link--lumen:hover { color: oklch(88% 0.13 78); }
+
+/* Lang toggle (reusa el markup de globals; re-tematizado al índigo) */
+.umbra .lang-toggle { gap: 6px; color: var(--u-paper-mute); }
+.umbra .lang-btn {
+  font-family: var(--font-jbmono), monospace;
+  font-size: 0.68rem; letter-spacing: 0.12em;
+  color: var(--u-paper-mute);
+  transition: color 0.25s var(--u-ease);
+}
+.umbra .lang-btn:hover,
+.umbra .lang-btn.active { color: var(--u-light); }
+.umbra .lang-sep { color: var(--u-hair-2); }
+
+/* ── Layout base ───────────────────────────────────────────────────────── */
+.u-main { max-width: var(--u-maxw); margin: 0 auto; padding: 0 28px; }
+
+/* ── Hero ──────────────────────────────────────────────────────────────── */
+.u-hero {
+  position: relative;
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: calc(var(--u-nav-h) + 64px) 0 80px;
+}
+/* El orbe: "la mente encendida" — un campo de luz que respira detrás del hero. */
+.u-orb {
+  position: absolute;
+  top: 50%; right: -8%;
+  translate: 0 -50%;
+  width: min(560px, 70vw);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: -1;
+  background: radial-gradient(
+    circle,
+    oklch(from var(--u-light) l c h / 0.22) 0%,
+    oklch(from var(--u-ai) l c h / 0.10) 38%,
+    transparent 68%
+  );
+  filter: blur(34px);
+  animation: u-breathe 9s ease-in-out infinite;
+}
+@keyframes u-breathe {
+  0%, 100% { transform: scale(1); opacity: 0.9; }
+  50%      { transform: scale(1.08); opacity: 1; }
+}
+.u-hero-kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  color: var(--u-paper-mute);
+  margin-bottom: 30px;
+}
+.u-hero-kicker::after {
+  content: "";
+  width: 56px; height: 1px;
+  background: var(--u-hair-2);
+}
+.u-hero-h1 {
+  font-family: var(--font-fraunces), serif;
+  font-optical-sizing: auto;
+  font-weight: 340;
+  font-size: clamp(2.7rem, 7.4vw, 5.7rem);
+  line-height: 1.02;
+  letter-spacing: -0.025em;
+  max-width: 16ch;
+  text-wrap: balance;
+  margin-bottom: 34px;
+}
+.u-hero-h1 em {
+  font-style: italic;
+  font-weight: 400;
+  color: var(--u-light);
+}
+.u-hero-sub {
+  font-size: clamp(1.06rem, 1.5vw, 1.28rem);
+  font-weight: 360;
+  line-height: 1.62;
+  color: var(--u-paper-dim);
+  max-width: 58ch;
+}
+.u-hero-sub strong { color: var(--u-paper); font-weight: 560; }
+.u-hero-scroll {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 52px;
+  color: var(--u-paper-mute);
+  transition: color 0.25s var(--u-ease), gap 0.25s var(--u-ease);
+}
+.u-hero-scroll:hover { color: var(--u-light); gap: 15px; }
+.u-hero-scroll .u-arrow { animation: u-bob 1.9s ease-in-out infinite; }
+@keyframes u-bob { 0%,100% { transform: translateY(0); } 50% { transform: translateY(4px); } }
+
+/* ── Tesis / throughline ───────────────────────────────────────────────── */
+.u-thesis {
+  padding: clamp(96px, 16vh, 200px) 0;
+  border-top: 1px solid var(--u-hair);
+}
+.u-thesis-p {
+  font-family: var(--font-fraunces), serif;
+  font-optical-sizing: auto;
+  font-weight: 330;
+  font-size: clamp(1.8rem, 4.2vw, 3.4rem);
+  line-height: 1.18;
+  letter-spacing: -0.02em;
+  max-width: 22ch;
+  text-wrap: balance;
+}
+.u-thesis-p em { font-style: italic; color: var(--u-light); }
+.u-thesis-note {
+  margin-top: 34px;
+  max-width: 52ch;
+  color: var(--u-paper-mute);
+  font-size: 1.02rem;
+  line-height: 1.6;
+}
+
+/* ── Mundos (el trabajo, sin card grid) ────────────────────────────────── */
+.u-worlds { display: flex; flex-direction: column; }
+.u-world {
+  position: relative;
+  padding: clamp(64px, 11vh, 128px) 0;
+  border-top: 1px solid var(--u-hair);
+  display: grid;
+  grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
+  gap: clamp(28px, 6vw, 80px);
+}
+/* Borde-luz de la firma del mundo (no es una card, es luz en el canto). */
+.u-world::before {
+  content: "";
+  position: absolute;
+  left: -28px; top: -1px;
+  width: 3px; height: 64px;
+  background: linear-gradient(var(--u-self, var(--u-light)), transparent);
+  opacity: 0.9;
+  border-radius: 2px;
+}
+.u-world-aside { display: flex; flex-direction: column; gap: 18px; }
+/* El colibrí como emblema del mundo, teñido con su propia luz (--u-self). */
+.u-world-colibri {
+  height: 26px;
+  width: auto;
+  color: var(--u-self, var(--u-light));
+  opacity: 0.92;
+  margin-bottom: -2px;
+  filter: drop-shadow(0 0 9px oklch(from var(--u-self, var(--u-light)) l c h / 0.4));
+}
+.u-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  width: fit-content;
+  color: var(--u-self, var(--u-light));
+}
+.u-tag svg { width: 15px; height: 15px; }
+.u-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  width: fit-content;
+  font-family: var(--font-jbmono), monospace;
+  font-size: 0.66rem;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  color: var(--u-paper-mute);
+}
+.u-status-dot {
+  width: 7px; height: 7px; border-radius: 50%;
+  background: var(--u-self, var(--u-light));
+}
+.u-status-dot--live { animation: u-pulse 2.2s ease infinite; }
+@keyframes u-pulse {
+  0%,100% { box-shadow: 0 0 0 0 oklch(from var(--u-self) l c h / 0.55); }
+  55%     { box-shadow: 0 0 0 6px oklch(from var(--u-self) l c h / 0); }
+}
+.u-world-title {
+  font-family: var(--font-fraunces), serif;
+  font-optical-sizing: auto;
+  font-weight: 380;
+  font-size: clamp(1.7rem, 3vw, 2.5rem);
+  line-height: 1.08;
+  letter-spacing: -0.02em;
+  color: var(--u-paper);
+}
+.u-world-body { display: flex; flex-direction: column; }
+.u-world-desc {
+  font-size: 1.06rem;
+  line-height: 1.66;
+  color: var(--u-paper-dim);
+  max-width: 60ch;
+}
+.u-world-meta {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  margin-top: 24px;
+  font-family: var(--font-jbmono), monospace;
+  font-size: 0.7rem;
+  letter-spacing: 0.06em;
+  color: var(--u-paper-mute);
+}
+.u-world-meta svg { width: 15px; height: 15px; color: var(--u-self, var(--u-light)); }
+.u-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px 26px;
+  margin-top: 30px;
+}
+.u-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 560;
+  font-size: 0.96rem;
+  color: var(--u-paper);
+  transition: gap 0.25s var(--u-ease), color 0.25s var(--u-ease);
+}
+.u-link svg { width: 16px; height: 16px; }
+.u-link--primary { color: var(--u-self, var(--u-light)); }
+.u-link:hover { gap: 12px; color: var(--u-self, var(--u-light)); }
+.u-link--muted { color: var(--u-paper-mute); font-weight: 500; }
+.u-link--muted:hover { color: var(--u-paper); }
+
+/* El flagship respira más y trae un campo de luz interior. */
+.u-world--flagship {
+  grid-template-columns: 1fr;
+  gap: clamp(28px, 4vw, 48px);
+  padding-top: clamp(76px, 13vh, 150px);
+}
+.u-world--flagship .u-world-title {
+  font-size: clamp(2.1rem, 5vw, 3.6rem);
+  max-width: 18ch;
+}
+.u-world--flagship .u-world-desc { font-size: 1.14rem; max-width: 64ch; }
+.u-world--flagship::after {
+  content: "";
+  position: absolute;
+  inset: 0 -40px;
+  z-index: -1;
+  background: radial-gradient(
+    70% 60% at 78% 30%,
+    oklch(from var(--u-self) l c h / 0.07),
+    transparent 70%
+  );
+  pointer-events: none;
+}
+.u-world--flagship .u-world-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+/* La ficha técnica de Lumen (guiño a la documentación de iluminación). */
+.u-spec {
+  margin-top: 28px;
+  border: 1px solid var(--u-hair);
+  border-radius: var(--u-r);
+  overflow: hidden;
+  max-width: 360px;
+}
+.u-spec-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 11px 16px;
+  font-family: var(--font-jbmono), monospace;
+  font-size: 0.72rem;
+  letter-spacing: 0.02em;
+}
+.u-spec-row + .u-spec-row { border-top: 1px solid var(--u-hair); }
+.u-spec-k { color: var(--u-paper-mute); text-transform: uppercase; letter-spacing: 0.1em; }
+.u-spec-v { color: var(--u-paper); }
+
+/* ── Roadmap ───────────────────────────────────────────────────────────── */
+.u-roadmap { padding: clamp(80px, 13vh, 150px) 0; border-top: 1px solid var(--u-hair); }
+.u-section-head { margin-bottom: 56px; max-width: 52ch; }
+.u-section-kicker { color: var(--u-light); margin-bottom: 18px; display: block; }
+.u-section-title {
+  font-family: var(--font-fraunces), serif;
+  font-optical-sizing: auto;
+  font-weight: 360;
+  font-size: clamp(1.9rem, 3.6vw, 2.9rem);
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  margin-bottom: 16px;
+}
+.u-section-sub { color: var(--u-paper-mute); font-size: 1.04rem; line-height: 1.62; }
+.u-timeline { display: flex; flex-direction: column; }
+.u-milestone {
+  display: grid;
+  grid-template-columns: 150px 1fr;
+  gap: clamp(20px, 5vw, 56px);
+  padding: 28px 0;
+}
+.u-milestone + .u-milestone { border-top: 1px solid var(--u-hair); }
+.u-milestone-when {
+  font-family: var(--font-jbmono), monospace;
+  font-size: 0.74rem;
+  letter-spacing: 0.08em;
+  color: var(--u-light);
+  padding-top: 4px;
+}
+.u-milestone-t {
+  font-family: var(--font-fraunces), serif;
+  font-weight: 460;
+  font-size: 1.22rem;
+  letter-spacing: -0.01em;
+  color: var(--u-paper);
+  margin-bottom: 8px;
+}
+.u-milestone-d { color: var(--u-paper-dim); font-size: 0.98rem; line-height: 1.62; max-width: 64ch; }
+.u-writing {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 40px;
+  color: var(--u-paper-mute);
+  font-size: 0.94rem;
+}
+.u-writing svg { width: 16px; height: 16px; color: var(--u-light); }
+
+/* globals.css define reglas por #id (#contact, #about…) para la home de Lumen.
+   Nuestro #contact colisiona y heredaría `background: var(--bg2)` (una caja
+   oscura). Neutralizamos cualquier fondo de id global sobre la umbrella. */
+.umbra #contact,
+.umbra #work,
+.umbra #roadmap { background: transparent; }
+
+/* ── Contacto (cierre editorial, sin caja centrada) ────────────────────── */
+.u-contact {
+  position: relative;
+  padding: clamp(96px, 18vh, 210px) 0;
+  border-top: 1px solid var(--u-hair);
+}
+.u-contact::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: radial-gradient(60% 80% at 20% 60%, oklch(from var(--u-light) l c h / 0.10), transparent 65%);
+  pointer-events: none;
+}
+.u-contact-h {
+  font-family: var(--font-fraunces), serif;
+  font-optical-sizing: auto;
+  font-weight: 330;
+  font-size: clamp(2.4rem, 6vw, 4.6rem);
+  line-height: 1.04;
+  letter-spacing: -0.025em;
+  margin-bottom: 24px;
+}
+.u-contact-h em { font-style: italic; color: var(--u-light); }
+.u-contact-p { color: var(--u-paper-dim); font-size: 1.1rem; line-height: 1.6; max-width: 56ch; margin-bottom: 44px; }
+.u-mailto {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 4px;
+  font-family: var(--font-fraunces), serif;
+  font-size: clamp(1.4rem, 3.4vw, 2.3rem);
+  font-weight: 440;
+  letter-spacing: -0.02em;
+  color: var(--u-light);
+  background-image: linear-gradient(var(--u-light), var(--u-light));
+  background-size: 0% 2px;
+  background-repeat: no-repeat;
+  background-position: 0 100%;
+  transition: background-size 0.45s var(--u-ease);
+}
+.u-mailto:hover { background-size: 100% 2px; }
+.u-contact-alt {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  margin-top: 28px;
+  color: var(--u-paper-mute);
+  font-size: 0.96rem;
+  transition: color 0.25s var(--u-ease);
+}
+.u-contact-alt:hover { color: var(--u-light); }
+.u-contact-alt svg { width: 16px; height: 16px; }
+
+/* ── Footer ────────────────────────────────────────────────────────────── */
+/* `display:block` + `background:transparent` revierten la regla global
+   `footer{display:flex;justify-content:center;background:var(--bg)}` de
+   globals.css, que centraba el contenido y le ponía una banda oscura. */
+.u-footer {
+  display: block;
+  background: transparent;
+  border-top: 1px solid var(--u-hair);
+  padding: 32px 0 44px;
+}
+.u-footer-inner {
+  max-width: var(--u-maxw);
+  margin: 0 auto;
+  padding: 0 28px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  font-family: var(--font-jbmono), monospace;
+  font-size: 0.68rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--u-paper-mute);
+}
+.u-footer-inner a { transition: color 0.25s var(--u-ease); }
+.u-footer-inner a:hover { color: var(--u-light); }
+
+/* ── Reveal (mejora un default ya visible; nunca esconde por defecto) ───── */
+.umbra.js .u-reveal {
+  opacity: 0;
+  transform: translateY(26px);
+  transition: opacity 0.8s var(--u-ease), transform 0.8s var(--u-ease);
+}
+.umbra.js .u-reveal.in { opacity: 1; transform: none; }
+
+/* ── Responsive ────────────────────────────────────────────────────────── */
+@media (max-width: 860px) {
+  .u-world,
+  .u-world--flagship { grid-template-columns: 1fr; gap: 24px; }
+  .u-milestone { grid-template-columns: 1fr; gap: 8px; }
+  .u-nav-links { gap: 18px; }
+  .u-nav-link { display: none; }
+  .u-nav-link--lumen { display: inline; white-space: nowrap; }
+  .u-mark { font-size: 1.05rem; white-space: nowrap; }
+  .u-main, .u-footer-inner, .u-nav-inner { padding-left: 20px; padding-right: 20px; }
+  .u-world::before { left: -8px; }
+}
+
+@media (max-width: 560px) {
+  .u-mark { font-size: 0.98rem; gap: 8px; }
+  .u-spark { width: 9px; height: 9px; }
+  .u-nav-links { gap: 13px; }
+  .u-nav-link--lumen { font-size: 0.6rem; letter-spacing: 0.1em; }
+  .umbra .lang-btn { font-size: 0.62rem; }
+  /* La línea del kicker estorba cuando el texto ya envuelve en móvil. */
+  .u-hero-kicker { flex-wrap: wrap; }
+  .u-hero-kicker::after { display: none; }
+}
+
+/* ── Menos movimiento: la luz se queda quieta, los reveals son instantáneos ── */
+@media (prefers-reduced-motion: reduce) {
+  .u-orb { animation: none; }
+  .u-aura { transition: none; }
+  .u-hero-scroll .u-arrow,
+  .u-status-dot--live { animation: none; }
+  .umbra.js .u-reveal { opacity: 1; transform: none; transition: none; }
+  .u-mailto { transition: none; }
+}
