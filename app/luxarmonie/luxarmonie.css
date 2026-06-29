@@ -1,91 +1,124 @@
+/* Caso de estudio Luxarmonie — tema claro editorial Lumen (paper + ámbar).
+   La página combina clases propias (.step-card…) con utilidades Tailwind
+   (text-white, text-electric…). Convertimos ambas dentro del scope
+   `.luxarmonie-body` para no tocar el JSX. Paleta y tipos = sistema Lumen. */
+
 .luxarmonie-body {
-  background: #0d1117;
-  color: white;
+  background: oklch(96.5% 0.007 78);
+  color: oklch(26% 0.018 55);
+  font-family: var(--font-hanken), system-ui, sans-serif;
   min-height: 100vh;
+}
+
+/* Display en Fraunces, peso editorial (sobre el font-black de las utilidades). */
+.luxarmonie-body h1,
+.luxarmonie-body h2,
+.luxarmonie-body h3 {
+  font-family: var(--font-fraunces), Georgia, serif;
+  font-weight: 500;
+  letter-spacing: -0.015em;
 }
 
 .luxarmonie-navbar {
   position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
+  top: 0; left: 0; right: 0;
   z-index: 50;
-  background: rgba(13, 17, 23, 0.85);
+  background: oklch(96.5% 0.007 78 / 0.85);
   backdrop-filter: blur(20px);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  border-bottom: 1px solid oklch(30% 0.02 60 / 0.12);
 }
 
-/* Shared case-study utilities (kept self-contained so the page needs no
-   cross-route CSS import; definitions match the Saratoga case study). */
+/* ── Clases propias del caso ──────────────────────────────────────────── */
 .step-card {
-  background: rgba(22, 27, 34, 0.6);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 24px;
+  background: oklch(30% 0.02 60 / 0.03);
+  border: 1px solid oklch(30% 0.02 60 / 0.12);
+  border-radius: 14px;
   padding: 2rem;
   transition: border-color 0.3s ease;
 }
-.step-card:hover {
-  border-color: rgba(30, 144, 255, 0.3);
-}
+.step-card:hover { border-color: oklch(52% 0.17 50 / 0.45); }
 
 .step-number {
-  width: 48px;
-  height: 48px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: rgba(30, 144, 255, 0.1);
-  border: 1px solid rgba(30, 144, 255, 0.3);
+  width: 48px; height: 48px;
+  display: flex; align-items: center; justify-content: center;
+  background: oklch(52% 0.17 50 / 0.1);
+  border: 1px solid oklch(52% 0.17 50 / 0.3);
   border-radius: 50%;
-  font-size: 1.1rem;
-  font-weight: 900;
-  color: #1e90ff;
+  font-family: var(--font-jbmono), monospace;
+  font-size: 1rem; font-weight: 700;
+  color: oklch(52% 0.17 50);
   flex-shrink: 0;
 }
 
 .result-item {
-  display: flex;
-  align-items: flex-start;
-  gap: 12px;
+  display: flex; align-items: flex-start; gap: 12px;
   padding: 1.25rem 1.5rem;
-  background: rgba(34, 197, 94, 0.05);
-  border: 1px solid rgba(34, 197, 94, 0.15);
-  border-radius: 16px;
+  background: oklch(50% 0.15 155 / 0.07);
+  border: 1px solid oklch(50% 0.15 155 / 0.22);
+  border-radius: 14px;
 }
 
 .tool-chip {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
+  display: inline-flex; align-items: center; gap: 6px;
   padding: 6px 14px;
-  background: rgba(30, 144, 255, 0.08);
-  border: 1px solid rgba(30, 144, 255, 0.2);
+  background: oklch(52% 0.17 50 / 0.08);
+  border: 1px solid oklch(52% 0.17 50 / 0.22);
   border-radius: 999px;
-  font-size: 0.75rem;
-  font-weight: 700;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.8);
+  font-family: var(--font-jbmono), monospace;
+  font-size: 0.72rem; font-weight: 500;
+  letter-spacing: 0.08em; text-transform: uppercase;
+  color: oklch(44% 0.02 55);
 }
 
 .divider {
-  width: 64px;
-  height: 3px;
-  background: #1e90ff;
+  width: 64px; height: 3px;
+  background: oklch(52% 0.17 50);
   border-radius: 2px;
   margin-bottom: 1.5rem;
 }
 
-/* Testimonial block — Luxarmonie has a real client quote, so we feature it. */
 .testimonial-card {
-  background: rgba(30, 144, 255, 0.05);
-  border: 1px solid rgba(30, 144, 255, 0.18);
-  border-radius: 24px;
+  background: oklch(52% 0.17 50 / 0.06);
+  border: 1px solid oklch(52% 0.17 50 / 0.2);
+  border-radius: 16px;
   padding: 2.5rem;
 }
 .testimonial-quote {
-  font-size: 1.35rem;
-  line-height: 1.6;
-  font-weight: 300;
-  color: rgba(255, 255, 255, 0.92);
+  font-family: var(--font-fraunces), Georgia, serif;
+  font-size: 1.4rem; line-height: 1.55; font-weight: 400;
+  letter-spacing: -0.01em;
+  color: oklch(30% 0.018 55);
+}
+
+/* ── Override de utilidades Tailwind dentro del scope (mayor especificidad) ─ */
+.luxarmonie-body .text-white { color: oklch(26% 0.018 55); }
+.luxarmonie-body .text-gray-400 { color: oklch(44% 0.02 55); }
+.luxarmonie-body .text-gray-500 { color: oklch(50% 0.02 55); }
+.luxarmonie-body .text-gray-700 { color: oklch(60% 0.02 55); }
+.luxarmonie-body .text-electric { color: oklch(52% 0.17 50); }
+.luxarmonie-body .text-green-400 { color: oklch(48% 0.15 155); }
+.luxarmonie-body .text-red-400 { color: oklch(52% 0.19 25); }
+
+.luxarmonie-body .border-white\/5 { border-color: oklch(30% 0.02 60 / 0.08); }
+.luxarmonie-body .border-white\/10 { border-color: oklch(30% 0.02 60 / 0.12); }
+.luxarmonie-body .border-white\/20 { border-color: oklch(30% 0.02 60 / 0.2); }
+.luxarmonie-body .border-electric { border-color: oklch(52% 0.17 50); }
+
+.luxarmonie-body .bg-white\/5 { background-color: oklch(30% 0.02 60 / 0.04); }
+.luxarmonie-body .bg-electric { background-color: oklch(52% 0.17 50); }
+.luxarmonie-body .bg-electric\/5 { background-color: oklch(52% 0.17 50 / 0.06); }
+.luxarmonie-body .bg-electric\/10 { background-color: oklch(52% 0.17 50 / 0.1); }
+.luxarmonie-body .bg-blue-600,
+.luxarmonie-body .bg-blue-500 { background-color: oklch(52% 0.17 50); }
+
+/* Botones de acento ámbar → texto papel para contraste. */
+.luxarmonie-body .bg-electric,
+.luxarmonie-body .bg-blue-600,
+.luxarmonie-body .bg-blue-500 { color: oklch(96.5% 0.007 78); }
+
+/* gradient-text (logo + palabra destacada del título) → ámbar sólido. */
+.luxarmonie-body .gradient-text {
+  background: none;
+  -webkit-text-fill-color: oklch(52% 0.17 50);
+  color: oklch(52% 0.17 50);
 }

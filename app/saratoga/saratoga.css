@@ -1,75 +1,108 @@
+/* Caso de estudio Saratoga — tema claro editorial Lumen (paper + ámbar).
+   Mismo enfoque que Luxarmonie: convierte clases propias + utilidades Tailwind
+   dentro del scope `.saratoga-body`, sin tocar el JSX. */
+
 .saratoga-body {
-  background: #0d1117;
-  color: white;
+  background: oklch(96.5% 0.007 78);
+  color: oklch(26% 0.018 55);
+  font-family: var(--font-hanken), system-ui, sans-serif;
   min-height: 100vh;
+}
+
+.saratoga-body h1,
+.saratoga-body h2,
+.saratoga-body h3 {
+  font-family: var(--font-fraunces), Georgia, serif;
+  font-weight: 500;
+  letter-spacing: -0.015em;
 }
 
 .saratoga-navbar {
   position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
+  top: 0; left: 0; right: 0;
   z-index: 50;
-  background: rgba(13, 17, 23, 0.85);
+  background: oklch(96.5% 0.007 78 / 0.85);
   backdrop-filter: blur(20px);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  border-bottom: 1px solid oklch(30% 0.02 60 / 0.12);
 }
 
+/* ── Clases propias del caso ──────────────────────────────────────────── */
 .step-card {
-  background: rgba(22, 27, 34, 0.6);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 24px;
+  background: oklch(30% 0.02 60 / 0.03);
+  border: 1px solid oklch(30% 0.02 60 / 0.12);
+  border-radius: 14px;
   padding: 2rem;
   transition: border-color 0.3s ease;
 }
-.step-card:hover {
-  border-color: rgba(30, 144, 255, 0.3);
-}
+.step-card:hover { border-color: oklch(52% 0.17 50 / 0.45); }
 
 .step-number {
-  width: 48px;
-  height: 48px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: rgba(30, 144, 255, 0.1);
-  border: 1px solid rgba(30, 144, 255, 0.3);
+  width: 48px; height: 48px;
+  display: flex; align-items: center; justify-content: center;
+  background: oklch(52% 0.17 50 / 0.1);
+  border: 1px solid oklch(52% 0.17 50 / 0.3);
   border-radius: 50%;
-  font-size: 1.1rem;
-  font-weight: 900;
-  color: #1e90ff;
+  font-family: var(--font-jbmono), monospace;
+  font-size: 1rem; font-weight: 700;
+  color: oklch(52% 0.17 50);
   flex-shrink: 0;
 }
 
 .result-item {
-  display: flex;
-  align-items: flex-start;
-  gap: 12px;
+  display: flex; align-items: flex-start; gap: 12px;
   padding: 1.25rem 1.5rem;
-  background: rgba(34, 197, 94, 0.05);
-  border: 1px solid rgba(34, 197, 94, 0.15);
-  border-radius: 16px;
+  background: oklch(50% 0.15 155 / 0.07);
+  border: 1px solid oklch(50% 0.15 155 / 0.22);
+  border-radius: 14px;
 }
 
 .tool-chip {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
+  display: inline-flex; align-items: center; gap: 6px;
   padding: 6px 14px;
-  background: rgba(30, 144, 255, 0.08);
-  border: 1px solid rgba(30, 144, 255, 0.2);
+  background: oklch(52% 0.17 50 / 0.08);
+  border: 1px solid oklch(52% 0.17 50 / 0.22);
   border-radius: 999px;
-  font-size: 0.75rem;
-  font-weight: 700;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.8);
+  font-family: var(--font-jbmono), monospace;
+  font-size: 0.72rem; font-weight: 500;
+  letter-spacing: 0.08em; text-transform: uppercase;
+  color: oklch(44% 0.02 55);
 }
 
 .divider {
-  width: 64px;
-  height: 3px;
-  background: #1e90ff;
+  width: 64px; height: 3px;
+  background: oklch(52% 0.17 50);
   border-radius: 2px;
   margin-bottom: 1.5rem;
+}
+
+/* ── Override de utilidades Tailwind dentro del scope ──────────────────── */
+.saratoga-body .text-white { color: oklch(26% 0.018 55); }
+.saratoga-body .text-gray-400 { color: oklch(44% 0.02 55); }
+.saratoga-body .text-gray-500 { color: oklch(50% 0.02 55); }
+.saratoga-body .text-gray-700 { color: oklch(60% 0.02 55); }
+.saratoga-body .text-electric { color: oklch(52% 0.17 50); }
+.saratoga-body .text-green-400 { color: oklch(48% 0.15 155); }
+.saratoga-body .text-red-400 { color: oklch(52% 0.19 25); }
+
+.saratoga-body .border-white\/5 { border-color: oklch(30% 0.02 60 / 0.08); }
+.saratoga-body .border-white\/10 { border-color: oklch(30% 0.02 60 / 0.12); }
+.saratoga-body .border-white\/20 { border-color: oklch(30% 0.02 60 / 0.2); }
+.saratoga-body .border-electric { border-color: oklch(52% 0.17 50); }
+
+.saratoga-body .bg-white\/5 { background-color: oklch(30% 0.02 60 / 0.04); }
+.saratoga-body .bg-electric { background-color: oklch(52% 0.17 50); }
+.saratoga-body .bg-electric\/5 { background-color: oklch(52% 0.17 50 / 0.06); }
+.saratoga-body .bg-electric\/10 { background-color: oklch(52% 0.17 50 / 0.1); }
+.saratoga-body .bg-blue-600,
+.saratoga-body .bg-blue-500 { background-color: oklch(52% 0.17 50); }
+
+.saratoga-body .bg-electric,
+.saratoga-body .bg-blue-600,
+.saratoga-body .bg-blue-500 { color: oklch(96.5% 0.007 78); }
+
+/* gradient-text (logo + palabra destacada) → ámbar sólido. */
+.saratoga-body .gradient-text {
+  background: none;
+  -webkit-text-fill-color: oklch(52% 0.17 50);
+  color: oklch(52% 0.17 50);
 }

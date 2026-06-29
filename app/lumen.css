@@ -1,0 +1,134 @@
+/* ============================================================================
+   LUMEN — tema claro editorial para /lumen y sus casos.
+   Lumen Studio es UNA línea de Diego (no su perfil), así que tiene identidad
+   propia: papel cálido + tinta oscura + ámbar de acento. Temáticamente apto
+   para un estudio de iluminación, y máximo contraste con la raíz índigo.
+
+   Estrategia: las 12 secciones de la home usan clases semánticas de globals.css
+   con tokens CSS (--bg, --text, --accent…). Sobrescribimos esos tokens dentro
+   del scope `.lumen` → recolorea y re-tipografía todo sin tocar el JSX. Más los
+   parches de los anti-patrones (eyebrow, side-stripe, over-round, gradient-text).
+   Mismo sistema tipográfico que la umbrella: Fraunces + Hanken + JetBrains Mono.
+   ========================================================================== */
+
+/* El fondo del <body> es global (oscuro). En las rutas Lumen lo ponemos papel
+   para que no asome tinta oscura en overscroll. */
+html:has(.lumen) body { background: oklch(96.5% 0.007 78); }
+
+.lumen {
+  /* — Superficie clara, paper cálido (evita el "cream AI" yéndose neutro) — */
+  --bg:       oklch(96.5% 0.007 78);
+  --bg2:      oklch(94% 0.009 78);
+  --bg3:      oklch(91.5% 0.012 78);
+  --surface:  oklch(30% 0.02 60 / 0.04);
+  --border:   oklch(30% 0.02 60 / 0.12);
+  --border2:  oklch(30% 0.02 60 / 0.20);
+
+  /* — Tinta oscura cálida (contrastes verificados sobre el paper) — */
+  --text:     oklch(26% 0.018 55);   /* ~12:1  títulos / cuerpo */
+  --muted:    oklch(44% 0.020 55);   /* ~6:1   secundario       */
+  --muted2:   oklch(48% 0.020 55);   /* ~5:1   labels pequeños  */
+
+  /* — Ámbar profundo: lee como texto sobre papel (no el ámbar claro del dark) — */
+  --accent:   oklch(52% 0.17 50);
+  --accent2:  oklch(52% 0.17 50);
+  --green:    oklch(50% 0.15 155);
+  --red:      oklch(52% 0.19 25);
+
+  /* — Radios contenidos (mata el over-round 24/32 → editorial) — */
+  --r-sm: 8px;
+  --r-md: 12px;
+  --r-lg: 14px;
+  --r-xl: 16px;
+
+  /* — Sistema tipográfico compartido — */
+  --font-display: var(--font-fraunces), Georgia, serif;
+  --font-body:    var(--font-hanken), system-ui, sans-serif;
+
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-body);
+}
+
+/* Display en Fraunces: peso editorial (no el 800 de Nunito) y tracking suave. */
+.lumen .hero-h1,
+.lumen .section-title,
+.lumen .metric-big .val,
+.lumen .metric-sm .val {
+  font-weight: 500;
+  letter-spacing: -0.015em;
+}
+.lumen .hero-h1 { font-optical-sizing: auto; }
+
+/* Eyebrow → kicker mono deliberado (no el all-caps-tracked reflejo de 2023). */
+.lumen .section-label,
+.lumen .hero-eyebrow,
+.lumen .story-eyebrow,
+.lumen .clients-label,
+.lumen .lead-magnet-pre {
+  font-family: var(--font-jbmono), ui-monospace, monospace;
+  font-weight: 500;
+  font-size: 0.7rem;
+  letter-spacing: 0.16em;
+  color: var(--accent);
+}
+
+/* Side-stripe del metric prohibido por impeccable → número en ámbar, sin franja. */
+.lumen .metric-big {
+  border-left: none;
+  border-radius: var(--r-lg);
+}
+.lumen .metric-big .val { color: var(--accent); }
+
+/* gradient-text → color sólido (ban). */
+.lumen .gradient-text {
+  background: none;
+  -webkit-text-fill-color: currentColor;
+  color: var(--accent);
+}
+
+/* Glows del hero pensados para fondo oscuro: en claro los volvemos un cálido
+   tenue (sumar luz sobre papel se ve sucio). */
+.lumen .hero-glow-a {
+  background: radial-gradient(circle, oklch(72% 0.15 55 / 0.10) 0%, transparent 65%);
+}
+.lumen .hero-glow-b {
+  background: radial-gradient(circle, oklch(72% 0.15 55 / 0.07) 0%, transparent 65%);
+}
+
+/* Inputs de formulario: tinta oscura sobre paper (estaban en blanco hardcodeado). */
+.lumen .input,
+.lumen .lead-form input,
+.lumen .contact-form input,
+.lumen .contact-form select,
+.lumen .contact-form textarea {
+  color: var(--text);
+  background: oklch(100% 0 0 / 0.5);
+  border-color: var(--border2);
+}
+.lumen .input::placeholder,
+.lumen .lead-form input::placeholder,
+.lumen .contact-form input::placeholder,
+.lumen .contact-form textarea::placeholder { color: var(--muted2); }
+.lumen .input:focus,
+.lumen .lead-form input:focus,
+.lumen .contact-form input:focus,
+.lumen .contact-form select:focus,
+.lumen .contact-form textarea:focus { border-color: var(--accent); }
+
+/* La maqueta de ficha técnica (.frag*): barras blancas → tinta, para que el
+   "documento" se lea sobre el paper. La sombra dura se ablanda. */
+.lumen .frag { box-shadow: 0 12px 36px oklch(30% 0.02 60 / 0.12); }
+.lumen .frag-rows span { background: oklch(30% 0.02 60 / 0.12); }
+.lumen .frag-rows span:nth-child(odd) { background: oklch(30% 0.02 60 / 0.22); }
+.lumen .frag-band { background: oklch(30% 0.02 60 / 0.20); }
+.lumen .frag-line { background: oklch(30% 0.02 60 / 0.12); }
+.lumen .frag-img { background: oklch(30% 0.02 60 / 0.07); }
+
+/* btn-primary: ámbar profundo con texto papel (el #0A0C10 hardcodeado sería
+   tinta-sobre-ámbar oscuro, bien, pero el papel da más contraste de marca). */
+.lumen .btn-primary { color: var(--bg); }
+
+/* Nav: el fondo oscuro hardcodeado (rgba(10,12,16,.82)) → glass de papel. */
+.lumen .nav { background: oklch(96.5% 0.007 78 / 0.82); }
+.lumen .nav-cta { color: var(--bg); }

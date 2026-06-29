@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import "@/app/lumen.css";
 import type { HomeContent } from "@/lib/home-content";
 import { DEFAULT_METRICS, DEFAULT_SERVICES, DEFAULT_ABOUT } from "@/lib/home-defaults";
 import Navbar from "@/components/home/sections/Navbar";
@@ -136,7 +137,7 @@ export default function HomeClient({ content }: { content?: HomeContent | null }
   }
 
   return (
-    <>
+    <div className="lumen">
       <Navbar
         lang={lang}
         setLangState={setLangState}
@@ -162,6 +163,6 @@ export default function HomeClient({ content }: { content?: HomeContent | null }
       <Stack />
       <Contact handleContactSubmit={handleContactSubmit} contactStatus={contactStatus} />
       <Footer />
-    </>
+    </div>
   );
 }
