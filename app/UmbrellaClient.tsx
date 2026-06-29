@@ -12,6 +12,7 @@ import {
   Mail,
   PenLine,
 } from "lucide-react";
+import NeuralField from "./NeuralField";
 import "./umbrella.css";
 
 // Raíz umbrella de Diego — "una mente encendida por dentro".
@@ -173,6 +174,7 @@ export default function UmbrellaClient() {
   return (
     <div className="umbra" ref={rootRef} id="top">
       <div className="u-aura" aria-hidden="true" />
+      <NeuralField />
 
       {/* ── Nav ── */}
       <nav className="u-nav">
@@ -496,10 +498,10 @@ export default function UmbrellaClient() {
         <section id="contact" className="u-contact scroll-mt-28">
           <h2 className="u-contact-h u-reveal">
             <span data-en="">
-              Let&apos;s <em>talk</em>.
+              Let&apos;s <em>talk.</em>
             </span>
             <span data-es="">
-              <em>Hablemos</em>.
+              <em>Hablemos.</em>
             </span>
           </h2>
           <p className="u-contact-p u-reveal">

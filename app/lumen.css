@@ -132,3 +132,19 @@ html:has(.lumen) body { background: oklch(96.5% 0.007 78); }
 /* Nav: el fondo oscuro hardcodeado (rgba(10,12,16,.82)) → glass de papel. */
 .lumen .nav { background: oklch(96.5% 0.007 78 / 0.82); }
 .lumen .nav-cta { color: var(--bg); }
+
+/* Skyline interactiva al fondo del hero. Altura en vh (estable), máscara que
+   disuelve las cimas en el papel. z-index 0 → detrás del contenido (z-index 1).
+   El <canvas> es reemplazado: necesita width/height explícitos para llenar. */
+.lumen-city {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: 58vh;
+  z-index: 0;
+  display: block;
+  pointer-events: none;
+  -webkit-mask-image: linear-gradient(to top, #000 46%, transparent 100%);
+          mask-image: linear-gradient(to top, #000 46%, transparent 100%);
+}

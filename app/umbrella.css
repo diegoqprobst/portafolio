@@ -220,6 +220,25 @@ html:has(.umbra) { scroll-snap-type: none; }
   0%, 100% { transform: scale(1); opacity: 0.9; }
   50%      { transform: scale(1.08); opacity: 1; }
 }
+/* Campo neuronal: cubre el hero detrás del texto; no intercepta el puntero
+   (lo escucha en window). z-index -1 lo deja sobre el aura pero bajo el texto. */
+/* Posición FIJA al viewport (no al hero flex): tamaño estable y reproducible,
+   sin el bucle de reflow del canvas absoluto con height:100%. La máscara la
+   concentra arriba-derecha (la zona visual del hero) y la desvanece hacia el
+   texto y las secciones inferiores. El selector `.umbra > .u-neural` (mayor
+   especificidad) vence al `.umbra > *` que la pondría relative/z-1. */
+.umbra > .u-neural {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  display: block;
+  -webkit-mask-image: radial-gradient(135% 95% at 78% 26%, #000 32%, transparent 78%);
+          mask-image: radial-gradient(135% 95% at 78% 26%, #000 32%, transparent 78%);
+}
+
 .u-hero-kicker {
   display: inline-flex;
   align-items: center;
@@ -511,12 +530,17 @@ html:has(.umbra) { scroll-snap-type: none; }
   padding: clamp(96px, 18vh, 210px) 0;
   border-top: 1px solid var(--u-hair);
 }
+/* Halo a sangre completa (100vw): antes quedaba recortado al ancho de la
+   columna (1080px) y dejaba un borde rectangular visible a la derecha. */
 .u-contact::after {
   content: "";
   position: absolute;
-  inset: 0;
+  top: 0; bottom: 0;
+  left: 50%; right: auto;
+  width: 100vw;
+  transform: translateX(-50%);
   z-index: -1;
-  background: radial-gradient(60% 80% at 20% 60%, oklch(from var(--u-light) l c h / 0.10), transparent 65%);
+  background: radial-gradient(50% 80% at 32% 55%, oklch(from var(--u-light) l c h / 0.12), transparent 62%);
   pointer-events: none;
 }
 .u-contact-h {

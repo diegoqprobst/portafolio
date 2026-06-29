@@ -1,4 +1,5 @@
 import Image from "next/image";
+import CityLights from "@/components/home/CityLights";
 
 export default function Hero() {
   return (
@@ -9,6 +10,7 @@ export default function Hero() {
           <div className="hero-glow-a" />
           <div className="hero-glow-b" />
         </div>
+        <CityLights />
         <div className="hero-inner">
           <div>
             <div className="hero-eyebrow">
