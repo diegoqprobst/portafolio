@@ -69,6 +69,15 @@ const securityHeaders = [
 
 const nextConfig: NextConfig = {
   reactStrictMode: true,
+  async redirects() {
+    return [
+      // El sitio de investigacion clinica vive en su propio subdominio
+      // (clinic.diegoquinde.com, GitHub Pages). La ruta natural /clinic
+      // del portafolio apunta alli.
+      { source: "/clinic", destination: "https://clinic.diegoquinde.com", permanent: true },
+      { source: "/clinic/:path*", destination: "https://clinic.diegoquinde.com", permanent: true },
+    ];
+  },
   async headers() {
     return [
       {
