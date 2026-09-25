@@ -85,22 +85,22 @@ export default function Projects({ openProject, toggleProject }: { openProject: 
               num="03"
               title="Saratoga Public Lighting Proposal"
               tags={["Claude Code", "Adobe Illustrator", "NFPA / IES", "Utah, USA"]}
-              metricVal="100%"
-              metricLbl={{ en: "Municipal compliant", es: "Cumplimiento municipal" }}
+              metricVal="1"
+              metricLbl={{ en: "Proposal delivered", es: "Propuesta entregada" }}
               isOpen={openProject === "p3"}
               onToggle={() => toggleProject("p3")}
               delay="120ms"
-              descEn="A lighting contractor bidding on public parks illumination in Saratoga Springs, Utah — no regulatory analysis, no compliance argument, no chance of winning. Researched Saratoga's municipal ordinances and IES/NFPA standards, built a compliance matrix, then redesigned the entire submittal in Adobe Illustrator as a professional tender document."
-              descEs="Un contratista de iluminación licitando alumbrado de parques públicos en Saratoga Springs, Utah — sin análisis normativo, sin argumento de cumplimiento, sin chances de ganar. Investigué las ordenanzas municipales de Saratoga y estándares IES/NFPA, construí una matriz de cumplimiento y rediseñé todo el submittal en Adobe Illustrator como documento de licitación profesional."
+              descEn="For a lighting contractor preparing a public parks illumination proposal in Saratoga Springs, Utah, I researched municipal ordinances and IES/NFPA standards, built a compliance matrix, and redesigned the submittal in Adobe Illustrator as a project-specific technical document."
+              descEs="Para un contratista que preparaba una propuesta de alumbrado de parques públicos en Saratoga Springs, Utah, investigué ordenanzas municipales y estándares IES/NFPA, construí una matriz de cumplimiento y rediseñé el submittal en Adobe Illustrator como documento técnico específico del proyecto."
               resultsEn={[
-                "100% compliant with Saratoga Springs municipal standards",
-                "Data-backed submittal that reads professional to the committee",
-                "Client entered the bid with a real technical edge",
+                "Municipal requirements mapped to product specifications",
+                "Data-backed submittal organized for review",
+                "Project-specific proposal delivered to the client",
               ]}
               resultsEs={[
-                "100% conforme con estándares municipales de Saratoga Springs",
-                "Submittal respaldado por datos que se ve profesional ante el comité",
-                "Cliente entró a la licitación con ventaja técnica real",
+                "Requisitos municipales relacionados con especificaciones de producto",
+                "Submittal respaldado por datos y organizado para revisión",
+                "Propuesta específica del proyecto entregada al cliente",
               ]}
               imgSrc="/assets/projects/submittal-sample.png"
               imgAlt="Saratoga proposal"

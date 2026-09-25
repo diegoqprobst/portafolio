@@ -86,16 +86,16 @@ export default function SaratogaClient() {
           </h1>
 
           <p className="text-xl sm:text-2xl text-gray-400 max-w-3xl leading-relaxed font-light mb-12">
-            A weak lighting bid with no regulatory backing became a technically
-            solid, compliance-ready proposal for Saratoga Springs&apos; public
-            parks — giving the client a real competitive edge in the tender.
+            A public-lighting proposal with limited regulatory context became
+            a structured, project-specific submittal for Saratoga Springs&apos;
+            public parks, connecting product data with municipal requirements.
           </p>
 
           <div className="grid grid-cols-3 gap-4 max-w-xl">
             {[
               { n: "3", l: "Standards reviewed" },
-              { n: "100%", l: "Municipal compliant" },
-              { n: "1", l: "Winning bid" },
+              { n: "1", l: "Compliance matrix" },
+              { n: "1", l: "Proposal delivered" },
             ].map((s) => (
               <div
                 key={s.l}
@@ -158,14 +158,14 @@ export default function SaratogaClient() {
                 <AlertTriangle className="w-8 h-8 text-red-400 flex-shrink-0 mt-1" />
                 <div>
                   <h3 className="text-xl font-bold text-white mb-2">
-                    A proposal that couldn&apos;t win
+                    A proposal missing key context
                   </h3>
                   <p className="text-gray-400 leading-relaxed">
                     The original submittal had no reference to Saratoga
                     Springs&apos; municipal lighting ordinances, no photometric
-                    analysis, and no structured compliance argument. Against
-                    competitors who include these elements, it had no chance of
-                    standing out.
+                    analysis, and no structured comparison between project
+                    requirements and the proposed products. That made its
+                    technical rationale harder to review.
                   </p>
                 </div>
               </div>
@@ -231,16 +231,16 @@ export default function SaratogaClient() {
             <div className="space-y-4">
               {[
                 {
-                  t: "Fully compliant with Saratoga Springs municipal standards",
-                  c: "Every product selection and installation detail referenced the applicable local ordinance — the proposal could be evaluated against specific criteria, not vague claims.",
+                  t: "Municipal requirements mapped to product data",
+                  c: "The proposal connected product specifications with the municipal requirements researched for the project, giving reviewers a clearer basis for evaluation.",
                 },
                 {
-                  t: "Data-backed visual submittal that reads as professional",
-                  c: "Redesigned in Adobe Illustrator with integrated compliance data — the committee receives a document that looks and reads like the work of a serious contractor, not a product catalog printout.",
+                  t: "Clearer, data-backed visual submittal",
+                  c: "Redesigned in Adobe Illustrator with technical data integrated into a document organized for review, rather than a collection of product sheets.",
                 },
                 {
-                  t: "Client enters the bid with a real technical edge",
-                  c: "Where competitors submitted generic proposals, this one addressed the municipality's specific requirements directly. Technical credibility is the differentiator in public tenders.",
+                  t: "Project-specific proposal delivered",
+                  c: "The client received one structured submittal bringing together the standards review, product data, and visual presentation.",
                 },
               ].map((r) => (
                 <div key={r.t} className="result-item">
@@ -276,7 +276,7 @@ export default function SaratogaClient() {
           <section className="scroll-animate pb-24">
             <div className="bg-electric/5 border border-electric/20 rounded-3xl p-10 text-center">
               <h2 className="text-3xl md:text-4xl font-bold mb-4">
-                Need a technical proposal that wins?
+                Need a clearer technical proposal?
               </h2>
               <p className="text-gray-400 text-lg mb-8 max-w-xl mx-auto">
                 If you&apos;re working on a lighting bid, submittal, or
