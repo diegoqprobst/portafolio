@@ -13,7 +13,9 @@ export default function Clients() {
               Luxarmonie<small>France</small>
             </div>
             <div className="client-name">
-              Can Wu<small>United States</small>
+              <span data-en="">Confidential Client</span>
+              <span data-es="">Cliente reservado</span>
+              <small>United States</small>
             </div>
             <div className="client-name">
               Revem<small>Ecuador</small>
