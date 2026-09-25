@@ -312,6 +312,112 @@ html:has(.umbra) { scroll-snap-type: none; }
 }
 
 /* ── Mundos (el trabajo, sin card grid) ────────────────────────────────── */
+.u-featured {
+  padding: clamp(88px, 14vh, 160px) 0;
+  border-top: 1px solid var(--u-hair);
+}
+.u-featured .u-section-head { margin-bottom: 52px; }
+.u-work-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1px;
+  background: var(--u-hair);
+  border: 1px solid var(--u-hair);
+}
+.u-work-card {
+  min-width: 0;
+  color: inherit;
+  background: var(--u-ink-1);
+  transition: background 0.35s var(--u-ease), transform 0.35s var(--u-ease);
+}
+.u-work-card:hover { background: var(--u-ink-2); }
+.u-work-image {
+  position: relative;
+  aspect-ratio: 16 / 10;
+  overflow: hidden;
+  background: var(--u-ink-0);
+}
+.u-work-image::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, oklch(13% 0.045 278 / 0.5), transparent 55%);
+}
+.u-work-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: saturate(0.78) contrast(1.04);
+  transition: transform 0.7s var(--u-ease), filter 0.4s var(--u-ease);
+}
+.u-work-card:hover .u-work-image img { transform: scale(1.035); filter: saturate(1); }
+.u-work-year {
+  position: absolute;
+  right: 18px;
+  bottom: 15px;
+  z-index: 1;
+  color: var(--u-paper);
+}
+.u-work-copy { padding: 28px 30px 32px; }
+.u-work-client { color: var(--u-light); }
+.u-work-copy h3 {
+  margin-top: 13px;
+  font-family: var(--font-fraunces), serif;
+  font-size: clamp(1.4rem, 2.3vw, 2rem);
+  font-weight: 420;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+}
+.u-work-service { margin-top: 12px; color: var(--u-paper-mute); font-size: 0.86rem; }
+.u-work-outcome { margin-top: 22px; color: var(--u-paper-dim); line-height: 1.55; }
+.u-work-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 24px;
+  color: var(--u-paper);
+  font-family: var(--font-jbmono), monospace;
+  font-size: 0.68rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.u-work-link svg { width: 14px; height: 14px; color: var(--u-light); }
+
+/* ── Experiencia profesional ──────────────────────────────────────────── */
+.u-experience {
+  padding: clamp(88px, 14vh, 150px) 0;
+  border-top: 1px solid var(--u-hair);
+}
+.u-experience-list { border-top: 1px solid var(--u-hair-2); }
+.u-experience-item {
+  display: grid;
+  grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
+  gap: clamp(28px, 6vw, 80px);
+  padding: 38px 0 42px;
+  border-bottom: 1px solid var(--u-hair-2);
+}
+.u-experience-index { color: var(--u-light); }
+.u-experience-identity h3 {
+  margin-top: 12px;
+  font-family: var(--font-fraunces), serif;
+  font-size: clamp(1.65rem, 3vw, 2.4rem);
+  font-weight: 420;
+  line-height: 1.1;
+}
+.u-experience-identity p { margin-top: 8px; color: var(--u-paper-mute); }
+.u-experience-detail > p {
+  max-width: 56ch;
+  color: var(--u-paper-dim);
+  font-size: 1.03rem;
+  line-height: 1.62;
+}
+.u-experience-focus {
+  display: block;
+  margin-top: 24px;
+  color: var(--u-paper-mute);
+  line-height: 1.7;
+}
+
 .u-worlds { display: flex; flex-direction: column; }
 .u-world {
   position: relative;
@@ -620,6 +726,8 @@ html:has(.umbra) { scroll-snap-type: none; }
 
 /* ── Responsive ────────────────────────────────────────────────────────── */
 @media (max-width: 860px) {
+  .u-work-grid { grid-template-columns: 1fr; }
+  .u-experience-item { grid-template-columns: 1fr; gap: 18px; }
   .u-world,
   .u-world--flagship { grid-template-columns: 1fr; gap: 24px; }
   .u-milestone { grid-template-columns: 1fr; gap: 8px; }
@@ -632,6 +740,7 @@ html:has(.umbra) { scroll-snap-type: none; }
 }
 
 @media (max-width: 560px) {
+  .u-work-copy { padding: 24px 22px 28px; }
   .u-mark { font-size: 0.98rem; gap: 8px; }
   .u-spark { width: 9px; height: 9px; }
   .u-nav-links { gap: 13px; }

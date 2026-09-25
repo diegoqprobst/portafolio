@@ -48,9 +48,9 @@ const JSON_LD = {
   url: "https://diegoquinde.com",
   image: "https://diegoquinde.com/IMG_6290.JPG",
   email: "diegoaquinde@gmail.com",
-  jobTitle: "Clinical Psychologist & AI Developer",
+  jobTitle: "Clinical Psychologist, Systems Designer & AI Builder",
   description:
-    "Clinical psychologist building AI for mental health: open-source evals for psychotherapy, a brief-therapy simulator, and a game about peace conflicts. Founder of Lumen Studio (technical documentation for lighting brands).",
+    "Clinical psychologist, systems designer and AI builder who turns complex research, product data and strategy into decision-ready documents and useful digital products.",
   knowsAbout: [
     "Psychotherapy",
     "Brief therapy",
@@ -68,9 +68,9 @@ const JSON_LD = {
   sameAs: ["https://www.upwork.com/freelancers/diegoaq"],
 };
 
-const TITLE = "Diego Quinde — Clinical Psychologist Building AI for Mental Health";
+const TITLE = "Diego Quinde — Systems Designer, Clinical Psychologist & AI Builder";
 const DESCRIPTION =
-  "Clinical psychologist building AI for mental health: open-source evals for psychotherapy, a brief-therapy simulator, a game about peace conflicts — and Lumen Studio, technical documentation for lighting brands.";
+  "Selected work by Diego Quinde across healthcare, public infrastructure, product documentation and AI for mental health — combining research, design and automation.";
 
 export const metadata: Metadata = {
   title: TITLE,

@@ -2,9 +2,11 @@
 
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import {
   ArrowDown,
   ArrowRight,
+  ArrowUpRight,
   Brain,
   FlaskConical,
   Gamepad2,
@@ -14,6 +16,7 @@ import {
 } from "lucide-react";
 import NeuralField from "./NeuralField";
 import "./umbrella.css";
+import { FEATURED_WORK } from "@/lib/featured-work";
 
 // Raíz umbrella de Diego — "una mente encendida por dentro".
 // Una sola narrativa (psicología × IA para salud mental × juego), no un
@@ -185,8 +188,12 @@ export default function UmbrellaClient() {
           </a>
           <div className="u-nav-links">
             <a href="#work" className="u-nav-link">
-              <span data-en="">Work</span>
-              <span data-es="">Trabajo</span>
+              <span data-en="">Selected work</span>
+              <span data-es="">Proyectos</span>
+            </a>
+            <a href="#experience" className="u-nav-link">
+              <span data-en="">Experience</span>
+              <span data-es="">Experiencia</span>
             </a>
             <a href="#roadmap" className="u-nav-link">
               Roadmap
@@ -222,36 +229,35 @@ export default function UmbrellaClient() {
         <section className="u-hero">
           <div className="u-orb" aria-hidden="true" />
           <div className="u-hero-kicker u-mono">
-            <span data-en="">Clinical psychologist · AI · in public</span>
-            <span data-es="">Psicólogo clínico · IA · en público</span>
+            <span data-en="">Clinical psychologist · systems designer · AI</span>
+            <span data-es="">Psicólogo clínico · diseñador de sistemas · IA</span>
           </div>
           <h1 className="u-hero-h1">
             <span data-en="">
-              Clinical psychologist <em>building AI</em> for mental health.
+              I turn complex systems into <em>clear, useful tools.</em>
             </span>
             <span data-es="">
-              Psicólogo clínico <em>construyendo IA</em> para salud mental.
+              Convierto sistemas complejos en <em>herramientas claras y útiles.</em>
             </span>
           </h1>
           <p className="u-hero-sub">
             <span data-en="">
-              I work where psychotherapy meets language models:{" "}
-              <strong>open-source evaluations</strong> for AI in psychotherapy, a
-              brief-therapy simulator, a game about peace conflicts — and Lumen
-              Studio, the documentation studio that funds the mission. Building in
-              public, in English and Spanish.
+              I combine clinical psychology, research, design and automation to
+              build <strong>decision-ready documents and intelligent products</strong>.
+              Recent work spans healthcare, public infrastructure and international
+              product brands — alongside open-source AI research for psychotherapy.
             </span>
             <span data-es="">
-              Trabajo donde la psicoterapia se cruza con los modelos de lenguaje:{" "}
-              <strong>evaluaciones open-source</strong> de IA en psicoterapia, un
-              simulador de terapia breve, un juego sobre conflictos de paz — y
-              Lumen Studio, el estudio de documentación que financia la misión.
-              Construyendo en público, en inglés y español.
+              Combino psicología clínica, investigación, diseño y automatización
+              para crear <strong>documentos que impulsan decisiones y productos
+              inteligentes</strong>. Mi trabajo reciente abarca salud, infraestructura
+              pública y marcas internacionales, junto con investigación abierta
+              sobre IA para psicoterapia.
             </span>
           </p>
-          <a href="#thesis" className="u-hero-scroll u-mono">
-            <span data-en="">The throughline</span>
-            <span data-es="">El hilo conductor</span>
+          <a href="#work" className="u-hero-scroll u-mono">
+            <span data-en="">View selected work</span>
+            <span data-es="">Ver proyectos destacados</span>
             <ArrowDown className="u-arrow" width={14} height={14} />
           </a>
         </section>
@@ -285,8 +291,149 @@ export default function UmbrellaClient() {
           </p>
         </section>
 
+        {/* ── Trabajo reciente ── */}
+        <section id="work" className="u-featured scroll-mt-28">
+          <div className="u-section-head u-reveal">
+            <span className="u-section-kicker u-mono">
+              <span data-en="">Selected work · 2026</span>
+              <span data-es="">Proyectos destacados · 2026</span>
+            </span>
+            <h2 className="u-section-title">
+              <span data-en="">Complex inputs. Clear outcomes.</span>
+              <span data-es="">Entradas complejas. Resultados claros.</span>
+            </h2>
+            <p className="u-section-sub">
+              <span data-en="">Research, data and design brought together to help teams sell, approve and scale ambitious work.</span>
+              <span data-es="">Investigación, datos y diseño integrados para ayudar a equipos a vender, aprobar y escalar proyectos ambiciosos.</span>
+            </p>
+          </div>
+          <div className="u-work-grid">
+            {FEATURED_WORK.map((project) => (
+              <a
+                key={project.title}
+                href={project.href}
+                className="u-work-card u-reveal"
+                target={project.kind === "document" ? "_blank" : undefined}
+                rel={project.kind === "document" ? "noopener noreferrer" : undefined}
+              >
+                <div className="u-work-image">
+                  <Image
+                    src={project.image}
+                    alt={`${project.title} project preview`}
+                    width={720}
+                    height={450}
+                    loading="lazy"
+                  />
+                  <span className="u-work-year u-mono">{project.year}</span>
+                </div>
+                <div className="u-work-copy">
+                  <span className="u-work-client u-mono">{project.client}</span>
+                  <h3>{project.title}</h3>
+                  <p className="u-work-service">
+                    <span data-en="">{project.service.en}</span>
+                    <span data-es="">{project.service.es}</span>
+                  </p>
+                  <p className="u-work-outcome">
+                    <span data-en="">{project.outcome.en}</span>
+                    <span data-es="">{project.outcome.es}</span>
+                  </p>
+                  <span className="u-work-link">
+                    <span data-en="">{project.kind === "case-study" ? "View case study" : "View document"}</span>
+                    <span data-es="">{project.kind === "case-study" ? "Ver caso de estudio" : "Ver documento"}</span>
+                    <ArrowUpRight />
+                  </span>
+                </div>
+              </a>
+            ))}
+          </div>
+        </section>
+
+        {/* ── Experiencia profesional ── */}
+        <section id="experience" className="u-experience scroll-mt-28">
+          <div className="u-section-head u-reveal">
+            <span className="u-section-kicker u-mono">
+              <span data-en="">Professional experience</span>
+              <span data-es="">Experiencia profesional</span>
+            </span>
+            <h2 className="u-section-title">
+              <span data-en="">Work inside delivery teams.</span>
+              <span data-es="">Experiencia en equipos de producto y datos.</span>
+            </h2>
+            <p className="u-section-sub">
+              <span data-en="">
+                Client delivery and AI data work, with an emphasis on clear
+                requirements, consistent quality and useful handoffs.
+              </span>
+              <span data-es="">
+                Proyectos para clientes y trabajo con datos de IA, con foco en
+                requisitos claros, calidad consistente y entregables útiles.
+              </span>
+            </p>
+          </div>
+
+          <div className="u-experience-list">
+            <article className="u-experience-item u-reveal">
+              <div className="u-experience-identity">
+                <span className="u-mono u-experience-index">
+                  <span data-en="">01 / Web &amp; automation</span>
+                  <span data-es="">01 / Web y automatización</span>
+                </span>
+                <h3>It&apos;s Rappid</h3>
+                <p>Forward Web Developer Engineer</p>
+              </div>
+              <div className="u-experience-detail">
+                <p>
+                  <span data-en="">
+                    Refined product catalogs and automated systems for client
+                    delivery, translating requirements into reliable web-ready
+                    outputs.
+                  </span>
+                  <span data-es="">
+                    Puse a punto catálogos de productos y sistemas automatizados
+                    para clientes, convirtiendo requisitos en entregables web
+                    confiables.
+                  </span>
+                </p>
+                <span className="u-experience-focus u-mono">
+                  <span data-en="">Product catalogs · Web delivery · Automation</span>
+                  <span data-es="">Catálogos · Desarrollo web · Automatización</span>
+                </span>
+              </div>
+            </article>
+
+            <article className="u-experience-item u-reveal">
+              <div className="u-experience-identity">
+                <span className="u-mono u-experience-index">
+                  <span data-en="">02 / AI data quality</span>
+                  <span data-es="">02 / Calidad de datos de IA</span>
+                </span>
+                <h3>iWallet</h3>
+                <p>Data Annotator</p>
+              </div>
+              <div className="u-experience-detail">
+                <p>
+                  <span data-en="">
+                    Annotated complex source material for an AI initiative and
+                    documented decision rules and quality checks to make review
+                    more consistent and repeatable.
+                  </span>
+                  <span data-es="">
+                    Anoté material técnico complejo para una iniciativa de IA y
+                    documenté criterios de decisión y controles de calidad para
+                    que la revisión fuera más consistente y reproducible.
+                  </span>
+                </p>
+                <span className="u-experience-focus u-mono">
+                  <span data-en="">Data annotation · Quality assurance · Documentation</span>
+                  <span data-es="">Anotación de datos · Control de calidad · Documentación</span>
+                </span>
+              </div>
+            </article>
+          </div>
+        </section>
+
         {/* ── Los mundos ── */}
-        <section id="work" className="u-worlds scroll-mt-28">
+        <section id="practice" className="u-worlds scroll-mt-28">
           {/* Flagship — AI × Psychotherapy */}
           <article
             className="u-world u-world--flagship u-reveal"
@@ -506,12 +653,15 @@ export default function UmbrellaClient() {
           </h2>
           <p className="u-contact-p u-reveal">
             <span data-en="">
-              Therapy × AI, evals, research collaborations, or the game — write me.
-              For lighting documentation work, head to the studio.
+              Need to turn complex research, product data or strategy into
+              something people can understand and act on? Tell me what you are
+              building. For lighting documentation, visit Lumen Studio.
             </span>
             <span data-es="">
-              Terapia × IA, evals, colaboraciones de investigación o el juego —
-              escríbeme. Para documentación técnica de iluminación, ve al estudio.
+              ¿Necesitas convertir investigación, datos de producto o estrategia
+              compleja en algo que las personas puedan entender y usar? Cuéntame
+              qué estás construyendo. Para documentación de iluminación, visita
+              Lumen Studio.
             </span>
           </p>
           <div className="u-reveal">
