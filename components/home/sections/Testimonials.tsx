@@ -31,10 +31,15 @@ export default function Testimonials() {
                   "The proposal Diego built for our Saratoga bid was on another level — technically solid, professionally presented, and actually compliant with local standards. It gave us a real edge.",
                 quoteEs:
                   "La propuesta que Diego construyó para nuestra licitación en Saratoga estaba en otro nivel — técnicamente sólida, presentada profesionalmente y realmente conforme a los estándares locales. Nos dio una ventaja real.",
-                initials: "MR",
-                name: "Mike R.",
-                roleEn: "Project Manager · Lighting Contractor, Utah",
-                roleEs: "Gerente de Proyecto · Contratista de Iluminación, Utah",
+                initials: "CL",
+                name: (
+                  <>
+                    <span data-en="">Client</span>
+                    <span data-es="">Cliente</span>
+                  </>
+                ),
+                roleEn: "Public lighting project · name withheld",
+                roleEs: "Proyecto de iluminación pública · nombre reservado",
                 delay: "80ms",
               },
               {
@@ -79,12 +84,10 @@ export default function Testimonials() {
           </div>
           <p className="testimonials-note reveal">
             <span data-en="">
-              * Names and details lightly anonymised at client request. Happy to
-              provide references on inquiry.
+              * Some client identities are withheld for privacy.
             </span>
             <span data-es="">
-              * Nombres y detalles ligeramente anonimizados a solicitud de
-              clientes. Con gusto proveo referencias bajo consulta.
+              * Algunas identidades de clientes se omiten por privacidad.
             </span>
           </p>
         </div>
