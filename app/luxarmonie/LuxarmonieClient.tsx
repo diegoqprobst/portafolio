@@ -21,6 +21,7 @@ import {
   XCircle,
 } from "lucide-react";
 import "./luxarmonie.css";
+import { mailto } from "@/lib/contact";
 
 export default function LuxarmonieClient() {
   useEffect(() => {
@@ -301,7 +302,7 @@ export default function LuxarmonieClient() {
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <a
-                  href="mailto:diegoaquinde@gmail.com?subject=Catalog%20Automation%20%26%20Technical%20Review"
+                  href={mailto("Catalog Automation & Technical Review")}
                   className="inline-flex items-center justify-center gap-2 bg-electric text-white px-8 py-4 rounded-2xl font-bold text-lg hover:bg-blue-500 transition-colors shadow-2xl"
                 >
                   <Mail className="w-5 h-5" />

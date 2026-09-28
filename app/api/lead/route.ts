@@ -4,6 +4,7 @@ import { insforge } from "@/lib/insforge";
 import { leadCreate } from "@/lib/schemas";
 import { checkPublicFormRateLimit } from "@/lib/rate-limit";
 import { sendEmail } from "@/lib/email";
+import { CONTACT_EMAIL } from "@/lib/contact";
 
 // Ruta PÚBLICA: captura el email del lead magnet (checklist) en Insforge.
 // Mismas defensas que /api/contact (rate-limit + honeypot + validación).
@@ -54,7 +55,7 @@ export async function POST(req: NextRequest) {
   // de inmediato, así que esto es un bonus cuando el email esté configurado).
   await sendEmail({
     to: data.email,
-    replyTo: "diegoaquinde@gmail.com",
+    replyTo: CONTACT_EMAIL,
     subject: "Your Catalog & Spec Sheet Prep Checklist — Lumen Studio",
     html: `<h2>Here's your checklist</h2>
 <p>Thanks for your interest in Lumen Studio. Open your checklist here:</p>

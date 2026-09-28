@@ -1,3 +1,5 @@
+import { mailto } from "@/lib/contact";
+
 export default function Footer() {
   return (
     <>
@@ -13,7 +15,7 @@ export default function Footer() {
             © 2026 Lumen Studio · Diego Quinde · diegoquinde.com
           </div>
           <div className="footer-links">
-            <a href="mailto:diegoaquinde@gmail.com">Email</a>
+            <a href={mailto()}>Email</a>
             <a
               href="https://www.upwork.com/freelancers/diegoaq?mp_source=share"
               target="_blank"

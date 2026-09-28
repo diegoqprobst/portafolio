@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { CONTACT_EMAIL, mailto } from "@/lib/contact";
 
 export const metadata: Metadata = {
   title: "Privacidad · Lumen Studio",
@@ -37,8 +38,8 @@ export default function PrivacyPage() {
 
       <Section title="Quién es responsable">
         Lumen Studio, operado por Diego Quinde. Contacto:{" "}
-        <a href="mailto:diegoaquinde@gmail.com" style={linkStyle}>
-          diegoaquinde@gmail.com
+        <a href={mailto()} style={linkStyle}>
+          {CONTACT_EMAIL}
         </a>
         .
       </Section>
@@ -69,8 +70,8 @@ export default function PrivacyPage() {
       <Section title="Tus derechos">
         Puedes solicitar acceso, corrección o eliminación de tus datos, u
         oponerte a su uso, escribiendo a{" "}
-        <a href="mailto:diegoaquinde@gmail.com" style={linkStyle}>
-          diegoaquinde@gmail.com
+        <a href={mailto()} style={linkStyle}>
+          {CONTACT_EMAIL}
         </a>
         . Atendemos solicitudes conforme al RGPD (UE) y normativas aplicables.
       </Section>
@@ -83,8 +84,8 @@ export default function PrivacyPage() {
       </h2>
       <Section title="Who is responsible">
         Lumen Studio, operated by Diego Quinde. Contact:{" "}
-        <a href="mailto:diegoaquinde@gmail.com" style={linkStyle}>
-          diegoaquinde@gmail.com
+        <a href={mailto()} style={linkStyle}>
+          {CONTACT_EMAIL}
         </a>
         .
       </Section>
@@ -111,8 +112,8 @@ export default function PrivacyPage() {
       <Section title="Your rights">
         You can request access, correction, or deletion of your data, or object
         to its use, by emailing{" "}
-        <a href="mailto:diegoaquinde@gmail.com" style={linkStyle}>
-          diegoaquinde@gmail.com
+        <a href={mailto()} style={linkStyle}>
+          {CONTACT_EMAIL}
         </a>
         . We handle requests in line with GDPR (EU) and applicable laws.
       </Section>

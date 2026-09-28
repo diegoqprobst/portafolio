@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Nunito, Fraunces, Hanken_Grotesk, JetBrains_Mono } from "next/font/google";
 import { Analytics } from "@vercel/analytics/react";
 import "./globals.css";
+import { CONTACT_EMAIL } from "@/lib/contact";
 
 // Self-hosted via next/font: sin round-trip a Google (mejor LCP + privacidad).
 // Nunito es variable → un solo archivo cubre todos los pesos 300–900.
@@ -47,7 +48,7 @@ const JSON_LD = {
   name: "Diego Quinde",
   url: "https://diegoquinde.com",
   image: "https://diegoquinde.com/IMG_6290.JPG",
-  email: "diegoaquinde@gmail.com",
+  email: CONTACT_EMAIL,
   jobTitle: "Clinical Psychologist, Systems Designer & AI Builder",
   description:
     "Clinical psychologist, systems designer and AI builder who turns complex research, product data and strategy into decision-ready documents and useful digital products.",

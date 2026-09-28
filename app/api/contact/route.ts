@@ -4,6 +4,7 @@ import { insforge } from "@/lib/insforge";
 import { contactMessageCreate } from "@/lib/schemas";
 import { checkPublicFormRateLimit } from "@/lib/rate-limit";
 import { sendEmail } from "@/lib/email";
+import { CONTACT_EMAIL } from "@/lib/contact";
 
 // Ruta PÚBLICA (no la cubre el middleware admin). Recibe el formulario de
 // contacto de la home, lo valida y lo guarda en Insforge.
@@ -57,7 +58,7 @@ export async function POST(req: NextRequest) {
 
   // Notificación best-effort a Diego (no bloquea: el mensaje ya está guardado).
   await sendEmail({
-    to: "diegoaquinde@gmail.com",
+    to: CONTACT_EMAIL,
     replyTo: data.email,
     subject: `Lumen Studio — nuevo mensaje de ${data.name}`,
     html: `<h2>Nuevo mensaje de contacto</h2>

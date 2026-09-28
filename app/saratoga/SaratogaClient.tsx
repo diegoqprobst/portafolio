@@ -20,6 +20,7 @@ import {
   XCircle,
 } from "lucide-react";
 import "./saratoga.css";
+import { mailto } from "@/lib/contact";
 
 export default function SaratogaClient() {
   useEffect(() => {
@@ -285,7 +286,7 @@ export default function SaratogaClient() {
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <a
-                  href="mailto:diegoaquinde@gmail.com?subject=Lighting%20Proposal%20Inquiry"
+                  href={mailto("Lighting Proposal Inquiry")}
                   className="inline-flex items-center justify-center gap-2 bg-electric text-white px-8 py-4 rounded-2xl font-bold text-lg hover:bg-blue-500 transition-colors shadow-2xl"
                 >
                   <Mail className="w-5 h-5" />

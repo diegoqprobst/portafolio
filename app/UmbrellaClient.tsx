@@ -17,6 +17,7 @@ import {
 import NeuralField from "./NeuralField";
 import "./umbrella.css";
 import { FEATURED_WORK } from "@/lib/featured-work";
+import { CONTACT_EMAIL, mailto } from "@/lib/contact";
 
 // Raíz umbrella de Diego — "una mente encendida por dentro".
 // Una sola narrativa (psicología × IA para salud mental × juego), no un
@@ -665,8 +666,8 @@ export default function UmbrellaClient() {
             </span>
           </p>
           <div className="u-reveal">
-            <a href="mailto:diegoaquinde@gmail.com" className="u-mailto">
-              diegoaquinde@gmail.com
+            <a href={mailto()} className="u-mailto">
+              {CONTACT_EMAIL}
             </a>
             <div>
               <Link href="/lumen#contact" className="u-contact-alt">
@@ -691,7 +692,7 @@ export default function UmbrellaClient() {
               <span data-en="">Privacy</span>
               <span data-es="">Privacidad</span>
             </Link>
-            <a href="mailto:diegoaquinde@gmail.com">
+            <a href={mailto()}>
               <Mail width={13} height={13} style={{ display: "inline" }} />
             </a>
           </span>

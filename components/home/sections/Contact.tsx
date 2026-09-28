@@ -1,4 +1,5 @@
 import type { FormEvent } from "react";
+import { CONTACT_EMAIL, mailto } from "@/lib/contact";
 
 export default function Contact({ handleContactSubmit, contactStatus }: { handleContactSubmit: (e: FormEvent<HTMLFormElement>) => void; contactStatus: { kind: "ok" | "error"; msg: string } | null }) {
   return (
@@ -35,11 +36,11 @@ export default function Contact({ handleContactSubmit, contactStatus }: { handle
                 </span>
               </p>
               <div className="contact-options">
-                <a href="mailto:diegoaquinde@gmail.com" className="contact-opt reveal">
+                <a href={mailto()} className="contact-opt reveal">
                   <div className="contact-opt-icon">✉️</div>
                   <div className="contact-opt-text">
                     <strong>Email</strong>
-                    <span>diegoaquinde@gmail.com</span>
+                    <span>{CONTACT_EMAIL}</span>
                   </div>
                 </a>
                 <a

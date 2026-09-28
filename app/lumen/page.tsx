@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import HomeClient from "@/components/home/HomeClient";
 import { getHomeContent } from "@/lib/home-content";
+import { CONTACT_EMAIL } from "@/lib/contact";
 
 // Lumen Studio vive ahora en /lumen: la raíz del dominio pasó a ser el perfil
 // umbrella de Diego (psicólogo clínico × IA × builder) y el estudio es una de
@@ -34,7 +35,7 @@ const JSON_LD = {
   url: "https://diegoquinde.com/lumen",
   image: "https://diegoquinde.com/IMG_6290.JPG",
   founder: { "@type": "Person", name: "Diego Quinde" },
-  email: "diegoaquinde@gmail.com",
+  email: CONTACT_EMAIL,
   areaServed: ["United States", "Europe", "Latin America"],
   knowsAbout: [
     "Adobe InDesign",
