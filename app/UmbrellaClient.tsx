@@ -17,6 +17,7 @@ import {
 import NeuralField from "./NeuralField";
 import "./umbrella.css";
 import { FEATURED_WORK } from "@/lib/featured-work";
+import { HACKATHONS } from "@/lib/hackathons";
 
 // Raíz umbrella de Diego — "una mente encendida por dentro".
 // Una sola narrativa (psicología × IA para salud mental × juego), no un
@@ -191,6 +192,9 @@ export default function UmbrellaClient() {
               <span data-en="">Selected work</span>
               <span data-es="">Proyectos</span>
             </a>
+            <a href="#hackathons" className="u-nav-link">
+              Hackathons
+            </a>
             <a href="#experience" className="u-nav-link">
               <span data-en="">Experience</span>
               <span data-es="">Experiencia</span>
@@ -344,6 +348,68 @@ export default function UmbrellaClient() {
                   </span>
                 </div>
               </a>
+            ))}
+          </div>
+        </section>
+
+        {/* ── Hackathons ── */}
+        <section id="hackathons" className="u-hack scroll-mt-28">
+          <div className="u-section-head u-reveal">
+            <span className="u-section-kicker u-mono">
+              <span data-en="">Hackathons · 2026</span>
+              <span data-es="">Hackathons · 2026</span>
+            </span>
+            <h2 className="u-section-title">
+              <span data-en="">Built fast. Built carefully.</span>
+              <span data-es="">Rápido, pero con cuidado.</span>
+            </h2>
+            <p className="u-section-sub">
+              <span data-en="">Two agent prototypes where the interesting part was deciding what the model must never do.</span>
+              <span data-es="">Dos prototipos de agentes donde lo interesante fue decidir qué nunca debe hacer el modelo.</span>
+            </p>
+          </div>
+          <div className="u-work-grid">
+            {HACKATHONS.map((h) => (
+              <article key={h.title} className="u-work-card u-hack-card u-reveal">
+                <div className="u-work-copy">
+                  <span className="u-work-client u-mono">
+                    {h.event} · {h.year}
+                  </span>
+                  <h3>{h.title}</h3>
+                  <p className="u-work-service">
+                    <span data-en="">{h.role.en}</span>
+                    <span data-es="">{h.role.es}</span>
+                  </p>
+                  <p className="u-work-outcome">
+                    <span data-en="">{h.summary.en}</span>
+                    <span data-es="">{h.summary.es}</span>
+                  </p>
+                  <ul className="u-hack-points">
+                    {h.highlights.en.map((_, i) => (
+                      <li key={i}>
+                        <span data-en="">{h.highlights.en[i]}</span>
+                        <span data-es="">{h.highlights.es[i]}</span>
+                      </li>
+                    ))}
+                  </ul>
+                  <span className="u-experience-focus u-mono">{h.stack}</span>
+                  <div className="u-hack-links">
+                    {h.links.map((link) => (
+                      <a
+                        key={link.href}
+                        href={link.href}
+                        className="u-work-link"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        <span data-en="">{link.label.en}</span>
+                        <span data-es="">{link.label.es}</span>
+                        <ArrowUpRight />
+                      </a>
+                    ))}
+                  </div>
+                </div>
+              </article>
             ))}
           </div>
         </section>

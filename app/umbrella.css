@@ -383,6 +383,39 @@ html:has(.umbra) { scroll-snap-type: none; }
 }
 .u-work-link svg { width: 14px; height: 14px; color: var(--u-light); }
 
+/* ── Hackathons ───────────────────────────────────────────────────────── */
+.u-hack {
+  padding: clamp(88px, 14vh, 150px) 0;
+  border-top: 1px solid var(--u-hair);
+}
+.u-hack .u-section-head { margin-bottom: 52px; }
+.u-hack-card { display: flex; }
+.u-hack-card .u-work-copy { display: flex; flex-direction: column; }
+.u-hack-points {
+  margin: 22px 0 24px;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 12px;
+}
+.u-hack-points li {
+  position: relative;
+  padding-left: 18px;
+  color: var(--u-paper-dim);
+  font-size: 0.9rem;
+  line-height: 1.55;
+}
+.u-hack-points li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.62em;
+  width: 7px;
+  height: 1px;
+  background: var(--u-light);
+}
+.u-hack-links { display: flex; flex-wrap: wrap; gap: 8px 26px; margin-top: auto; }
+
 /* ── Experiencia profesional ──────────────────────────────────────────── */
 .u-experience {
   padding: clamp(88px, 14vh, 150px) 0;
