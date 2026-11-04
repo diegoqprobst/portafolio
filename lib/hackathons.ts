@@ -11,6 +11,38 @@ export type Hackathon = {
 
 export const HACKATHONS: Hackathon[] = [
   {
+    title: "Solar Proposal Agent",
+    event: "Meta Global AI Developer Hackathon · Remote",
+    year: "2026",
+    role: {
+      en: "Solo project, built in nine days",
+      es: "Proyecto individual, construido en nueve días",
+    },
+    summary: {
+      en: "An agent that sizes solar + storage for rural infrastructure and never invents a number: every input quotes its source, code does the math, and what cannot be proven goes to a person.",
+      es: "Un agente que dimensiona solar + almacenamiento para infraestructura rural y nunca inventa un número: cada dato cita su fuente, el código hace las cuentas y lo que no se puede probar pasa a una persona.",
+    },
+    highlights: {
+      en: [
+        "Quote-checked inputs: a value taken from a datasheet must quote it exactly and appear inside the quote, or it is rejected in code.",
+        "On a real datasheet it declined to invent a design and returned eight questions about what must be measured on site.",
+        "Live runs exposed three defects (percentages recorded as 45, a status loop, a false “finished”). All fixed and covered by 44 offline tests.",
+      ],
+      es: [
+        "Datos con cita verificada: un valor tomado de una ficha debe citarla exactamente y aparecer dentro de la cita, o el código lo rechaza.",
+        "Con una ficha técnica real se negó a inventar un diseño y devolvió ocho preguntas sobre lo que hay que medir en sitio.",
+        "Las corridas en vivo revelaron tres fallos (porcentajes como 45, un bucle de estado, un falso “terminado”). Corregidos y cubiertos por 44 pruebas offline.",
+      ],
+    },
+    stack: "Python · Muse Spark 1.3 (Meta Model API) · NASA POWER · pypdf · pytest",
+    links: [
+      {
+        label: { en: "View repository", es: "Ver repositorio" },
+        href: "https://github.com/diegoqprobst/solar-proposal-agent",
+      },
+    ],
+  },
+  {
     title: "Between Sessions",
     event: "Agents, Everywhere · AI Tinkerers × OpenAI · Miami",
     year: "2026",

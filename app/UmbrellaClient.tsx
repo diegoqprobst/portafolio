@@ -364,8 +364,8 @@ export default function UmbrellaClient() {
               <span data-es="">Rápido, pero con cuidado.</span>
             </h2>
             <p className="u-section-sub">
-              <span data-en="">Two agent prototypes where the interesting part was deciding what the model must never do.</span>
-              <span data-es="">Dos prototipos de agentes donde lo interesante fue decidir qué nunca debe hacer el modelo.</span>
+              <span data-en="">Three agent prototypes where the interesting part was deciding what the model must never do.</span>
+              <span data-es="">Tres prototipos de agentes donde lo interesante fue decidir qué nunca debe hacer el modelo.</span>
             </p>
           </div>
           <div className="u-work-grid">
