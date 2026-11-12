@@ -379,7 +379,7 @@ export default function UmbrellaClient() {
                   <th scope="row">
                     <T en="Runtime" es="Duración" />
                   </th>
-                  <td>0:12</td>
+                  <td>0:25</td>
                 </tr>
                 <tr>
                   <th scope="row">

@@ -5,23 +5,23 @@ import { VideoSkin } from '@/video/skin';
 
 import type { PlaybackProps } from '../shell/params';
 
-// What the preview plays: Diego's own footage. Set VITE_MUX_PLAYBACK_ID to stream it from Mux;
+// What the preview plays: Diego's own footage, four plates (daylight, shallows, dusk, stage). Set VITE_MUX_PLAYBACK_ID to stream it from Mux;
 // without it, the local copy in apps/preview/public/media is used (development only).
 const MUX_ID = import.meta.env.VITE_MUX_PLAYBACK_ID as string | undefined;
-const SRC = MUX_ID ? `https://stream.mux.com/${MUX_ID}.m3u8` : './media/sea-lions.mp4';
-const POSTER = MUX_ID ? `https://image.mux.com/${MUX_ID}/thumbnail.jpg?time=6` : './media/poster.jpg';
+const SRC = MUX_ID ? `https://stream.mux.com/${MUX_ID}.m3u8` : './media/kelvin-reel.mp4';
+const POSTER = MUX_ID ? `https://image.mux.com/${MUX_ID}/thumbnail.jpg?time=15.7` : './media/kelvin-reel-poster.jpg';
 /** Chapters for the time slider, served from `apps/preview/public`. */
 const CHAPTERS = './kelvin-chapters.vtt';
 const STRIP = './kelvin-colorstrip.json';
-/** The demo opens as an instrument: paused where the sand meets the water, loupe on the caustics. */
-const SPECIMEN = { t: 6.2, u: 0.46, v: 0.6 };
+/** The demo opens as an instrument: paused at dusk, loupe on the wall where it still catches the warm sky. */
+const SPECIMEN = { t: 15.7, u: 0.64, v: 0.56 };
 
 /** `media` carries the workbench's playback options: autoplay, muted, loop, and preload. */
 export function Player({ media }: { media?: PlaybackProps }) {
   const track = <track kind="chapters" label="English" srcLang="en" src={CHAPTERS} default />;
   return (
     <VideoPlayer poster={POSTER}>
-      <VideoSkin videoId="sea-lions" colorStrip={STRIP} specimen={SPECIMEN}>
+      <VideoSkin videoId="kelvin-reel" colorStrip={STRIP} specimen={SPECIMEN}>
         {MUX_ID ? (
           <MuxVideo {...media} src={SRC} playsInline crossOrigin="" loop>
             {track}

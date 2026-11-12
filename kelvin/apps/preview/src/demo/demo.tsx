@@ -44,7 +44,7 @@ function Demo() {
         <section className="demo-stage" aria-label="Player">
           <Player />
           <p className="demo-caption">
-            <span>Plate I–III</span> Sea lions in the shallows. Pause anywhere, then move over the picture.
+            <span>Plate I–IV</span> Daylight, shallows, dusk and stage light. Pause anywhere, then move over the picture.
           </p>
         </section>
 
@@ -141,15 +141,15 @@ function Demo() {
 
 /**
  * `?hero` stages the cover shot for the portfolio and the submission: only the player, paused on
- * the sand/water boundary with the loupe aimed and one note pinned. Development convenience only.
+ * the dusk plate with the loupe on the lamp-lit wall and one note pinned on the warm wall. Development convenience only.
  */
 function stageHero() {
   document.documentElement.classList.add('demo-hero');
   try {
     localStorage.setItem(
-      'kelvin-notes-v1:sea-lions',
+      'kelvin-notes-v1:kelvin-reel',
       JSON.stringify([
-        { id: 'hero', t: 6.2, u: 0.3, v: 0.78, text: 'Warm sand under the caustics', hex: '#9C9A8C', cct: 6100 },
+        { id: 'hero', t: 15.7, u: 0.64, v: 0.56, text: 'Wall still warm from the sky', hex: '#8E7A68', cct: 4400 },
       ]),
     );
   } catch {
@@ -160,17 +160,21 @@ function stageHero() {
     const video = document.querySelector('video');
     if (!video) return void setTimeout(run, 100);
     video.muted = true;
-    await new Promise((r) => (video.readyState >= 2 ? r(null) : video.addEventListener('loadeddata', r, { once: true })));
-    video.currentTime = 6.2;
-    await video.play().catch(() => undefined);
-    await wait(250);
-    video.pause();
-    video.currentTime = 6.2;
+    // The player may already be seeking to its opening frame: wait on its state, not on a single event.
+    while (video.readyState < 2 || video.seeking) await wait(100);
+    if (!document.querySelector('.kv[data-sheet]')) {
+      // No specimen opening (a small player, or a browser that held the frame back): stage it by hand.
+      video.currentTime = 15.7;
+      await video.play().catch(() => undefined);
+      await wait(250);
+      video.pause();
+      video.currentTime = 15.7;
+    }
     await wait(900);
     const layer = document.querySelector('.kv-loupe-layer');
     const rect = video.getBoundingClientRect();
     layer?.dispatchEvent(
-      new PointerEvent('pointermove', { bubbles: true, clientX: rect.left + rect.width * 0.46, clientY: rect.top + rect.height * 0.6 }),
+      new PointerEvent('pointermove', { bubbles: true, clientX: rect.left + rect.width * 0.95, clientY: rect.top + rect.height * 0.75 }),
     );
     document.documentElement.dataset.heroReady = '';
   };
