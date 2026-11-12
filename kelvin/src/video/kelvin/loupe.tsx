@@ -3,9 +3,10 @@
 import { usePlayer } from '@videojs/react/video';
 import { useCallback, useEffect, useLayoutEffect, useRef, useState, type KeyboardEvent, type PointerEvent } from 'react';
 
+import { Crosshair } from './crosshair';
 import { IconNote } from './icons';
 import { cctReading, formatCct, toHex } from './lib/color';
-import { pointToUv, uvToPoint } from './lib/geometry';
+import { contentBox, pointToUv, uvToPoint } from './lib/geometry';
 import { routeKey, type ArrowKey } from './lib/mode';
 import { readPixel, safeReadPixel, type PixelReading } from './lib/pixels';
 import { useKelvin } from './state';
@@ -15,7 +16,17 @@ const MAG_SIZE = 132;
 const ZOOM = 2.5;
 const ANNOUNCE_MS = 400;
 
-type Layout = { x: number; y: number; width: number; height: number; picRight: number; picBottom: number } | null;
+type Layout = {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+  picRight: number;
+  picBottom: number;
+  pic: { left: number; top: number; width: number; height: number };
+  vw: number;
+  vh: number;
+} | null;
 
 /** Paused-only precision reticle: magnifier, exact colour, approximate temperature, pinned notes. */
 export function Loupe() {
@@ -68,6 +79,12 @@ export function Loupe() {
       height: r.height,
       picRight: Math.min(vr.right, r.right) - r.left,
       picBottom: Math.min(vr.bottom, r.bottom) - r.top,
+      pic: (() => {
+        const b = contentBox(vr, video.videoWidth, video.videoHeight);
+        return { left: b.left - r.left, top: b.top - r.top, width: b.width, height: b.height };
+      })(),
+      vw: video.videoWidth,
+      vh: video.videoHeight,
     });
 
     const next = safeReadPixel(() => readPixel(video, u, v), video);
@@ -226,6 +243,8 @@ export function Loupe() {
       <span id="kv-loupe-hint" className="kv-visually-hidden">
         {labels.loupeHint}
       </span>
+
+      <Crosshair box={layout.pic} x={layout.x} y={layout.y} videoWidth={layout.vw} videoHeight={layout.vh} />
 
       {pins.map((note) => {
         const video = getVideo();

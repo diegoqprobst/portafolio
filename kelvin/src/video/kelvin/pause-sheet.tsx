@@ -161,7 +161,7 @@ export function PauseSheet() {
           </div>
           <div className="kv-sheet-gauges">
             <Gauge
-              label={labels.temperature}
+              label={labels.cctShort}
               position={tempPosition}
               display={tempDisplay}
               spectrum={SPECTRA.temperature}
@@ -219,6 +219,10 @@ export function PauseSheet() {
           </button>
         ) : null}
       </div>
+      <footer className="kv-sheet-foot">
+        <p className="kv-sheet-keys">{labels.keyLegend}</p>
+        <p className="kv-sheet-meter">{labels.meterNote}</p>
+      </footer>
     </section>
   );
 }

@@ -920,6 +920,164 @@
   }
 }
 
+/* ---------- Drafting crosshair ---------- */
+
+.kv .kv-crosshair-frame {
+  position: absolute;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.kv .kv-crosshair-h,
+.kv .kv-crosshair-v {
+  position: absolute;
+  background: rgb(220 230 244 / 0.7);
+  box-shadow: 0 0 0 1px rgb(10 16 39 / 0.45);
+}
+
+.kv .kv-crosshair-h {
+  inset-inline: 0;
+  block-size: 1px;
+}
+
+.kv .kv-crosshair-v {
+  inset-block: 0;
+  inline-size: 1px;
+}
+
+.kv .kv-crosshair-coord {
+  position: absolute;
+  padding: 1px 5px;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  color: var(--kv-ink);
+  background: rgb(10 16 39 / 0.78);
+  border-radius: 1px;
+  white-space: nowrap;
+}
+
+.kv .kv-crosshair-coord--x {
+  top: 4px;
+  translate: -50% 0;
+}
+
+.kv .kv-crosshair-coord--y {
+  left: 4px;
+  translate: 0 -50%;
+}
+
+/* ---------- Tool selector (header band, paused) ---------- */
+
+.kv .kv-header:has(.kv-toolbar) {
+  pointer-events: auto;
+}
+
+.kv .kv-toolbar {
+  margin-inline-start: auto;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.kv .kv-tools {
+  display: flex;
+  border: 1px solid rgb(220 230 244 / 0.3);
+  border-radius: var(--kv-radius-inner);
+}
+
+.kv .kv-tool {
+  all: unset;
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-block-size: 26px;
+  padding-inline: 9px;
+  font-family: var(--kv-font-ui);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--kv-ink-soft);
+  cursor: pointer;
+}
+
+.kv .kv-tools .kv-tool + .kv-tool {
+  border-inline-start: 1px solid rgb(220 230 244 / 0.2);
+}
+
+.kv .kv-tool[aria-checked='true'] {
+  color: var(--kv-chrome);
+  background: var(--kv-ink);
+}
+
+.kv .kv-exposure-switch {
+  border: 1px solid rgb(220 230 244 / 0.3);
+  border-radius: var(--kv-radius-inner);
+}
+
+.kv .kv-exposure-switch[aria-checked='true'] {
+  color: var(--kv-chrome);
+  background: var(--kv-orange);
+  border-color: var(--kv-orange);
+}
+
+.kv .kv-tool-key {
+  font-size: 10px;
+  opacity: 0.7;
+}
+
+@media (hover: hover) {
+  .kv .kv-tool:hover {
+    color: var(--kv-ink);
+  }
+}
+
+.kv .kv-tool:focus-visible {
+  outline: 2px solid var(--kv-orange);
+  outline-offset: 1px;
+}
+
+.kv .kv-tool-cycle {
+  display: none;
+}
+
+@container kelvin (max-width: 720px) {
+  .kv .kv-tools {
+    display: none;
+  }
+
+  .kv .kv-tool-cycle {
+    display: inline-flex;
+    border: 1px solid rgb(220 230 244 / 0.3);
+    border-radius: var(--kv-radius-inner);
+    color: var(--kv-ink);
+  }
+}
+
+/* Sheet footer: keys and what the readings are not. */
+.kv .kv-sheet-foot {
+  margin-top: auto;
+  display: grid;
+  gap: 4px;
+  border-top: 1px solid var(--kv-line);
+  padding-top: 8px;
+}
+
+.kv .kv-sheet-keys,
+.kv .kv-sheet-meter {
+  margin: 0;
+  font-size: 11px;
+  line-height: 1.45;
+  color: var(--kv-ink-soft);
+}
+
+.kv .kv-sheet-keys {
+  letter-spacing: 0.04em;
+  color: var(--kv-ink);
+}
+
 /* ---------- Pause sheet ---------- */
 
 /* The player becomes a paper page; the picture is framed on it. */

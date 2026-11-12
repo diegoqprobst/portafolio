@@ -33,6 +33,8 @@ import {
   IconVolume,
 } from './icons';
 import { KelvinMark } from './mark';
+import { useKelvin } from './state';
+import { ToolBar } from './tool-bar';
 
 function PlayKey() {
   return (
@@ -89,6 +91,7 @@ function FullscreenKey() {
 
 /** Blue title band: poster and pause only, never during playback. */
 function HeaderBand() {
+  const { mode } = useKelvin();
   const paused = usePlayer((s) => s.paused);
   const started = usePlayer((s) => s.started);
   const chapters = usePlayer((s) => s.chaptersCues);
@@ -98,7 +101,7 @@ function HeaderBand() {
   return (
     <div className="kv-header">
       <KelvinMark />
-      {cue ? <span className="kv-header-chapter">{cue.text}</span> : null}
+      {mode.sheet ? <ToolBar /> : cue ? <span className="kv-header-chapter">{cue.text}</span> : null}
     </div>
   );
 }

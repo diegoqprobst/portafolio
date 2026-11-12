@@ -8,6 +8,15 @@ export type KelvinLabels = {
   readingPending: string;
   temperature: string;
   offCurve: string;
+  cctShort: string;
+  tools: string;
+  toolPoint: string;
+  toolCompare: string;
+  toolArea: string;
+  toolRuler: string;
+  exposure: string;
+  keyLegend: string;
+  settings: string;
   meterNote: string;
   luminance: string;
   hue: string;
@@ -36,6 +45,15 @@ export const DEFAULT_LABELS: KelvinLabels = {
   readingPending: 'Waiting for a frame',
   temperature: 'Apparent CCT',
   offCurve: 'off the light curve',
+  cctShort: 'CCT',
+  tools: 'Measuring tool',
+  toolPoint: 'Point',
+  toolCompare: 'A–B',
+  toolArea: 'Area',
+  toolRuler: 'Ruler',
+  exposure: 'Exposure',
+  keyLegend: '1–4 tools · E exposure · X aim · ↵ set · P pin · Esc back',
+  settings: 'Settings',
   meterNote: 'Readings come from the picture, not a light meter: no lux without exposure data and a calibrated reference.',
   luminance: 'Luminance',
   hue: 'Hue',

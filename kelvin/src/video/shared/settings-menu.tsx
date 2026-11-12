@@ -161,7 +161,7 @@ export function SettingsMenu() {
   return (
     <Menu.Root side="top" align="center">
       <ButtonTooltip label={<TextPrimitive token={settingsText.key}>{settingsText.text}</TextPrimitive>}>
-        <Menu.Trigger render={<Button />}>
+        <Menu.Trigger render={<Button aria-label={settingsText.text} />}>
           <IconDial className={'media-button-icon'} />
           <TextPrimitive className={'media-settings-button-label'} token={settingsText.key}>
             {settingsText.text}
