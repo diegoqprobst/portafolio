@@ -135,22 +135,8 @@ export function PauseSheet() {
   const lumDisplay = slice ? `${Math.round(slice.luminance * 100)} %` : '—';
   const hue = slice ? hueOf(fromHex(slice.meanHex)) : null;
 
-  if (geometry.layout === 'compact') {
-    return (
-      <section className="kv-sheet kv-sheet--compact" style={geometry.sheet} aria-label={labels.sheetTitle}>
-        <span className="kv-sheet-time">{formatTimecode(time)}</span>
-        {plate ? <span className="kv-sheet-plate">{plate}</span> : null}
-        {slice ? (
-          <span className="kv-sheet-chips" aria-hidden="true">
-            {slice.swatches.slice(0, 4).map((s) => (
-              <span key={s.hex} className="kv-chip" style={{ background: s.hex }} />
-            ))}
-          </span>
-        ) : null}
-        {slice ? <span className="kv-sheet-k">{tempDisplay}</span> : null}
-      </section>
-    );
-  }
+  // Small landscape players: the docked loupe tag carries the reading; no strip over the picture.
+  if (geometry.layout === 'compact') return null;
 
   return (
     <section className={`kv-sheet kv-sheet--${geometry.layout}`} style={geometry.sheet} aria-label={labels.sheetTitle}>

@@ -895,29 +895,112 @@
     bottom: calc(var(--kv-key) + var(--kv-bar-pad) * 2 + 14px);
     translate: none;
     inline-size: auto;
-    grid-template-columns: auto 1fr;
+    display: flex;
+    flex-wrap: wrap;
     align-items: center;
-    column-gap: 12px;
+    gap: 4px 12px;
     padding: 6px 10px;
+    max-block-size: 46%;
+    overflow-y: auto;
   }
 
   .kv .kv-tag .kv-temp,
-  .kv .kv-tag .kv-tag-hint {
+  .kv .kv-tag .kv-tag-hint,
+  .kv .kv-tag .kv-tag-note {
     display: none;
   }
 
   .kv .kv-tag-k {
     border-top: 0;
     padding-top: 0;
+    gap: 8px;
   }
 
-  .kv .kv-tag .kv-note-form {
-    grid-column: 1 / -1;
+  .kv .kv-tag-hex {
+    font-size: 15px;
   }
 
-  .kv[data-sheet-layout='compact'] .kv-header {
+  .kv .kv-tag-row:not(.kv-tag-k) + .kv-tag-k .kv-tag-label {
     display: none;
   }
+
+  .kv .kv-tag-grid {
+    flex-basis: 100%;
+    font-size: 11px;
+  }
+
+  .kv .kv-tag .kv-note-form,
+  .kv .kv-tag .kv-scale-form {
+    flex-basis: 100%;
+  }
+
+  .kv .kv-tag-foot {
+    display: flex;
+    margin-inline-start: auto;
+  }
+
+  /* The header keeps only the tool controls; the compact strip is dropped so the picture stays clear. */
+  .kv .kv-header .kv-mark {
+    display: none;
+  }
+}
+
+/* Same docking in the compact sheet layout (small landscape players). */
+.kv[data-sheet-layout='compact'] .kv-mag {
+  inline-size: 72px;
+  block-size: 72px;
+}
+
+.kv[data-sheet-layout='compact'] .kv-tag,
+.kv[data-sheet-layout='compact'] .kv-tag[data-flip-x],
+.kv[data-sheet-layout='compact'] .kv-tag[data-flip-y],
+.kv[data-sheet-layout='compact'] .kv-tag[data-flip-x][data-flip-y] {
+  left: 8px !important;
+  right: 8px;
+  top: auto !important;
+  bottom: calc(var(--kv-key) + var(--kv-bar-pad) * 2 + 14px);
+  translate: none;
+  inline-size: auto;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 12px;
+  padding: 6px 10px;
+  max-block-size: 46%;
+  overflow-y: auto;
+}
+
+.kv[data-sheet-layout='compact'] .kv-tag .kv-temp,
+.kv[data-sheet-layout='compact'] .kv-tag .kv-tag-hint,
+.kv[data-sheet-layout='compact'] .kv-tag .kv-tag-note {
+  display: none;
+}
+
+.kv[data-sheet-layout='compact'] .kv-tag-k {
+  border-top: 0;
+  padding-top: 0;
+  gap: 8px;
+}
+
+.kv[data-sheet-layout='compact'] .kv-tag-grid {
+  flex-basis: 100%;
+  font-size: 11px;
+}
+
+.kv[data-sheet-layout='compact'] .kv-tag .kv-note-form,
+.kv[data-sheet-layout='compact'] .kv-tag .kv-scale-form,
+.kv[data-sheet-layout='compact'] .kv-tag-foot {
+  flex-basis: 100%;
+}
+
+.kv[data-sheet-layout='compact'] .kv-tag-foot {
+  display: flex;
+  justify-content: flex-end;
+}
+
+/* The header keeps only the tool controls; the compact strip is dropped so the picture stays clear. */
+.kv[data-sheet-layout='compact'] .kv-header .kv-mark {
+  display: none;
 }
 
 /* ---------- Drafting crosshair ---------- */
