@@ -373,7 +373,7 @@ export default function UmbrellaClient() {
                   <th scope="row">
                     <T en="Format" es="Formato" />
                   </th>
-                  <td>HLS · Mux · 1920×1080</td>
+                  <td>{process.env.NEXT_PUBLIC_KELVIN_MUX_PLAYBACK_ID ? "HLS · Mux · 1920×1080" : "MP4 · H.264 · 1280×720"}</td>
                 </tr>
                 <tr>
                   <th scope="row">
