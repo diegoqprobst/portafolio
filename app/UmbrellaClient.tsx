@@ -8,7 +8,8 @@ import dynamic from "next/dynamic";
 import "./umbrella.css";
 
 // Video.js solo baja cuando hace falta; el resto de la página no lo paga.
-const PlatePlayer = dynamic(() => import("./PlatePlayer"), { ssr: false });
+// Kelvin, the Video.js v10 skin (see /kelvin). Client-only: it reads the video frame in the browser.
+const KelvinPlayer = dynamic(() => import("./kelvin/KelvinPlayer"), { ssr: false });
 import { FEATURED_WORK } from "@/lib/featured-work";
 import { HACKATHONS } from "@/lib/hackathons";
 
@@ -338,26 +339,25 @@ export default function UmbrellaClient() {
                 </h2>
                 <p className="u-lede u-head-sub">
                   <T
-                    en="A Video.js player rebuilt in this system: square controls, the progress bar printed in the second ink, the time set in the page's own type."
-                    es="Un reproductor Video.js reconstruido con este sistema: controles cuadrados, barra de progreso impresa en la segunda tinta, los tiempos en la tipografía de la página."
+                    en="Kelvin, a Video.js player I designed for reviewing light. It plays with one row of controls; pause it and the frame becomes an instrument: a loupe that reads colour and temperature, a colour timeline, and notes pinned to the picture."
+                    es="Kelvin, un reproductor Video.js que diseñé para revisar la luz. Se reproduce con una sola fila de controles; al pausar, el fotograma se vuelve un instrumento: una lupa que lee color y temperatura, una línea de tiempo de color y notas fijadas en la imagen."
                   />
                 </p>
               </div>
             </div>
 
             <figure className="u-moving u-rise">
-              <PlatePlayer
-                src="/assets/video/reel.mp4"
-                poster="/assets/video/reel-poster.jpg"
-                label="Sample footage for the player"
-              />
+              <KelvinPlayer />
               <figcaption className="u-exhibit-cap">
                 <span>
                   <T en="Plate 01 · in motion" es="Lámina 01 · en movimiento" />
                 </span>
                 <span>
-                  <T en="Sample footage, own clip" es="Metraje de muestra, toma propia" />
+                  <T en="Own footage · pause, then move over the picture" es="Toma propia · pausa y mueve el cursor sobre la imagen" />
                 </span>
+                <Link href="/kelvin">
+                  <T en="How it works" es="Cómo funciona" />
+                </Link>
               </figcaption>
             </figure>
 
@@ -367,13 +367,13 @@ export default function UmbrellaClient() {
                   <th scope="row">
                     <T en="Player" es="Reproductor" />
                   </th>
-                  <td>Video.js 8 · <T en="custom skin" es="piel propia" /></td>
+                  <td>Kelvin · <T en="Video.js 10 skin, designed and built by me" es="piel para Video.js 10, diseñada y construida por mí" /></td>
                 </tr>
                 <tr>
                   <th scope="row">
                     <T en="Format" es="Formato" />
                   </th>
-                  <td>MP4 · H.264 · 1280×720</td>
+                  <td>HLS · Mux · 1920×1080</td>
                 </tr>
                 <tr>
                   <th scope="row">
@@ -387,8 +387,8 @@ export default function UmbrellaClient() {
                   </th>
                   <td>
                     <T
-                      en="Keyboard enabled · captions ready · no picture-in-picture"
-                      es="Teclado activo · listo para subtítulos · sin imagen en imagen"
+                      en="Space plays · X aims the loupe · Enter pins a note · Esc steps back"
+                      es="Espacio reproduce · X apunta la lupa · Enter fija una nota · Esc retrocede"
                     />
                   </td>
                 </tr>

@@ -84,6 +84,20 @@
   padding: revert-layer;
 }
 
+/* Same for resets like Tailwind's preflight (`svg, img, video { display: block }`), which would
+   otherwise un-hide the scaffold's inactive icons (play + pause + restart drawn on top of each other). */
+.kv :where(svg, img, video, canvas, button, input, select, textarea) {
+  display: revert-layer;
+  vertical-align: revert-layer;
+  max-inline-size: revert-layer;
+  block-size: revert-layer;
+  font: revert-layer;
+  color: revert-layer;
+  line-height: revert-layer;
+  background-color: revert-layer;
+  border: revert-layer;
+}
+
 /* Host pages style bare elements (h2, li, ul…); keep their typography and list styling out of the skin.
    Specificity 0,1,0: beats bare-element host rules, loses to every Kelvin class rule. */
 .kv :where(h1, h2, h3, h4, p, ul, ol, li, dl, dt, dd, figure, figcaption, table, th, td) {
