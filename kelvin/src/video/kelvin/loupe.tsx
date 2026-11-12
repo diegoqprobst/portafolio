@@ -190,7 +190,7 @@ export function Loupe() {
   if (!active || !layout) return null;
 
   // The tag stays on the picture: flip it left when it would cross the picture's right edge (or the sheet).
-  const flipX = layout.x + 84 + 200 > layout.picRight;
+  const flipX = layout.x + 84 + 240 > layout.picRight;
   const flipY = layout.y > layout.picBottom * 0.6;
   const pins = notes.filter((n) => Math.abs(n.t - time) < 0.35);
 

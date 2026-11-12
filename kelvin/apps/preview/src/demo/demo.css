@@ -32,9 +32,9 @@ html {
 body {
   margin: 0;
   color: var(--kv-ink);
-  font-family: 'Libre Caslon Text', Georgia, serif;
-  font-size: 17px;
-  line-height: 1.6;
+  font-family: 'Montserrat', 'Helvetica Neue', Arial, sans-serif;
+  font-size: 15px;
+  line-height: 1.7;
   background-color: var(--kv-navy);
   background-image:
     url('../../kelvin-engravings.svg'),
@@ -90,11 +90,11 @@ body {
 
 .demo h1 {
   margin: 0;
-  font-family: 'Barlow Condensed', sans-serif;
+  font-family: 'Montserrat', 'Helvetica Neue', Arial, sans-serif;
   font-weight: 600;
-  font-size: clamp(52px, 8vw, 88px);
+  font-size: clamp(40px, 6vw, 64px);
   line-height: 0.9;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.18em;
   text-transform: uppercase;
   color: var(--kv-ink);
 }
@@ -102,8 +102,8 @@ body {
 .demo-lede {
   margin: 0;
   max-inline-size: 34em;
-  font-size: 20px;
-  line-height: 1.5;
+  font-size: 17px;
+  line-height: 1.55;
   justify-self: end;
   color: var(--kv-ink);
   text-wrap: balance;
@@ -115,16 +115,16 @@ body {
 
 .demo-caption {
   margin: 12px 0 0;
-  font-style: italic;
+  font-style: normal;
   font-size: 15px;
   color: var(--kv-ink-soft);
 }
 
 .demo-caption span {
-  font-family: 'Barlow Condensed', sans-serif;
+  font-family: 'Montserrat', 'Helvetica Neue', Arial, sans-serif;
   font-style: normal;
   font-weight: 600;
-  letter-spacing: 0.2em;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
   color: var(--kv-cyan);
   margin-inline-end: 8px;
@@ -156,10 +156,10 @@ video-player {
 
 .demo h2 {
   margin: 0 0 8px;
-  font-family: 'Barlow Condensed', sans-serif;
+  font-family: 'Montserrat', 'Helvetica Neue', Arial, sans-serif;
   font-weight: 600;
-  font-size: 22px;
-  letter-spacing: 0.12em;
+  font-size: 13px;
+  letter-spacing: 0.16em;
   text-transform: uppercase;
   color: var(--kv-ink);
 }
@@ -198,7 +198,7 @@ video-player {
 }
 
 kbd {
-  font-family: 'Barlow Condensed', sans-serif;
+  font-family: 'Montserrat', 'Helvetica Neue', Arial, sans-serif;
   font-weight: 600;
   font-size: 15px;
   letter-spacing: 0.06em;
@@ -218,7 +218,7 @@ kbd {
 .demo-titleblock {
   border-collapse: collapse;
   min-inline-size: min(100%, 640px);
-  font-family: 'Barlow Condensed', sans-serif;
+  font-family: 'Montserrat', 'Helvetica Neue', Arial, sans-serif;
   font-size: 15px;
   letter-spacing: 0.04em;
   border: 1px solid var(--kv-ink);
@@ -236,7 +236,7 @@ kbd {
 .demo-titleblock th {
   font-weight: 600;
   font-size: 12px;
-  letter-spacing: 0.2em;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
   color: var(--kv-cyan);
   white-space: nowrap;

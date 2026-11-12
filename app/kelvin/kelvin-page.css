@@ -24,9 +24,9 @@
   background-position: center top, 0 0, 0 0, 0 0, 0 0;
   background-repeat: repeat-y, repeat, repeat, repeat, repeat;
   color: var(--kvp-carbon);
-  font-family: "Libre Caslon Text", Georgia, serif;
-  font-size: 17px;
-  line-height: 1.55;
+  font-family: "Montserrat", "Helvetica Neue", Arial, sans-serif;
+  font-size: 15px;
+  line-height: 1.7;
   padding: 48px 24px 64px;
 }
 
@@ -42,20 +42,20 @@
 }
 
 .kvp-kicker {
-  font-family: "Barlow Condensed", sans-serif;
+  font-family: "Montserrat", "Helvetica Neue", Arial, sans-serif;
   font-weight: 600;
   font-size: 14px;
-  letter-spacing: 0.26em;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
   color: var(--kvp-blue);
 }
 
 .kvp h1 {
-  font-family: "Barlow Condensed", sans-serif;
+  font-family: "Montserrat", "Helvetica Neue", Arial, sans-serif;
   font-weight: 600;
-  font-size: clamp(56px, 9vw, 96px);
+  font-size: clamp(40px, 6vw, 64px);
   line-height: 0.95;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.18em;
   text-transform: uppercase;
   color: var(--kvp-carbon);
   margin: 4px 0 12px;
@@ -63,8 +63,8 @@
 
 .kvp-lede {
   max-width: 36em;
-  font-size: 20px;
-  line-height: 1.45;
+  font-size: 17px;
+  line-height: 1.55;
 }
 
 .kvp-stage {
@@ -88,16 +88,16 @@
 
 .kvp-caption {
   margin-top: 12px;
-  font-style: italic;
+  font-style: normal;
   font-size: 15px;
   color: var(--kvp-soft);
 }
 
 .kvp-caption span {
-  font-family: "Barlow Condensed", sans-serif;
+  font-family: "Montserrat", "Helvetica Neue", Arial, sans-serif;
   font-style: normal;
   font-weight: 600;
-  letter-spacing: 0.2em;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
   color: var(--kvp-blue);
   margin-inline-end: 8px;
@@ -115,10 +115,10 @@
 
 .kvp-grid h2,
 .kvp-notes h2 {
-  font-family: "Barlow Condensed", sans-serif;
+  font-family: "Montserrat", "Helvetica Neue", Arial, sans-serif;
   font-weight: 600;
-  font-size: 22px;
-  letter-spacing: 0.12em;
+  font-size: 13px;
+  letter-spacing: 0.16em;
   text-transform: uppercase;
   margin-bottom: 8px;
 }
@@ -145,7 +145,7 @@
 }
 
 .kvp-grid strong {
-  font-family: "Barlow Condensed", sans-serif;
+  font-family: "Montserrat", "Helvetica Neue", Arial, sans-serif;
   font-weight: 600;
   letter-spacing: 0.06em;
   text-transform: uppercase;
