@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'vitest';
 
-import { INITIAL_MODE, modeReducer, routeKey, type Mode } from './mode';
+import { INITIAL_MODE, modeReducer, routeKey, specimenTime, type Mode } from './mode';
 
 const paused = modeReducer(INITIAL_MODE, { type: 'pause' });
 const keyboard = modeReducer(paused, { type: 'loupeKeyboard' });
@@ -38,6 +38,36 @@ describe('modeReducer', () => {
   });
   test('moves are ignored outside keyboard mode', () =>
     expect(modeReducer(paused, { type: 'move', key: 'ArrowRight', fine: false })).toBe(paused));
+});
+
+describe('specimen (opening as an instrument)', () => {
+  const opened = modeReducer(INITIAL_MODE, { type: 'specimen', u: 0.46, v: 0.6 });
+
+  test('opens the sheet with the pointer loupe aimed at the given point', () =>
+    expect(opened).toMatchObject({ sheet: true, loupe: 'pointer', reticle: { u: 0.46, v: 0.6 } }));
+  test('clamps the point to the frame', () =>
+    expect(modeReducer(INITIAL_MODE, { type: 'specimen', u: 1.4, v: -2 }).reticle).toEqual({ u: 1, v: 0 }));
+  test('play closes it like any pause, keeping the reticle', () =>
+    expect(modeReducer(opened, { type: 'play' })).toEqual({ ...INITIAL_MODE, reticle: { u: 0.46, v: 0.6 } }));
+  test('Escape closes it', () => {
+    expect(escapeCloses(opened)).toBe(true);
+    expect(modeReducer(opened, { type: 'escape' })).toMatchObject({ sheet: false, loupe: 'off' });
+  });
+  test('does nothing once something is already open', () => {
+    const aimed = modeReducer(paused, { type: 'pointer', u: 0.1, v: 0.1 });
+    expect(modeReducer(aimed, { type: 'specimen', u: 0.46, v: 0.6 })).toBe(aimed);
+  });
+});
+
+describe('specimenTime', () => {
+  test('keeps a time inside the clip', () => expect(specimenTime(6.2, 12.4)).toBe(6.2));
+  test('pulls a late time back from the very end, so there is a frame to read', () =>
+    expect(specimenTime(30, 12.4)).toBeCloseTo(12.3));
+  test('never goes below zero', () => expect(specimenTime(-3, 12.4)).toBe(0));
+  test('without a known duration it trusts the time', () => {
+    expect(specimenTime(6.2, Number.NaN)).toBe(6.2);
+    expect(specimenTime(6.2, Number.POSITIVE_INFINITY)).toBe(6.2);
+  });
 });
 
 describe('routeKey', () => {

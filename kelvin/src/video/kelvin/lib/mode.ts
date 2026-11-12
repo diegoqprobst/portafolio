@@ -17,6 +17,8 @@ export type Mode = {
 };
 export type ModeEvent =
   | { type: 'pause' }
+  /** Open as an instrument before anything has played: sheet, loupe, and where it aims. */
+  | { type: 'specimen'; u: number; v: number }
   | { type: 'tool'; tool: Tool }
   | { type: 'exposure' }
   | { type: 'setAnchor' }
@@ -53,6 +55,10 @@ export function modeReducer(state: Mode, event: ModeEvent): Mode {
   switch (event.type) {
     case 'pause':
       return { ...state, sheet: true, loupe: 'pointer' };
+    case 'specimen':
+      // Only from the closed state: it never moves a reticle the viewer is already using.
+      if (state.sheet || state.loupe !== 'off') return state;
+      return { ...state, sheet: true, loupe: 'pointer', reticle: { u: clamp(event.u), v: clamp(event.v) } };
     case 'play':
       return { ...INITIAL_MODE, reticle: state.reticle, tool: state.tool, exposure: state.exposure };
     case 'tool':
@@ -88,6 +94,15 @@ export function modeReducer(state: Mode, event: ModeEvent): Mode {
       return { ...state, reticle, drag };
     }
   }
+}
+
+/**
+ * The moment a specimen opens on: inside the clip, and a little before its end so there is a frame to read.
+ * With no usable duration yet (a live or still-loading source) the requested time is trusted.
+ */
+export function specimenTime(t: number, duration: number): number {
+  const from = Math.max(0, t);
+  return Number.isFinite(duration) && duration > 0 ? Math.min(from, Math.max(0, duration - 0.1)) : from;
 }
 
 /** Who handles a keydown: Kelvin's loupe, the scaffold hotkeys, or the Escape ladder. */

@@ -12,7 +12,7 @@ import { cn } from '@/lib/resolve-class-name';
 
 import type { KelvinLabels } from './kelvin/labels';
 import type { ColorStrip } from './kelvin/lib/color-strip';
-import { KelvinContainer } from './kelvin/state';
+import { KelvinContainer, type Specimen } from './kelvin/state';
 import { KelvinBar } from './kelvin/bar';
 import { KelvinBehaviors } from './kelvin/behaviors';
 import { Loupe } from './kelvin/loupe';
@@ -32,6 +32,12 @@ export interface VideoSkinProps extends Omit<ContainerPrimitive.Props, 'children
   /** Pre-computed colour timeline (object or URL). Omit for a plain track. */
   colorStrip?: ColorStrip | string;
   labels?: Partial<KelvinLabels>;
+  /**
+   * Open as an instrument instead of a poster: paused on the frame at `t` seconds with the sheet
+   * open and the loupe aimed at (`u`, `v`). Nothing plays; Play or Escape closes it as usual.
+   * Where the browser loads no frame before a gesture, the poster stays.
+   */
+  specimen?: Specimen;
 }
 
 export function VideoSkin({ children, className, renderPoster, renderThumbnail, ...props }: VideoSkinProps) {

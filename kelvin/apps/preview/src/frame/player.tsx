@@ -13,13 +13,15 @@ const POSTER = MUX_ID ? `https://image.mux.com/${MUX_ID}/thumbnail.jpg?time=6` :
 /** Chapters for the time slider, served from `apps/preview/public`. */
 const CHAPTERS = './kelvin-chapters.vtt';
 const STRIP = './kelvin-colorstrip.json';
+/** The demo opens as an instrument: paused where the sand meets the water, loupe on the caustics. */
+const SPECIMEN = { t: 6.2, u: 0.46, v: 0.6 };
 
 /** `media` carries the workbench's playback options: autoplay, muted, loop, and preload. */
 export function Player({ media }: { media?: PlaybackProps }) {
   const track = <track kind="chapters" label="English" srcLang="en" src={CHAPTERS} default />;
   return (
     <VideoPlayer poster={POSTER}>
-      <VideoSkin videoId="sea-lions" colorStrip={STRIP}>
+      <VideoSkin videoId="sea-lions" colorStrip={STRIP} specimen={SPECIMEN}>
         {MUX_ID ? (
           <MuxVideo {...media} src={SRC} playsInline crossOrigin="" loop>
             {track}

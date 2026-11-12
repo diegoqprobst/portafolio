@@ -1337,6 +1337,11 @@
   background: var(--kv-halftone-paper), var(--kv-paper);
 }
 
+/* Opened as a specimen, nothing has played yet: the poster would cover the framed picture. */
+.media-skin.kv[data-sheet] .media-poster {
+  display: none;
+}
+
 .kv video {
   transform-origin: 0 0;
   transition:

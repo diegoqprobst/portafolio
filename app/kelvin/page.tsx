@@ -31,7 +31,7 @@ export default function Page() {
 
       <main>
         <section className="kvp-stage" aria-label="Kelvin player">
-          <KelvinPlayer />
+          <KelvinPlayer specimen />
           <p className="kvp-caption">
             <span>Plate I–III</span> Sea lions in the shallows. Pause, then move over the picture.
           </p>

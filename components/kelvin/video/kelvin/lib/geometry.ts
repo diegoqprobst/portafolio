@@ -22,6 +22,18 @@ export function pointToUv(x: number, y: number, el: Box, videoWidth: number, vid
   return { u: Math.min(1, Math.max(0, u)), v: Math.min(1, Math.max(0, v)) };
 }
 
+export type SheetLayout = 'side' | 'below' | 'compact';
+
+/**
+ * Where the pause sheet goes for a player of this size: beside the picture, below it, or, when there
+ * is room for neither, `compact` (no sheet; the loupe tag docks over the picture).
+ */
+export function sheetLayout(width: number, height: number): SheetLayout {
+  if (width >= 720 && height >= width * 0.42) return 'side';
+  if (height >= width * 1.1) return 'below';
+  return 'compact';
+}
+
 /** Frame coordinates → client point. */
 export function uvToPoint(u: number, v: number, el: Box, videoWidth: number, videoHeight: number) {
   const box = contentBox(el, videoWidth, videoHeight);

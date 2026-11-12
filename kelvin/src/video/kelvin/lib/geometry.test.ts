@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'vitest';
 
-import { contentBox, pointToUv, uvToPoint } from './geometry';
+import { contentBox, pointToUv, sheetLayout, uvToPoint } from './geometry';
 
 const el = { left: 0, top: 0, width: 1000, height: 1000 };
 
@@ -57,4 +57,11 @@ describe('contentBox with a DOMRect-like box', () => {
   }
   test('copies getter-backed fields when the video size is unknown', () =>
     expect(contentBox(new RectLike(), 0, 0)).toEqual({ left: 10, top: 20, width: 300, height: 200 }));
+});
+
+describe('sheetLayout', () => {
+  test('a wide player puts the sheet beside the picture', () => expect(sheetLayout(1280, 720)).toBe('side'));
+  test('a tall player puts it below', () => expect(sheetLayout(360, 640)).toBe('below'));
+  test('a small landscape player has no room: compact', () => expect(sheetLayout(480, 270)).toBe('compact'));
+  test('wide but very shallow is compact too', () => expect(sheetLayout(1000, 300)).toBe('compact'));
 });

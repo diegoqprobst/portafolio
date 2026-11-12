@@ -18,7 +18,8 @@ import {
 
 import { DEFAULT_LABELS, type KelvinLabels } from './labels';
 import { parseColorStrip, stripMatches, type ColorStrip } from './lib/color-strip';
-import { INITIAL_MODE, modeReducer, type Mode, type ModeEvent } from './lib/mode';
+import { sheetLayout } from './lib/geometry';
+import { INITIAL_MODE, modeReducer, specimenTime, type Mode, type ModeEvent } from './lib/mode';
 import { addNote as add, loadNotes, removeNote as remove, saveNotes, type Note, type NoteStorage } from './lib/notes';
 import { loadScale, saveScale, type Scale } from './lib/scale';
 
@@ -61,9 +62,27 @@ export interface KelvinContainerProps extends Omit<ContainerPrimitive.Props, 'ch
   videoId: string;
   colorStrip?: ColorStrip | string | undefined;
   labels?: Partial<KelvinLabels> | undefined;
+  specimen?: Specimen | undefined;
 }
 
-export function KelvinContainer({ children, videoId, colorStrip, labels: labelOverrides, ...props }: KelvinContainerProps) {
+/**
+ * Open as an instrument instead of a poster: paused on the frame at `t` seconds, sheet open,
+ * loupe aimed at (`u`, `v`) in frame fractions (default: the centre). Nothing is played.
+ */
+export interface Specimen {
+  t: number;
+  u?: number;
+  v?: number;
+}
+
+export function KelvinContainer({
+  children,
+  videoId,
+  colorStrip,
+  labels: labelOverrides,
+  specimen,
+  ...props
+}: KelvinContainerProps) {
   const store = usePlayer();
   const paused = usePlayer((s) => s.paused);
   const started = usePlayer((s) => s.started);
@@ -117,6 +136,47 @@ export function KelvinContainer({ children, videoId, colorStrip, labels: labelOv
     if (!mode.sheet) return;
     return store.requestControlsLock();
   }, [mode.sheet, store]);
+
+  // Specimen: seek to the chosen frame without playing, and open once that frame is there to read.
+  // The poster stays, untouched, where that cannot work well: a player too small to frame the picture
+  // (the tools would cover it), or a browser that loads no frame before a gesture (iPhone).
+  const startedRef = useRef(started);
+  startedRef.current = started;
+  const specimenT = specimen?.t;
+  const specimenU = specimen?.u ?? 0.5;
+  const specimenV = specimen?.v ?? 0.5;
+  useEffect(() => {
+    if (specimenT === undefined || startedRef.current) return;
+    const root = rootRef.current;
+    const video = root?.querySelector('video');
+    if (!root || !video) return;
+    let live = true;
+    const roomy = () => {
+      const r = root.getBoundingClientRect();
+      return sheetLayout(r.width, r.height) !== 'compact';
+    };
+    const untouched = () => live && !startedRef.current && video.paused && roomy();
+    const open = () => {
+      if (untouched()) dispatch({ type: 'specimen', u: specimenU, v: specimenV });
+    };
+    const onSeeked = () => {
+      if (video.readyState >= 2) open();
+      else video.addEventListener('loadeddata', open, { once: true });
+    };
+    const arm = () => {
+      if (!untouched()) return;
+      video.addEventListener('seeked', onSeeked, { once: true });
+      video.currentTime = specimenTime(specimenT, video.duration);
+    };
+    if (video.readyState >= 1) arm();
+    else video.addEventListener('loadedmetadata', arm, { once: true });
+    return () => {
+      live = false;
+      video.removeEventListener('loadedmetadata', arm);
+      video.removeEventListener('seeked', onSeeked);
+      video.removeEventListener('loadeddata', open);
+    };
+  }, [specimenT, specimenU, specimenV]);
 
   const addNote = useCallback(
     (draft: Omit<Note, 'id'>) =>

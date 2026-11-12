@@ -10,10 +10,11 @@ import { EXPOSURE_PALETTE, ZONE_RANGES, type Zone } from './lib/exposure';
 import { IconClose, IconDownload } from './icons';
 import { cctReading, formatCct, fromHex, hueOf, temperaturePosition } from './lib/color';
 import { sliceAt } from './lib/color-strip';
+import { sheetLayout, type SheetLayout } from './lib/geometry';
 import { formatTimecode, notesToCsv, type Note } from './lib/notes';
 import { useKelvin } from './state';
 
-type Layout = 'side' | 'below' | 'compact';
+type Layout = SheetLayout;
 type Geometry = { layout: Layout; picture: CSSProperties; sheet: CSSProperties };
 
 const PAD = 14;
@@ -24,7 +25,8 @@ const SHEET_MIN = 280;
 /** Where the picture and the sheet go for this player size. The sheet never covers the picture, except in compact. */
 export function sheetGeometry(width: number, height: number, videoWidth: number, videoHeight: number): Geometry {
   const aspect = videoWidth && videoHeight ? videoHeight / videoWidth : 9 / 16;
-  if (width >= 720 && height >= width * 0.42) {
+  const layout = sheetLayout(width, height);
+  if (layout === 'side') {
     // As large as the height allows, leaving the sheet column at least SHEET_MIN wide.
     const scale = Math.min((height - HEADER - BAR) / height, (width - PAD * 3 - SHEET_MIN) / width);
     return {
@@ -33,7 +35,7 @@ export function sheetGeometry(width: number, height: number, videoWidth: number,
       sheet: { insetInlineStart: PAD * 2 + width * scale, insetInlineEnd: PAD, top: HEADER, bottom: BAR },
     };
   }
-  if (height >= width * 1.1) {
+  if (layout === 'below') {
     const pictureHeight = width * aspect;
     const shift = HEADER - (height - pictureHeight) / 2;
     return {
