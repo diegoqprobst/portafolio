@@ -4,7 +4,7 @@ import { usePlayer } from '@videojs/react/video';
 import { useCallback, useEffect, useLayoutEffect, useRef, useState, type KeyboardEvent, type PointerEvent } from 'react';
 
 import { IconNote } from './icons';
-import { estimateCct, toHex } from './lib/color';
+import { cctReading, formatCct, toHex } from './lib/color';
 import { pointToUv, uvToPoint } from './lib/geometry';
 import { routeKey, type ArrowKey } from './lib/mode';
 import { readPixel, safeReadPixel, type PixelReading } from './lib/pixels';
@@ -98,17 +98,20 @@ export function Loupe() {
   }, [active, u, v, frame, getVideo, rootRef]);
 
   const hex = reading.status === 'ok' ? toHex(reading.rgb) : null;
-  const cct = reading.status === 'ok' ? estimateCct(reading.rgb) : null;
+  const cctR = reading.status === 'ok' ? cctReading(reading.rgb) : null;
+  const cct = cctR?.kind === 'ok' ? cctR.k : null;
+  const cctText = cctR ? formatCct(cctR, labels) : '—';
+  const scaleK = cctR?.kind === 'ok' ? cctR.k : cctR?.kind === 'above' ? 10000 : null;
 
   // Keyboard aiming announces the reading, debounced.
   useEffect(() => {
     if (mode.loupe !== 'keyboard') return;
     const timer = window.setTimeout(() => {
       if (reading.status === 'blocked') setAnnouncement(labels.readingUnavailable);
-      else if (hex) setAnnouncement(`${hex}. ${labels.temperature} ${cct === null ? '—' : `${labels.approx} ${cct} K`}`);
+      else if (hex) setAnnouncement(`${hex}. ${labels.temperature} ${cctR?.kind === 'off' ? labels.offCurve : cctText}`);
     }, ANNOUNCE_MS);
     return () => window.clearTimeout(timer);
-  }, [mode.loupe, reading.status, hex, cct, labels]);
+  }, [mode.loupe, reading.status, hex, cctR?.kind, cctText, labels]);
 
   useEffect(() => {
     if (mode.loupe === 'keyboard' && !noteOpen) layerRef.current?.focus();
@@ -271,9 +274,9 @@ export function Loupe() {
             </div>
             <div className="kv-tag-row kv-tag-k">
               <span className="kv-tag-label">{labels.temperature}</span>
-              <span className="kv-tag-value">{cct === null ? '—' : `≈ ${cct.toLocaleString('en-US')} K`}</span>
+              <span className="kv-tag-value" title={cctR?.kind === 'off' ? labels.offCurve : undefined}>{cctText}</span>
             </div>
-            <TemperatureScale kelvin={cct} />
+            <TemperatureScale kelvin={scaleK} />
           </>
         ) : (
           <p className="kv-tag-note">{reading.status === 'blocked' ? labels.readingUnavailable : labels.readingPending}</p>

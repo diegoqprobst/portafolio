@@ -7,6 +7,8 @@ export type KelvinLabels = {
   readingUnavailable: string;
   readingPending: string;
   temperature: string;
+  offCurve: string;
+  meterNote: string;
   luminance: string;
   hue: string;
   palette: string;
@@ -32,7 +34,9 @@ export const DEFAULT_LABELS: KelvinLabels = {
   loupeHint: 'Press X to aim with the keyboard, Enter to add a note',
   readingUnavailable: 'Reading unavailable in this browser',
   readingPending: 'Waiting for a frame',
-  temperature: 'Temperature',
+  temperature: 'Apparent CCT',
+  offCurve: 'off the light curve',
+  meterNote: 'Readings come from the picture, not a light meter: no lux without exposure data and a calibrated reference.',
   luminance: 'Luminance',
   hue: 'Hue',
   palette: 'Palette',

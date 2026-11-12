@@ -60,3 +60,28 @@ describe('hueOf', () => {
   });
   test('neutral grey has no hue', () => expect(hueOf({ r: 128, g: 128, b: 128 })).toBeNull());
 });
+
+import { cctReading, duv, formatCct } from './color';
+
+describe('cctReading (apparent CCT, honestly bounded)', () => {
+  test('white reads near D65', () => {
+    const r = cctReading({ r: 255, g: 255, b: 255 });
+    expect(r.kind).toBe('ok');
+    if (r.kind === 'ok') {
+      expect(r.k).toBeGreaterThan(6200);
+      expect(r.k).toBeLessThan(6800);
+    }
+  });
+  test('a pale blue past 10 000 K reads as above the scale', () =>
+    expect(cctReading({ r: 190, g: 215, b: 255 })).toEqual({ kind: 'above' }));
+  test('saturated blue is off the light curve', () => expect(cctReading({ r: 0, g: 0, b: 255 })).toEqual({ kind: 'off' }));
+  test('a green tint is off the light curve', () => expect(cctReading({ r: 200, g: 255, b: 200 })).toEqual({ kind: 'off' }));
+  test('white sits on the blackbody locus', () => expect(Math.abs(duv({ r: 255, g: 255, b: 255 }))).toBeLessThan(0.005));
+});
+
+describe('formatCct', () => {
+  const labels = { offCurve: 'off the light curve' };
+  test('ok', () => expect(formatCct({ kind: 'ok', k: 6504 }, labels)).toBe('≈ 6,504 K'));
+  test('above', () => expect(formatCct({ kind: 'above' }, labels)).toBe('> 10 000 K'));
+  test('off', () => expect(formatCct({ kind: 'off' }, labels)).toBe('—'));
+});

@@ -6,7 +6,7 @@ import { useEffect, useLayoutEffect, useState, type CSSProperties } from 'react'
 import { splitChapter } from './chapter-overlay';
 import { Gauge, SPECTRA } from './gauge';
 import { IconClose, IconDownload } from './icons';
-import { fromHex, hueOf, temperaturePosition } from './lib/color';
+import { cctReading, formatCct, fromHex, hueOf, temperaturePosition } from './lib/color';
 import { sliceAt } from './lib/color-strip';
 import { formatTimecode, notesToCsv } from './lib/notes';
 import { useKelvin } from './state';
@@ -102,7 +102,9 @@ export function PauseSheet() {
     rootRef.current?.querySelector<HTMLElement>('.kv-key--play')?.focus();
   };
 
-  const tempDisplay = slice?.cct ? `≈ ${slice.cct.toLocaleString('en-US')} K` : '—';
+  const sliceCct = slice ? cctReading(fromHex(slice.meanHex)) : null;
+  const tempDisplay = sliceCct ? formatCct(sliceCct, labels) : '—';
+  const tempPosition = sliceCct?.kind === 'ok' ? temperaturePosition(sliceCct.k) : sliceCct?.kind === 'above' ? 0 : null;
   const lumDisplay = slice ? `${Math.round(slice.luminance * 100)} %` : '—';
   const hue = slice ? hueOf(fromHex(slice.meanHex)) : null;
 
@@ -160,7 +162,7 @@ export function PauseSheet() {
           <div className="kv-sheet-gauges">
             <Gauge
               label={labels.temperature}
-              position={slice.cct ? temperaturePosition(slice.cct) : null}
+              position={tempPosition}
               display={tempDisplay}
               spectrum={SPECTRA.temperature}
             />
