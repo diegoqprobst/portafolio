@@ -35,3 +35,8 @@ marketing/
 .roo
 .trae
 .windsurf
+.vercel
+.env*
+
+# Brainstorming visual companion (local only)
+.superpowers/
