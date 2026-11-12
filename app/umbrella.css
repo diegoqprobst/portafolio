@@ -1,795 +1,1069 @@
 /* ============================================================================
    UMBRELLA — sistema de diseño de la raíz (diegoquinde.com)
-   Concepto: "una mente encendida por dentro". Superficie drenched de tinta
-   índigo + una luz cálida que la habita; cada mundo (psicoterapia·IA / estudio /
-   juego) tiene su luz de firma sobre la misma tinta constante.
 
-   Scope: todo vive bajo `.umbra` para no filtrarse a /lumen ni /admin (que
-   siguen con globals.css). Los tokens `--u-*` se declaran en :root a propósito,
-   listos para que el resto del sitio los herede en una pasada futura.
+   Mundo: el folleto de exposición técnica de mediados de siglo (Union Carbide,
+   "Giants of the New Age", 1933). Papel litográfico marfil casi blanco, dos
+   tintas — el periwinkle de plano que ocupa campos enteros a sangre y el minio
+   naranja de marca —, negro carbón para el texto, un pliego blanco
+   encuadernado dentro, titulares en caja alta geométrica muy pesada y filetes
+   de registro de 3px en la segunda tinta. Las fotos van en fotograbado negro
+   montadas sobre un bloque de tinta corrido, como en los pliegos originales.
+   Sin tarjetas, sin radios, sin sombras, sin resplandores, sin monoespaciada.
+
+   Tipografía (fijada por Diego): Montserrat para display, Helvetica Neue para
+   todo lo demás. Helvetica Neue no es redistribuible: va como stack y degrada
+   a Helvetica/Arial fuera de macOS, que es el mismo esqueleto grotesco.
+
+   Scope: todo vive bajo `.umbra` para no filtrarse a /lumen ni /admin, que
+   siguen con globals.css y el sistema tipográfico anterior.
    ========================================================================== */
 
 :root {
-  /* — Tinta drenched (índigo profundo, claramente de color, no negro) — */
-  --u-ink-0: oklch(13% 0.045 278);
-  --u-ink-1: oklch(18.5% 0.055 278);
-  --u-ink-2: oklch(23% 0.062 277);
+  /* — Las tres tintas del folleto — */
+  /* El valor lo dio Diego: #575892, un periwinkle apagado muy cerca de la
+     tinta de la portada de 1933. -deep es la segunda pasada y -lit la
+     plancha corrida; -lit solo vive SOBRE la tinta, porque sobre el papel se
+     queda en 3.1:1. Medido: 5.7:1 sobre el papel, 5.6:1 con el crema. */
+  --u-ink:       #575892;  /* la tinta, elegida por Diego: el campo, no el acento */
+  --u-ink-deep:  #42437A;  /* segunda pasada: estados pulsados      */
+  /* El papel del folleto no es el tostado del swatch: en las páginas
+     interiores es un marfil casi blanco, y la tinta es la que pone todo el
+     color. El grano de abajo es lo que le devuelve el cuerpo. */
+  --u-paper:     #F3F0E7;  /* papel: el suelo de la página        */
+  --u-paper-lit: #FBF9F3;  /* media tinta del papel               */
+  --u-carbon:    #2B2B2B;  /* texto                                        */
 
-  /* — Hairlines (separación sin cards) — */
-  --u-hair:   oklch(82% 0.04 280 / 0.13);
-  --u-hair-2: oklch(82% 0.04 280 / 0.26);
+  /* Segunda tinta: el ladrillo apagado con el que se imprimían de verdad los
+     folletos a dos colores. Marca y campo: 4.66:1 sobre el papel y 5.31:1
+     con el blanco calzado encima. */
+  --u-orange:      #A85334;  /* ladrillo apagado, no el minio encendido */
+  --u-orange-deep: #8C4229;  /* segunda pasada: pulsado / hover         */
+  /* Trama de la segunda tinta: sobre el campo de tinta el ladrillo a plena
+     fuerza se apaga (1.23:1), así que ahí imprime como trama clara, que es
+     lo que hace una prensa a dos tintas cuando necesita que el segundo color
+     lea sobre el primero. 4.74:1 sobre el campo. */
+  --u-orange-tint: #F7D5C2;
 
-  /* — Texto: blanco cálido para sentirse humano, no frío.
-       Contrastes verificados sobre --u-ink-1 (≥ 4.5:1 en cuerpo). — */
-  --u-paper:      oklch(96% 0.01 85);    /* ~14:1  títulos / cuerpo fuerte */
-  --u-paper-dim:  oklch(80% 0.022 280);  /* ~8:1   cuerpo                  */
-  --u-paper-mute: oklch(68.5% 0.03 280); /* ~5.6:1 secundario / meta       */
+  /* La hoja blanca: el pliego couché que se encuaderna dentro del papel
+     envejecido. Es dónde van la banda de especificación y las láminas. */
+  --u-white:     #FFFFFF;
 
-  /* — Las luces. Una cálida primaria + una firma por mundo. — */
-  --u-light:      oklch(82% 0.15 75);    /* ámbar: la chispa, Lumen, lo humano */
-  --u-light-deep: oklch(72% 0.15 62);
-  --u-ai:         oklch(84% 0.12 200);   /* fósforo frío: la máquina         */
-  --u-play:       oklch(74% 0.19 8);     /* coral: el juego                  */
+  /* Secundarios: tintados del papel, nunca grises. Medido en el render:
+     carbon-2 6.35:1 sobre el papel; crema 5.55:1 y crema-2 4.73:1 sobre la
+     tinta. */
+  --u-carbon-2:  #5E5648;
+  --u-cream:     #F4ECD9;
+  --u-cream-2:   #E3DBC6;
 
-  /* Luz del mundo en foco (la anima el observer de scroll). */
-  --u-glow: var(--u-light);
+  /* — Filetes — */
+  --u-rule:      2px solid var(--u-ink);
+  --u-hair:      1px solid rgba(43, 43, 43, 0.26);
 
-  /* — Radios contenidos (cards topan en 12–16px; nada de 32px) — */
-  --u-r: 14px;
+  /* — Tipos — */
+  --u-display: var(--font-montserrat), "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --u-text: "Helvetica Neue", Helvetica, "Helvetica Now Text", Arial, "Liberation Sans", sans-serif;
 
-  /* — Motion — */
+  /* — Métrica de página — */
+  --u-maxw: 1240px;
+  --u-gutter: clamp(20px, 5vw, 76px);
   --u-ease: cubic-bezier(0.16, 1, 0.3, 1);
-
-  --u-maxw: 1080px;
-  --u-nav-h: 76px;
 }
 
-/* La raíz umbrella NO usa el scroll-snap de la historia de Lumen (definido en
-   globals.css sobre `html`): aquí no hay `.scene` a las que anclar, así que solo
-   produce jank. Lo neutralizamos en cualquier página que monte `.umbra`. */
+/* La raíz no usa el scroll-snap de la historia de Lumen (definido en
+   globals.css sobre `html`): aquí no hay `.scene` donde anclar. */
 html:has(.umbra) { scroll-snap-type: none; }
 
-/* ── Raíz ──────────────────────────────────────────────────────────────── */
+/* El overscroll de arriba enseña el fondo del documento, que en globals.css es
+   la tinta casi negra de /lumen. En la raíz tiene que ser la plancha. */
+html:has(.umbra), html:has(.umbra) body { background: var(--u-ink); }
+
+/* ── Hoja ───────────────────────────────────────────────────────────────── */
 .umbra {
   position: relative;
   min-height: 100vh;
-  background: var(--u-ink-1);
-  color: var(--u-paper);
-  font-family: var(--font-hanken), system-ui, sans-serif;
+  background: var(--u-paper);
+  color: var(--u-carbon);
+  font-family: var(--u-text);
   font-size: 17px;
-  line-height: 1.6;
-  letter-spacing: -0.005em;
+  line-height: 1.58;
   overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
+  --u-selection-bg: var(--u-ink);
+  --u-selection-fg: var(--u-cream);
 }
 
-/* Grano: materializa la tinta para que el drench no se lea plano/muerto. */
+/* Grano de papel: el offset del 33 imprime sobre fibra, no sobre vidrio. */
 .umbra::before {
   content: "";
   position: fixed;
   inset: 0;
   z-index: 0;
   pointer-events: none;
-  opacity: 0.045;
-  mix-blend-mode: soft-light;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  opacity: 0.85;
+  mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)' opacity='0.16'/%3E%3C/svg%3E");
 }
 
-/* Aura: la luz que sigue al cursor + se tiñe del mundo en foco.
-   --u-mx/--u-my las setea JS (rAF). Crossfade del color via transition. */
-.u-aura {
-  position: fixed;
-  inset: 0;
-  z-index: 0;
-  pointer-events: none;
-  background:
-    radial-gradient(
-      40vw 40vw at var(--u-mx, 50%) var(--u-my, 16%),
-      oklch(from var(--u-glow) l c h / 0.16),
-      transparent 60%
-    ),
-    radial-gradient(
-      55vw 50vw at 92% 4%,
-      oklch(from var(--u-glow) l c h / 0.10),
-      transparent 55%
-    );
-  transition: background 1.2s var(--u-ease);
-}
+.umbra > * { position: relative; z-index: 1; }
 
-.umbra > * {
-  position: relative;
-  z-index: 1;
-}
+/* Superficies del navegador: también son del sistema. */
+.umbra ::selection { background: var(--u-selection-bg); color: var(--u-selection-fg); }
+.umbra { caret-color: var(--u-ink); accent-color: var(--u-ink); }
+.umbra * { scrollbar-color: var(--u-ink) var(--u-paper); }
+/* :where() deja la regla en specificity 0 para el selector de tipo, así los
+   componentes de abajo (.u-act, .u-read) pueden fijar su propio color sin
+   pelearse con el reset. */
+.umbra :where(a) { color: inherit; text-decoration: none; text-underline-offset: 0.22em; }
 
-/* Tipografía de marca */
-.u-serif { font-family: var(--font-fraunces), Georgia, serif; font-optical-sizing: auto; }
-.u-mono {
-  font-family: var(--font-jbmono), ui-monospace, monospace;
-  font-size: 0.72rem;
-  letter-spacing: 0.16em;
+/* Aislamiento: globals.css pinta por id (#contact, #about, #services…) para la
+   home de Lumen, y un id gana a cualquier clase. Dentro de .umbra no manda. */
+.umbra #contact.u-close { background: var(--u-ink); }
+.umbra :focus-visible {
+  outline: 2px solid var(--u-ink);
+  outline-offset: 3px;
+  border-radius: 0;
+}
+/* Sobre tinta el anillo de foco tiene que ser crema, o desaparece. La barra
+   superior flota sobre la portada, así que cambia de color con ella. */
+.u-plate :focus-visible,
+.u-close :focus-visible,
+.u-run:not(.past) :focus-visible { outline-color: var(--u-cream); }
+.u-run.past :focus-visible { outline-color: var(--u-ink); }
+
+/* Un solo juego de numerales en todo lo tabular. */
+.umbra table,
+.u-spec,
+.u-contents,
+.u-sched { font-variant-numeric: tabular-nums; }
+
+/* ── Primitivas tipográficas ────────────────────────────────────────────── */
+.u-label {
+  font-family: var(--u-text);
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
   text-transform: uppercase;
+  color: var(--u-carbon-2);
 }
-.u-lit { color: var(--u-light); }
+.u-plate .u-label { color: var(--u-cream-2); }
 
-/* ── Nav ───────────────────────────────────────────────────────────────── */
-.u-nav {
+.u-h2 {
+  font-family: var(--u-display);
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: -0.015em;
+  line-height: 0.92;
+  font-size: clamp(2.1rem, 5.4vw, 4rem);
+}
+.u-h3 {
+  font-family: var(--u-display);
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.005em;
+  line-height: 1.04;
+  font-size: clamp(1.15rem, 2.1vw, 1.5rem);
+}
+.u-lede {
+  max-width: 68ch;
+  font-size: clamp(1.02rem, 1.35vw, 1.2rem);
+  line-height: 1.6;
+  color: var(--u-carbon);
+}
+.u-body { max-width: 70ch; }
+.u-dim { color: var(--u-carbon-2); }
+.u-plate .u-dim { color: var(--u-cream-2); }
+
+/* Filete de registro: abre cada sección. */
+.u-reg {
+  display: block;
+  width: 100%;
+  height: 3px;
+  background: var(--u-orange);
+  transform-origin: left center;
+}
+
+/* ── Rejilla ────────────────────────────────────────────────────────────── */
+.u-sheet {
+  max-width: var(--u-maxw);
+  margin: 0 auto;
+  padding-inline: var(--u-gutter);
+}
+.u-section { padding-block: clamp(56px, 8vw, 104px); }
+.u-section > .u-sheet > * + * { margin-top: 28px; }
+
+/* ── Cabecera de sección: número + título, sin eyebrow ──────────────────── */
+.u-head {
+  display: grid;
+  grid-template-columns: 4.5rem minmax(0, 1fr);
+  gap: clamp(14px, 2.4vw, 32px);
+  align-items: start;
+}
+.u-head-no {
+  font-family: var(--u-display);
+  font-weight: 900;
+  font-size: clamp(1.6rem, 3vw, 2.4rem);
+  line-height: 0.9;
+  color: var(--u-orange);
+  padding-top: 0.08em;
+}
+.u-head-sub { margin-top: 14px; }
+
+/* ── Running head (nav) ─────────────────────────────────────────────────── */
+.u-run {
   position: fixed;
   top: 0; left: 0; right: 0;
-  z-index: 50;
-  height: var(--u-nav-h);
+  z-index: 60;
+  height: 56px;
   display: flex;
   align-items: center;
-  background: oklch(18.5% 0.055 278 / 0.72);
-  backdrop-filter: blur(18px) saturate(140%);
-  -webkit-backdrop-filter: blur(18px) saturate(140%);
-  border-bottom: 1px solid var(--u-hair);
+  color: var(--u-cream);
+  border-bottom: 1px solid transparent;
+  transition: background 0.3s var(--u-ease), color 0.3s var(--u-ease),
+    border-color 0.3s var(--u-ease);
 }
-.u-nav-inner {
-  max-width: var(--u-maxw);
+.u-run.past {
+  background: var(--u-paper);
+  color: var(--u-carbon);
+  border-bottom: var(--u-rule);
+}
+.u-run-inner {
   width: 100%;
+  max-width: var(--u-maxw);
   margin: 0 auto;
-  padding: 0 28px;
+  padding-inline: var(--u-gutter);
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 24px;
 }
-.u-mark {
+.u-run-mark {
   display: inline-flex;
   align-items: center;
-  gap: 11px;
-  font-family: var(--font-fraunces), serif;
-  font-size: 1.18rem;
-  font-weight: 600;
-  letter-spacing: -0.02em;
-  color: var(--u-paper);
-}
-/* El colibrí de marca, teñido con la luz del tema (currentColor → ámbar) y con
-   un halo suave que lo encaja en el concepto "una mente encendida por dentro". */
-.u-colibri {
-  height: 26px;
-  width: auto;
-  color: var(--u-light);
-  flex-shrink: 0;
-  filter: drop-shadow(0 0 7px oklch(from var(--u-light) l c h / 0.45));
-}
-.u-colibri--sm { height: 15px; filter: none; }
-.u-footer-brand { display: inline-flex; align-items: center; gap: 11px; }
-.u-nav-links {
-  display: flex;
-  align-items: center;
-  gap: 26px;
-}
-.u-nav-link {
-  font-family: var(--font-jbmono), monospace;
-  font-size: 0.7rem;
+  gap: 10px;
+  font-family: var(--u-display);
+  font-weight: 800;
+  font-size: 0.82rem;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: var(--u-paper-mute);
-  transition: color 0.25s var(--u-ease);
+  white-space: nowrap;
 }
-.u-nav-link:hover { color: var(--u-paper); }
-.u-nav-link--lumen { color: var(--u-light); }
-.u-nav-link--lumen:hover { color: oklch(88% 0.13 78); }
-
-/* Lang toggle (reusa el markup de globals; re-tematizado al índigo) */
-.umbra .lang-toggle { gap: 6px; color: var(--u-paper-mute); }
-.umbra .lang-btn {
-  font-family: var(--font-jbmono), monospace;
-  font-size: 0.68rem; letter-spacing: 0.12em;
-  color: var(--u-paper-mute);
-  transition: color 0.25s var(--u-ease);
-}
-.umbra .lang-btn:hover,
-.umbra .lang-btn.active { color: var(--u-light); }
-.umbra .lang-sep { color: var(--u-hair-2); }
-
-/* ── Layout base ───────────────────────────────────────────────────────── */
-.u-main { max-width: var(--u-maxw); margin: 0 auto; padding: 0 28px; }
-
-/* ── Hero ──────────────────────────────────────────────────────────────── */
-.u-hero {
-  position: relative;
-  min-height: 100svh;
+.u-run-mark svg { width: 30px; height: 20px; flex: none; }
+.u-run-nav {
   display: flex;
-  flex-direction: column;
-  justify-content: center;
-  padding: calc(var(--u-nav-h) + 64px) 0 80px;
+  align-items: center;
+  gap: clamp(14px, 2vw, 28px);
 }
-/* El orbe: "la mente encendida" — un campo de luz que respira detrás del hero. */
-.u-orb {
+.u-run-nav a {
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  padding-block: 4px;
+  border-bottom: 2px solid transparent;
+  transition: border-color 0.18s var(--u-ease);
+}
+.u-run-nav a:hover { border-bottom-color: currentColor; }
+.u-run-studio { font-weight: 800 !important; }
+.u-run-nav a { white-space: nowrap; }
+@media (max-width: 900px) {
+  .u-run-nav a:not(.u-run-studio):not(.u-run-contact) { display: none; }
+}
+@media (max-width: 580px) {
+  .u-run-nav a.u-run-studio { display: none; }
+  .u-run-nav { gap: 14px; }
+  .u-run-mark { font-size: 0.72rem; letter-spacing: 0.1em; gap: 8px; }
+  .u-run-mark svg { width: 24px; height: 16px; }
+}
+
+.u-lang {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border: 1px solid currentColor;
+  padding: 3px 7px;
+}
+.u-lang button {
+  background: none;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+  color: inherit;
+  opacity: 0.55;
+  font-family: var(--u-text);
+  font-size: 0.64rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+}
+.u-lang button.active { opacity: 1; text-decoration: underline; text-underline-offset: 0.2em; }
+.u-lang .sep { opacity: 0.4; font-size: 0.64rem; }
+
+/* ── 1. Portada: la plancha ─────────────────────────────────────────────── */
+.u-plate {
+  position: relative;
+  background: var(--u-ink);
+  color: var(--u-cream);
+  padding-top: clamp(104px, 13vh, 150px);
+  padding-bottom: clamp(36px, 5vw, 56px);
+  overflow: hidden;
+}
+/* Desregistro: la plancha de tinta corrida 2px, como en el pliego de 1933. */
+.u-plate::after {
+  content: "";
   position: absolute;
-  top: 50%; right: -8%;
-  translate: 0 -50%;
-  width: min(560px, 70vw);
-  aspect-ratio: 1;
-  border-radius: 50%;
-  pointer-events: none;
-  z-index: -1;
-  background: radial-gradient(
-    circle,
-    oklch(from var(--u-light) l c h / 0.22) 0%,
-    oklch(from var(--u-ai) l c h / 0.10) 38%,
-    transparent 68%
-  );
-  filter: blur(34px);
-  animation: u-breathe 9s ease-in-out infinite;
+  left: 0; right: 0; bottom: 0;
+  height: 6px;
+  background: var(--u-orange);
+  transform: translateX(-3px);
 }
-@keyframes u-breathe {
-  0%, 100% { transform: scale(1); opacity: 0.9; }
-  50%      { transform: scale(1.08); opacity: 1; }
+.u-cover {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) clamp(220px, 30vw, 430px);
+  gap: clamp(16px, 4vw, 48px);
+  align-items: start;
 }
-/* Campo neuronal: cubre el hero detrás del texto; no intercepta el puntero
-   (lo escucha en window). z-index -1 lo deja sobre el aura pero bajo el texto. */
-/* Posición FIJA al viewport (no al hero flex): tamaño estable y reproducible,
-   sin el bucle de reflow del canvas absoluto con height:100%. La máscara la
-   concentra arriba-derecha (la zona visual del hero) y la desvanece hacia el
-   texto y las secciones inferiores. El selector `.umbra > .u-neural` (mayor
-   especificidad) vence al `.umbra > *` que la pondría relative/z-1. */
-.umbra > .u-neural {
-  position: fixed;
+.u-cover-name { position: relative; }
+.u-cover-name span { position: relative; z-index: 1; }
+/* La plancha mal registrada: misma palabra, otra tinta, corrida 2px. */
+.u-cover-name::before {
+  content: attr(data-mis);
+  position: absolute;
   inset: 0;
   z-index: 0;
-  width: 100%;
-  height: 100%;
+  color: var(--u-orange);
+  transform: translate(3px, 3px);
+  white-space: pre-line;
   pointer-events: none;
-  display: block;
-  -webkit-mask-image: radial-gradient(135% 95% at 78% 26%, #000 32%, transparent 78%);
-          mask-image: radial-gradient(135% 95% at 78% 26%, #000 32%, transparent 78%);
 }
-
-.u-hero-kicker {
-  display: inline-flex;
-  align-items: center;
-  gap: 12px;
-  color: var(--u-paper-mute);
-  margin-bottom: 30px;
+.u-cover-name,
+.u-cover-name::before {
+  font-family: var(--u-display);
+  font-weight: 900;
+  text-transform: uppercase;
+  font-size: clamp(4.1rem, 13.2vw, 10.5rem);
+  line-height: 0.8;
+  letter-spacing: -0.035em;
+  margin: 0;
 }
-.u-hero-kicker::after {
-  content: "";
-  width: 56px; height: 1px;
-  background: var(--u-hair-2);
+.u-cover-name { color: var(--u-cream); }
+.u-cover-name span { display: block; }
+.u-cover-rule {
+  height: 3px;
+  background: var(--u-cream);
+  margin-top: clamp(20px, 3vw, 34px);
 }
-.u-hero-h1 {
-  font-family: var(--font-fraunces), serif;
-  font-optical-sizing: auto;
-  font-weight: 340;
-  font-size: clamp(2.7rem, 7.4vw, 5.7rem);
-  line-height: 1.02;
-  letter-spacing: -0.025em;
-  max-width: 16ch;
-  text-wrap: balance;
-  margin-bottom: 34px;
-}
-.u-hero-h1 em {
-  font-style: italic;
-  font-weight: 400;
-  color: var(--u-light);
-}
-.u-hero-sub {
-  font-size: clamp(1.06rem, 1.5vw, 1.28rem);
-  font-weight: 360;
-  line-height: 1.62;
-  color: var(--u-paper-dim);
-  max-width: 58ch;
-}
-.u-hero-sub strong { color: var(--u-paper); font-weight: 560; }
-.u-hero-scroll {
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  margin-top: 52px;
-  color: var(--u-paper-mute);
-  transition: color 0.25s var(--u-ease), gap 0.25s var(--u-ease);
-}
-.u-hero-scroll:hover { color: var(--u-light); gap: 15px; }
-.u-hero-scroll .u-arrow { animation: u-bob 1.9s ease-in-out infinite; }
-@keyframes u-bob { 0%,100% { transform: translateY(0); } 50% { transform: translateY(4px); } }
-
-/* ── Tesis / throughline ───────────────────────────────────────────────── */
-.u-thesis {
-  padding: clamp(96px, 16vh, 200px) 0;
-  border-top: 1px solid var(--u-hair);
-}
-.u-thesis-p {
-  font-family: var(--font-fraunces), serif;
-  font-optical-sizing: auto;
-  font-weight: 330;
-  font-size: clamp(1.8rem, 4.2vw, 3.4rem);
-  line-height: 1.18;
-  letter-spacing: -0.02em;
-  max-width: 22ch;
-  text-wrap: balance;
-}
-.u-thesis-p em { font-style: italic; color: var(--u-light); }
-.u-thesis-note {
-  margin-top: 34px;
-  max-width: 52ch;
-  color: var(--u-paper-mute);
-  font-size: 1.02rem;
-  line-height: 1.6;
-}
-
-/* ── Mundos (el trabajo, sin card grid) ────────────────────────────────── */
-.u-featured {
-  padding: clamp(88px, 14vh, 160px) 0;
-  border-top: 1px solid var(--u-hair);
-}
-.u-featured .u-section-head { margin-bottom: 52px; }
-.u-work-grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 1px;
-  background: var(--u-hair);
-  border: 1px solid var(--u-hair);
-}
-.u-work-card {
-  min-width: 0;
-  color: inherit;
-  background: var(--u-ink-1);
-  transition: background 0.35s var(--u-ease), transform 0.35s var(--u-ease);
-}
-.u-work-card:hover { background: var(--u-ink-2); }
-.u-work-image {
-  position: relative;
-  aspect-ratio: 16 / 10;
-  overflow: hidden;
-  background: var(--u-ink-0);
-}
-.u-work-image::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(to top, oklch(13% 0.045 278 / 0.5), transparent 55%);
-}
-.u-work-image img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  filter: saturate(0.78) contrast(1.04);
-  transition: transform 0.7s var(--u-ease), filter 0.4s var(--u-ease);
-}
-.u-work-card:hover .u-work-image img { transform: scale(1.035); filter: saturate(1); }
-.u-work-year {
-  position: absolute;
-  right: 18px;
-  bottom: 15px;
-  z-index: 1;
-  color: var(--u-paper);
-}
-.u-work-copy { padding: 28px 30px 32px; }
-.u-work-client { color: var(--u-light); }
-.u-work-copy h3 {
-  margin-top: 13px;
-  font-family: var(--font-fraunces), serif;
-  font-size: clamp(1.4rem, 2.3vw, 2rem);
-  font-weight: 420;
-  line-height: 1.15;
-  letter-spacing: -0.02em;
-}
-.u-work-service { margin-top: 12px; color: var(--u-paper-mute); font-size: 0.86rem; }
-.u-work-outcome { margin-top: 22px; color: var(--u-paper-dim); line-height: 1.55; }
-.u-work-link {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  margin-top: 24px;
-  color: var(--u-paper);
-  font-family: var(--font-jbmono), monospace;
-  font-size: 0.68rem;
+.u-cover-stand {
+  margin-top: clamp(18px, 2.6vw, 28px);
+  max-width: 34ch;
+  font-size: clamp(0.82rem, 1.25vw, 1.02rem);
+  font-weight: 500;
+  line-height: 1.75;
   letter-spacing: 0.1em;
   text-transform: uppercase;
+  color: var(--u-cream);
 }
-.u-work-link svg { width: 14px; height: 14px; color: var(--u-light); }
-
-/* ── Hackathons ───────────────────────────────────────────────────────── */
-.u-hack {
-  padding: clamp(88px, 14vh, 150px) 0;
-  border-top: 1px solid var(--u-hair);
+.u-cover-stand strong { font-weight: 700; }
+.u-cover-aside {
+  align-self: stretch;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: clamp(18px, 3vw, 40px);
 }
-.u-hack .u-section-head { margin-bottom: 52px; }
-.u-hack-card { display: flex; }
-.u-hack-card .u-work-copy { display: flex; flex-direction: column; }
-.u-hack-points {
-  margin: 22px 0 24px;
-  padding: 0;
-  list-style: none;
-  display: grid;
-  gap: 12px;
+.u-cover-art {
+  color: var(--u-cream);
+  opacity: 0.95;
 }
-.u-hack-points li {
-  position: relative;
-  padding-left: 18px;
-  color: var(--u-paper-dim);
-  font-size: 0.9rem;
-  line-height: 1.55;
+/* Pie de imprenta: el folleto de 1933 cierra la portada con el pie del
+   editor. Aquí ocupa el cuadrante inferior derecho, que si no queda muerto. */
+.u-imprint {
+  align-self: end;
+  text-align: right;
+  font-size: 0.64rem;
+  font-weight: 600;
+  letter-spacing: 0.19em;
+  line-height: 2;
+  text-transform: uppercase;
+  color: var(--u-cream-2);
+  border-top: 1px solid rgba(244, 236, 217, 0.4);
+  padding-top: 12px;
 }
-.u-hack-points li::before {
-  content: "";
-  position: absolute;
-  left: 0;
-  top: 0.62em;
-  width: 7px;
-  height: 1px;
-  background: var(--u-light);
-}
-.u-hack-links { display: flex; flex-wrap: wrap; gap: 8px 26px; margin-top: auto; }
-
-/* ── Experiencia profesional ──────────────────────────────────────────── */
-.u-experience {
-  padding: clamp(88px, 14vh, 150px) 0;
-  border-top: 1px solid var(--u-hair);
-}
-.u-experience-list { border-top: 1px solid var(--u-hair-2); }
-.u-experience-item {
-  display: grid;
-  grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
-  gap: clamp(28px, 6vw, 80px);
-  padding: 38px 0 42px;
-  border-bottom: 1px solid var(--u-hair-2);
-}
-.u-experience-index { color: var(--u-light); }
-.u-experience-identity h3 {
-  margin-top: 12px;
-  font-family: var(--font-fraunces), serif;
-  font-size: clamp(1.65rem, 3vw, 2.4rem);
-  font-weight: 420;
-  line-height: 1.1;
-}
-.u-experience-identity p { margin-top: 8px; color: var(--u-paper-mute); }
-.u-experience-detail > p {
-  max-width: 56ch;
-  color: var(--u-paper-dim);
-  font-size: 1.03rem;
-  line-height: 1.62;
-}
-.u-experience-focus {
-  display: block;
-  margin-top: 24px;
-  color: var(--u-paper-mute);
-  line-height: 1.7;
+.u-cover-art svg { width: 100%; height: auto; }
+@media (max-width: 760px) {
+  .u-cover { grid-template-columns: 1fr; }
+  .u-cover-aside { order: -1; }
+  .u-cover-art { width: 58%; }
+  .u-imprint { display: none; }
 }
 
-.u-worlds { display: flex; flex-direction: column; }
-.u-world {
-  position: relative;
-  padding: clamp(64px, 11vh, 128px) 0;
-  border-top: 1px solid var(--u-hair);
+/* ── 2. Banda de especificación + índice ────────────────────────────────── */
+.u-spec-band {
+  background: var(--u-white);
+  border-bottom: 3px solid var(--u-orange);
+  padding-block: clamp(28px, 4vw, 44px);
+}
+.u-spec-grid {
   display: grid;
-  grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
-  gap: clamp(28px, 6vw, 80px);
+  grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr) minmax(220px, 0.9fr);
+  gap: clamp(22px, 3.6vw, 56px);
+  align-items: start;
 }
-/* Borde-luz de la firma del mundo (no es una card, es luz en el canto). */
-.u-world::before {
-  content: "";
-  position: absolute;
-  left: -28px; top: -1px;
-  width: 3px; height: 64px;
-  background: linear-gradient(var(--u-self, var(--u-light)), transparent);
-  opacity: 0.9;
-  border-radius: 2px;
+@media (max-width: 1000px) { .u-spec-grid { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 680px) { .u-spec-grid { grid-template-columns: 1fr; } }
+
+.u-spec { width: 100%; border-collapse: collapse; }
+.u-spec th,
+.u-spec td {
+  text-align: left;
+  vertical-align: baseline;
+  padding: 9px 0;
+  border-bottom: var(--u-hair);
+  font-size: 0.92rem;
 }
-.u-world-aside { display: flex; flex-direction: column; gap: 18px; }
-/* El colibrí como emblema del mundo, teñido con su propia luz (--u-self). */
-.u-world-colibri {
-  height: 26px;
-  width: auto;
-  color: var(--u-self, var(--u-light));
-  opacity: 0.92;
-  margin-bottom: -2px;
-  filter: drop-shadow(0 0 9px oklch(from var(--u-self, var(--u-light)) l c h / 0.4));
-}
-.u-tag {
-  display: inline-flex;
-  align-items: center;
-  gap: 9px;
-  width: fit-content;
-  color: var(--u-self, var(--u-light));
-}
-.u-tag svg { width: 15px; height: 15px; }
-.u-status {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  width: fit-content;
-  font-family: var(--font-jbmono), monospace;
+.u-spec tr:last-child th,
+.u-spec tr:last-child td { border-bottom: 0; }
+.u-spec th {
+  width: 9.5rem;
   font-size: 0.66rem;
+  font-weight: 700;
+  letter-spacing: 0.17em;
+  text-transform: uppercase;
+  color: var(--u-carbon-2);
+  padding-right: 16px;
+}
+
+.u-contents { list-style: none; margin: 0; padding: 0; }
+.u-contents li { border-bottom: var(--u-hair); }
+.u-contents a {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  padding: 8px 0;
+  font-size: 0.8rem;
+  font-weight: 600;
   letter-spacing: 0.13em;
   text-transform: uppercase;
-  color: var(--u-paper-mute);
 }
-.u-status-dot {
-  width: 7px; height: 7px; border-radius: 50%;
-  background: var(--u-self, var(--u-light));
+.u-contents .no { color: var(--u-orange); font-family: var(--u-display); font-weight: 900; }
+.u-contents .dots {
+  flex: 1;
+  height: 1px;
+  border-bottom: 1px dotted rgba(43, 43, 43, 0.4);
+  transform: translateY(-3px);
 }
-.u-status-dot--live { animation: u-pulse 2.2s ease infinite; }
-@keyframes u-pulse {
-  0%,100% { box-shadow: 0 0 0 0 oklch(from var(--u-self) l c h / 0.55); }
-  55%     { box-shadow: 0 0 0 6px oklch(from var(--u-self) l c h / 0); }
+.u-contents a:hover .dots { border-bottom-color: var(--u-ink-deep); }
+.u-contents a:hover { color: var(--u-ink-deep); }
+
+/* Bloque de acción: tinta sólida, el único botón de la página. */
+.u-act {
+  display: block;
+  background: var(--u-orange);
+  color: var(--u-white);
+  padding: 20px 22px 22px;
+  transition: background 0.18s var(--u-ease), transform 0.18s var(--u-ease);
 }
-.u-world-title {
-  font-family: var(--font-fraunces), serif;
-  font-optical-sizing: auto;
-  font-weight: 380;
-  font-size: clamp(1.7rem, 3vw, 2.5rem);
-  line-height: 1.08;
-  letter-spacing: -0.02em;
-  color: var(--u-paper);
+.u-act:hover { background: var(--u-orange-deep); transform: translate(-2px, -2px); }
+.u-act:active { transform: none; }
+.u-act-t {
+  display: block;
+  font-family: var(--u-display);
+  font-weight: 900;
+  text-transform: uppercase;
+  font-size: 1.12rem;
+  line-height: 1.05;
+  letter-spacing: -0.005em;
 }
-.u-world-body { display: flex; flex-direction: column; }
-.u-world-desc {
-  font-size: 1.06rem;
-  line-height: 1.66;
-  color: var(--u-paper-dim);
-  max-width: 60ch;
+.u-act-d { display: block; margin-top: 8px; font-size: 0.82rem; line-height: 1.5; color: var(--u-white); }
+.u-act-m {
+  margin-top: 14px;
+  display: inline-block;
+  border-bottom: 2px solid var(--u-white);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
 }
-.u-world-meta {
-  display: inline-flex;
-  align-items: center;
-  gap: 9px;
-  margin-top: 24px;
-  font-family: var(--font-jbmono), monospace;
-  font-size: 0.7rem;
-  letter-spacing: 0.06em;
-  color: var(--u-paper-mute);
+
+/* ── 3. Declaración ─────────────────────────────────────────────────────── */
+.u-statement { padding-block: clamp(56px, 9vw, 112px); }
+.u-statement-h {
+  font-family: var(--u-display);
+  font-weight: 900;
+  text-transform: uppercase;
+  font-size: clamp(1.9rem, 5.6vw, 4.1rem);
+  line-height: 0.95;
+  letter-spacing: -0.025em;
+  max-width: 17ch;
 }
-.u-world-meta svg { width: 15px; height: 15px; color: var(--u-self, var(--u-light)); }
-.u-links {
+.u-statement-h em { font-style: normal; color: var(--u-ink); }
+.u-statement-cols {
+  margin-top: clamp(26px, 3.6vw, 44px);
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(20px, 3.4vw, 54px);
+  border-top: var(--u-hair);
+  padding-top: 22px;
+}
+@media (max-width: 760px) { .u-statement-cols { grid-template-columns: 1fr; } }
+.u-statement-cols p { max-width: 62ch; }
+
+/* ── 4. Exhibiciones (trabajo + prototipos) ─────────────────────────────── */
+.u-exhibits {
+  margin-top: clamp(30px, 4vw, 48px);
+  border-top: var(--u-hair);
+}
+.u-exhibit {
+  display: grid;
+  grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr);
+  gap: clamp(20px, 3.5vw, 54px);
+  padding-block: clamp(26px, 3.6vw, 44px);
+  border-bottom: var(--u-hair);
+  align-items: start;
+}
+@media (max-width: 800px) { .u-exhibit { grid-template-columns: 1fr; } }
+/* Al pasar el cursor la plancha se corre y deja ver la prueba en color. */
+a.u-exhibit:hover .u-plate-img img {
+  transform: translate(5px, 5px);
+  filter: none;
+}
+a.u-exhibit:hover .u-exhibit-t { color: var(--u-ink-deep); }
+
+/* Lámina: la foto impresa a dos tintas, con desregistro al pasar el cursor. */
+.u-plate-img {
+  position: relative;
+  margin: 0 14px 14px 0;
+}
+/* La plancha de tinta sobre la que se monta el fotograbado. */
+.u-plate-img::before {
+  content: "";
+  position: absolute;
+  inset: 14px -14px -14px 14px;
+  background: var(--u-ink);
+}
+/* El fotograbado va en negro sobre la plancha de tinta: es como monta las
+   fotos el folleto de 1933 — la foto no se tiñe, el color lo pone el bloque
+   de debajo. Filtros CSS planos y nada de `filter: url(#…)`: el filtro SVG se
+   apila mal según el motor y la lámina salía plana. */
+.u-plate-img > img,
+.u-plate-img > span { position: relative; z-index: 1; }
+.u-plate-img img {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 8 / 5;
+  object-fit: cover;
+  filter: grayscale(1) contrast(1.12) brightness(1.03);
+  transition: transform 0.22s var(--u-ease), filter 0.22s var(--u-ease);
+}
+.u-plate-no {
+  position: absolute;
+  z-index: 2;
+  left: 0; top: 0;
+  background: var(--u-orange);
+  color: var(--u-white);
+  font-family: var(--u-display);
+  font-weight: 900;
+  font-size: 0.74rem;
+  letter-spacing: 0.1em;
+  padding: 5px 10px 4px;
+}
+
+.u-exhibit-cap {
+  margin-top: 12px;
+  padding-top: 9px;
+  border-top: var(--u-hair);
   display: flex;
   flex-wrap: wrap;
-  gap: 14px 26px;
-  margin-top: 30px;
+  gap: 4px 12px;
+  font-size: 0.66rem;
+  font-weight: 700;
+  letter-spacing: 0.17em;
+  text-transform: uppercase;
+  color: var(--u-carbon-2);
 }
-.u-link {
+.u-exhibit-cap span + span::before {
+  content: "·";
+  margin-right: 12px;
+  opacity: 0.6;
+}
+.u-exhibit-t {
+  margin-top: 0;
+  font-family: var(--u-display);
+  font-weight: 900;
+  text-transform: uppercase;
+  font-size: clamp(1.25rem, 2.5vw, 1.85rem);
+  line-height: 1.02;
+  letter-spacing: -0.012em;
+  transition: color 0.18s var(--u-ease);
+}
+.u-exhibit-note { margin-top: 12px; max-width: 54ch; }
+.u-exhibit-spec { margin-top: 16px; }
+.u-read {
+  margin-top: 18px;
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  font-weight: 560;
-  font-size: 0.96rem;
-  color: var(--u-paper);
-  transition: gap 0.25s var(--u-ease), color 0.25s var(--u-ease);
-}
-.u-link svg { width: 16px; height: 16px; }
-.u-link--primary { color: var(--u-self, var(--u-light)); }
-.u-link:hover { gap: 12px; color: var(--u-self, var(--u-light)); }
-.u-link--muted { color: var(--u-paper-mute); font-weight: 500; }
-.u-link--muted:hover { color: var(--u-paper); }
-
-/* El flagship respira más y trae un campo de luz interior. */
-.u-world--flagship {
-  grid-template-columns: 1fr;
-  gap: clamp(28px, 4vw, 48px);
-  padding-top: clamp(76px, 13vh, 150px);
-}
-.u-world--flagship .u-world-title {
-  font-size: clamp(2.1rem, 5vw, 3.6rem);
-  max-width: 18ch;
-}
-.u-world--flagship .u-world-desc { font-size: 1.14rem; max-width: 64ch; }
-.u-world--flagship::after {
-  content: "";
-  position: absolute;
-  inset: 0 -40px;
-  z-index: -1;
-  background: radial-gradient(
-    70% 60% at 78% 30%,
-    oklch(from var(--u-self) l c h / 0.07),
-    transparent 70%
-  );
-  pointer-events: none;
-}
-.u-world--flagship .u-world-head {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: 20px;
-}
-
-/* La ficha técnica de Lumen (guiño a la documentación de iluminación). */
-.u-spec {
-  margin-top: 28px;
-  border: 1px solid var(--u-hair);
-  border-radius: var(--u-r);
-  overflow: hidden;
-  max-width: 360px;
-}
-.u-spec-row {
-  display: flex;
-  justify-content: space-between;
-  gap: 16px;
-  padding: 11px 16px;
-  font-family: var(--font-jbmono), monospace;
   font-size: 0.72rem;
-  letter-spacing: 0.02em;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--u-ink);
+  border-bottom: 2px solid var(--u-orange);
+  padding-bottom: 2px;
 }
-.u-spec-row + .u-spec-row { border-top: 1px solid var(--u-hair); }
-.u-spec-k { color: var(--u-paper-mute); text-transform: uppercase; letter-spacing: 0.1em; }
-.u-spec-v { color: var(--u-paper); }
+.u-read:hover { color: var(--u-orange-deep); }
+.u-read svg { width: 13px; height: 13px; }
 
-/* ── Roadmap ───────────────────────────────────────────────────────────── */
-.u-roadmap { padding: clamp(80px, 13vh, 150px) 0; border-top: 1px solid var(--u-hair); }
-.u-section-head { margin-bottom: 56px; max-width: 52ch; }
-.u-section-kicker { color: var(--u-light); margin-bottom: 18px; display: block; }
-.u-section-title {
-  font-family: var(--font-fraunces), serif;
-  font-optical-sizing: auto;
-  font-weight: 360;
-  font-size: clamp(1.9rem, 3.6vw, 2.9rem);
-  line-height: 1.1;
-  letter-spacing: -0.02em;
-  margin-bottom: 16px;
-}
-.u-section-sub { color: var(--u-paper-mute); font-size: 1.04rem; line-height: 1.62; }
-.u-timeline { display: flex; flex-direction: column; }
-.u-milestone {
-  display: grid;
-  grid-template-columns: 150px 1fr;
-  gap: clamp(20px, 5vw, 56px);
-  padding: 28px 0;
-}
-.u-milestone + .u-milestone { border-top: 1px solid var(--u-hair); }
-.u-milestone-when {
-  font-family: var(--font-jbmono), monospace;
-  font-size: 0.74rem;
-  letter-spacing: 0.08em;
-  color: var(--u-light);
-  padding-top: 4px;
-}
-.u-milestone-t {
-  font-family: var(--font-fraunces), serif;
-  font-weight: 460;
-  font-size: 1.22rem;
-  letter-spacing: -0.01em;
-  color: var(--u-paper);
-  margin-bottom: 8px;
-}
-.u-milestone-d { color: var(--u-paper-dim); font-size: 0.98rem; line-height: 1.62; max-width: 64ch; }
-.u-writing {
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  margin-top: 40px;
-  color: var(--u-paper-mute);
-  font-size: 0.94rem;
-}
-.u-writing svg { width: 16px; height: 16px; color: var(--u-light); }
-
-/* globals.css define reglas por #id (#contact, #about…) para la home de Lumen.
-   Nuestro #contact colisiona y heredaría `background: var(--bg2)` (una caja
-   oscura). Neutralizamos cualquier fondo de id global sobre la umbrella. */
-.umbra #contact,
-.umbra #work,
-.umbra #roadmap { background: transparent; }
-
-/* ── Contacto (cierre editorial, sin caja centrada) ────────────────────── */
-.u-contact {
+.u-findings { margin: 14px 0 0; padding: 0; list-style: none; max-width: 58ch; }
+.u-findings li {
   position: relative;
-  padding: clamp(96px, 18vh, 210px) 0;
-  border-top: 1px solid var(--u-hair);
+  padding-left: 22px;
+  margin-top: 9px;
+  font-size: 0.93rem;
+  line-height: 1.55;
 }
-/* Halo a sangre completa (100vw): antes quedaba recortado al ancho de la
-   columna (1080px) y dejaba un borde rectangular visible a la derecha. */
-.u-contact::after {
+.u-findings li::before {
   content: "";
   position: absolute;
-  top: 0; bottom: 0;
-  left: 50%; right: auto;
-  width: 100vw;
-  transform: translateX(-50%);
-  z-index: -1;
-  background: radial-gradient(50% 80% at 32% 55%, oklch(from var(--u-light) l c h / 0.12), transparent 62%);
-  pointer-events: none;
+  left: 0; top: 0.62em;
+  width: 11px; height: 2px;
+  background: var(--u-orange);
 }
-.u-contact-h {
-  font-family: var(--font-fraunces), serif;
-  font-optical-sizing: auto;
-  font-weight: 330;
-  font-size: clamp(2.4rem, 6vw, 4.6rem);
-  line-height: 1.04;
-  letter-spacing: -0.025em;
-  margin-bottom: 24px;
-}
-.u-contact-h em { font-style: italic; color: var(--u-light); }
-.u-contact-p { color: var(--u-paper-dim); font-size: 1.1rem; line-height: 1.6; max-width: 56ch; margin-bottom: 44px; }
-.u-mailto {
-  display: inline-flex;
-  align-items: baseline;
-  gap: 4px;
-  font-family: var(--font-fraunces), serif;
-  font-size: clamp(1.4rem, 3.4vw, 2.3rem);
-  font-weight: 440;
-  letter-spacing: -0.02em;
-  color: var(--u-light);
-  background-image: linear-gradient(var(--u-light), var(--u-light));
-  background-size: 0% 2px;
-  background-repeat: no-repeat;
-  background-position: 0 100%;
-  transition: background-size 0.45s var(--u-ease);
-}
-.u-mailto:hover { background-size: 100% 2px; }
-.u-contact-alt {
-  display: inline-flex;
-  align-items: center;
-  gap: 9px;
-  margin-top: 28px;
-  color: var(--u-paper-mute);
-  font-size: 0.96rem;
-  transition: color 0.25s var(--u-ease);
-}
-.u-contact-alt:hover { color: var(--u-light); }
-.u-contact-alt svg { width: 16px; height: 16px; }
-
-/* ── Footer ────────────────────────────────────────────────────────────── */
-/* `display:block` + `background:transparent` revierten la regla global
-   `footer{display:flex;justify-content:center;background:var(--bg)}` de
-   globals.css, que centraba el contenido y le ponía una banda oscura. */
-.u-footer {
-  display: block;
-  background: transparent;
-  border-top: 1px solid var(--u-hair);
-  padding: 32px 0 44px;
-}
-.u-footer-inner {
-  max-width: var(--u-maxw);
-  margin: 0 auto;
-  padding: 0 28px;
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
-  gap: 14px;
-  font-family: var(--font-jbmono), monospace;
-  font-size: 0.68rem;
+.u-stack {
+  margin-top: 16px;
+  font-size: 0.7rem;
+  font-weight: 600;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: var(--u-paper-mute);
+  color: var(--u-carbon-2);
+  border-top: var(--u-hair);
+  padding-top: 10px;
 }
-.u-footer-inner a { transition: color 0.25s var(--u-ease); }
-.u-footer-inner a:hover { color: var(--u-light); }
+.u-links-row { display: flex; flex-wrap: wrap; gap: 20px; }
 
-/* ── Reveal (mejora un default ya visible; nunca esconde por defecto) ───── */
-.umbra.js .u-reveal {
-  opacity: 0;
-  transform: translateY(26px);
-  transition: opacity 0.8s var(--u-ease), transform 0.8s var(--u-ease);
+/* Sección impresa a sangre en tinta: rompe la corrida de papel a mitad del
+   folleto y le da al scroll el ritmo que pide el mundo. El remapeo vive en el
+   .u-sheet interior, no en la sección, para que la sección conserve su propio
+   --u-ink como fondo mientras todo lo de dentro se imprime en crema. */
+.u-section--ink { background: var(--u-ink); color: var(--u-cream); }
+.u-section--ink > .u-sheet {
+  --u-ink: var(--u-cream);
+  --u-orange: var(--u-orange-tint);
+  --u-orange-deep: var(--u-orange-tint);
+  --u-carbon: var(--u-cream);
+  --u-carbon-2: var(--u-cream-2);
+  --u-hair: 1px solid rgba(244, 236, 217, 0.24);
 }
-.umbra.js .u-reveal.in { opacity: 1; transform: none; }
+.u-section--ink > .u-sheet ::selection { background: var(--u-cream); color: var(--u-ink-deep); }
+.u-section--ink > .u-sheet :focus-visible { outline-color: var(--u-cream); }
 
-/* ── Responsive ────────────────────────────────────────────────────────── */
-@media (max-width: 860px) {
-  .u-work-grid { grid-template-columns: 1fr; }
-  .u-experience-item { grid-template-columns: 1fr; gap: 18px; }
-  .u-world,
-  .u-world--flagship { grid-template-columns: 1fr; gap: 24px; }
-  .u-milestone { grid-template-columns: 1fr; gap: 8px; }
-  .u-nav-links { gap: 18px; }
-  .u-nav-link { display: none; }
-  .u-nav-link--lumen { display: inline; white-space: nowrap; }
-  .u-mark { font-size: 1.05rem; white-space: nowrap; }
-  .u-main, .u-footer-inner, .u-nav-inner { padding-left: 20px; padding-right: 20px; }
-  .u-world::before { left: -8px; }
+/* ── 5. Departamentos (práctica) ────────────────────────────────────────── */
+.u-depts { display: grid; gap: 0; margin-top: clamp(28px, 4vw, 44px); border-top: var(--u-hair); }
+.u-dept {
+  display: grid;
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+  gap: clamp(20px, 3.5vw, 54px);
+  padding-block: clamp(26px, 3.6vw, 44px);
+  border-bottom: var(--u-hair);
+  align-items: start;
+}
+@media (max-width: 800px) { .u-dept { grid-template-columns: 1fr; } }
+.u-dept-side { display: flex; flex-direction: column; gap: 14px; }
+.u-dept-art { width: 92px; color: var(--u-ink); }
+.u-dept-art svg { width: 100%; height: auto; }
+.u-state {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  align-self: flex-start;
+  border: 1px solid var(--u-ink);
+  color: var(--u-ink);
+  padding: 4px 9px;
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+.u-state b { width: 7px; height: 7px; background: var(--u-orange); display: block; }
+.u-state--live b { background: var(--u-orange); animation: u-pulse 2.6s var(--u-ease) infinite; }
+@keyframes u-pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.28; } }
+
+/* ── 6. Registro de experiencia ─────────────────────────────────────────── */
+.u-record { width: 100%; border-collapse: collapse; margin-top: clamp(24px, 3.4vw, 40px); }
+.u-record caption { text-align: left; padding-bottom: 12px; }
+.u-record th, .u-record td { text-align: left; vertical-align: top; padding: 16px 18px 16px 0; border-bottom: var(--u-hair); }
+.u-record thead th {
+  border-bottom: var(--u-rule);
+  font-size: 0.64rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--u-carbon-2);
+  padding-top: 0;
+}
+.u-record tbody th {
+  font-family: var(--u-display);
+  font-weight: 800;
+  text-transform: uppercase;
+  font-size: 1rem;
+  width: 10rem;
+}
+.u-record td:last-child { padding-right: 0; }
+.u-record-role { font-size: 0.86rem; color: var(--u-carbon-2); width: 13rem; }
+@media (max-width: 760px) {
+  .u-record, .u-record tbody, .u-record tr, .u-record td, .u-record th { display: block; width: auto; }
+  .u-record thead { display: none; }
+  .u-record tr { border-bottom: var(--u-hair); padding-block: 14px; }
+  .u-record td, .u-record tbody th { border-bottom: 0; padding: 2px 0; }
+  .u-record-role { width: auto; }
 }
 
-@media (max-width: 560px) {
-  .u-work-copy { padding: 24px 22px 28px; }
-  .u-mark { font-size: 0.98rem; gap: 8px; }
-  .u-spark { width: 9px; height: 9px; }
-  .u-nav-links { gap: 13px; }
-  .u-nav-link--lumen { font-size: 0.6rem; letter-spacing: 0.1em; }
-  .umbra .lang-btn { font-size: 0.62rem; }
-  /* La línea del kicker estorba cuando el texto ya envuelve en móvil. */
-  .u-hero-kicker { flex-wrap: wrap; }
-  .u-hero-kicker::after { display: none; }
+/* ── 7. Calendario (roadmap) ────────────────────────────────────────────── */
+.u-sched { margin-top: clamp(24px, 3.4vw, 40px); border-top: var(--u-rule); }
+.u-sched-row {
+  display: grid;
+  grid-template-columns: 11rem minmax(0, 1fr);
+  gap: clamp(14px, 2.6vw, 36px);
+  padding-block: 22px;
+  border-bottom: var(--u-hair);
+}
+@media (max-width: 680px) { .u-sched-row { grid-template-columns: 1fr; gap: 6px; } }
+.u-sched-when {
+  font-family: var(--u-display);
+  font-weight: 900;
+  text-transform: uppercase;
+  font-size: 0.92rem;
+  letter-spacing: 0.04em;
+  color: var(--u-ink);
+}
+.u-sched-t { font-family: var(--u-display); font-weight: 800; text-transform: uppercase; font-size: 1.02rem; }
+.u-sched-d { margin-top: 7px; max-width: 64ch; }
+.u-note {
+  margin-top: 20px;
+  border-left: 3px solid var(--u-orange);
+  padding: 4px 0 4px 16px;
+  font-size: 0.88rem;
+  color: var(--u-carbon-2);
+  max-width: 62ch;
 }
 
-/* ── Menos movimiento: la luz se queda quieta, los reveals son instantáneos ── */
+/* ── 8. Plancha de contacto ─────────────────────────────────────────────── */
+.u-close { background: var(--u-ink); color: var(--u-cream); padding-block: clamp(56px, 8vw, 104px); }
+.u-close-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(300px, 0.92fr);
+  gap: clamp(28px, 5vw, 76px);
+  align-items: start;
+}
+@media (max-width: 880px) { .u-close-grid { grid-template-columns: 1fr; } }
+.u-close-h {
+  font-family: var(--u-display);
+  font-weight: 900;
+  text-transform: uppercase;
+  font-size: clamp(2.2rem, 7vw, 4.6rem);
+  line-height: 0.88;
+  letter-spacing: -0.03em;
+}
+.u-close-p { margin-top: 22px; max-width: 46ch; color: var(--u-cream); }
+.u-mail {
+  margin-top: 26px;
+  display: inline-block;
+  font-family: var(--u-display);
+  font-weight: 800;
+  font-size: clamp(0.95rem, 2vw, 1.3rem);
+  letter-spacing: -0.01em;
+  border-bottom: 2px solid var(--u-cream);
+  padding-bottom: 3px;
+}
+.u-close-alt { margin-top: 26px; display: flex; flex-wrap: wrap; gap: 22px; }
+.u-close-alt a {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  border-bottom: 1px solid var(--u-cream-2);
+  padding-bottom: 2px;
+  color: var(--u-cream-2);
+}
+.u-close-alt a:hover { color: var(--u-cream); border-bottom-color: var(--u-cream); }
+
+/* Formulario: campos de ficha, líneas de imprenta, sin cajas redondeadas. */
+.u-form { border-top: 1px solid var(--u-cream); padding-top: 22px; }
+.u-field { display: block; margin-bottom: 18px; }
+.u-field > span {
+  display: block;
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--u-cream-2);
+  margin-bottom: 6px;
+}
+.u-field input,
+.u-field textarea,
+.u-field select {
+  width: 100%;
+  background: transparent;
+  border: 0;
+  border-bottom: 1px solid var(--u-cream-2);
+  color: var(--u-cream);
+  font-family: var(--u-text);
+  font-size: 0.98rem;
+  padding: 7px 0;
+  border-radius: 0;
+  transition: border-color 0.18s var(--u-ease);
+}
+.u-field textarea { resize: vertical; min-height: 84px; line-height: 1.5; }
+.u-field input::placeholder,
+.u-field textarea::placeholder { color: rgba(244, 236, 217, 0.5); }
+.u-field input:focus,
+.u-field textarea:focus,
+.u-field select:focus { outline: none; border-bottom-color: var(--u-cream); border-bottom-width: 2px; }
+.u-field input:focus-visible,
+.u-field textarea:focus-visible { outline: 2px solid var(--u-cream); outline-offset: 4px; }
+.u-field select { appearance: none; color: var(--u-cream); }
+.u-field select option { color: var(--u-carbon); background: var(--u-paper); }
+.u-field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+@media (max-width: 520px) { .u-field-row { grid-template-columns: 1fr; } }
+.u-hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+
+.u-submit {
+  width: 100%;
+  background: var(--u-orange);
+  color: var(--u-white);
+  border: 0;
+  border-radius: 0;
+  padding: 15px 18px;
+  font-family: var(--u-display);
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 0.86rem;
+  cursor: pointer;
+  transition: background 0.18s var(--u-ease), color 0.18s var(--u-ease);
+}
+.u-submit:hover:not(:disabled) { background: var(--u-orange-deep); }
+.u-submit:disabled { opacity: 0.55; cursor: progress; }
+.u-form-msg { margin-top: 14px; font-size: 0.88rem; }
+.u-form-msg[data-state="error"] { color: var(--u-orange-tint); }
+.u-form-msg[data-state="ok"] { color: var(--u-cream); }
+
+/* ── Colofón ────────────────────────────────────────────────────────────── */
+.u-colophon {
+  background: var(--u-paper);
+  border-top: var(--u-rule);
+  padding-block: 30px;
+  font-size: 0.74rem;
+  color: var(--u-carbon-2);
+}
+.u-colophon-inner {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px 28px;
+  align-items: center;
+  justify-content: space-between;
+}
+.u-colophon-mark { display: inline-flex; align-items: center; gap: 10px; color: var(--u-ink); }
+.u-colophon-mark svg { width: 34px; height: 22px; }
+.u-colophon a:hover { color: var(--u-ink-deep); }
+.u-colophon-links { display: inline-flex; flex-wrap: wrap; gap: 20px; }
+
+/* ── La lámina en movimiento ────────────────────────────────────────────
+   Sección sobre el pliego blanco y reproductor Video.js vestido entero: la
+   piel por defecto es redonda, translúcida y de otro mundo, así que aquí se
+   reemplaza pieza por pieza. Progreso en la segunda tinta, tiempos en
+   Montserrat tabular, todo a escuadra.
+
+   Los selectores llevan `.video-js` delante a propósito: la hoja de Video.js
+   se carga después que esta (el reproductor es un import dinámico), así que
+   hay que ganarle en especificidad, no en orden.
+   ====================================================================== */
+/* La fuente de iconos de Video.js servida desde /public: importada desde el
+   paquete, la ruta relativa de su hoja no resuelve y los controles salen en
+   tofu. Aquí va con ruta absoluta y `display: block` para que no haya un
+   parpadeo de cuadrados antes de cargar. */
+@font-face {
+  font-family: "VideoJS";
+  src: url("/assets/video/font/VideoJS.woff") format("woff");
+  font-weight: normal;
+  font-style: normal;
+  font-display: block;
+}
+
+.u-section--sheet { background: var(--u-white); }
+
+.u-moving { margin: clamp(26px, 3.6vw, 44px) 0 0; }
+.u-moving figcaption { margin-top: 0; border-top: 0; }
+.u-moving-spec { margin-top: clamp(22px, 3vw, 34px); max-width: 640px; }
+
+.u-player { border: 1px solid var(--u-carbon); background: var(--u-ink); }
+.u-player .video-js {
+  width: 100%;
+  font-family: var(--u-text);
+  background-color: var(--u-ink);
+  color: var(--u-cream);
+}
+.u-player .video-js .vjs-poster { background-color: var(--u-ink); }
+.u-player .video-js .vjs-poster img { width: 100%; height: 100%; object-fit: cover; }
+.u-player .video-js *:focus-visible { outline: 2px solid var(--u-cream); outline-offset: -2px; }
+
+/* Botón de reproducción: un bloque de segunda tinta, no una píldora. */
+.u-player .video-js .vjs-big-play-button {
+  width: clamp(64px, 7vw, 88px);
+  height: clamp(64px, 7vw, 88px);
+  line-height: clamp(64px, 7vw, 88px);
+  margin: 0;
+  border: 0;
+  border-radius: 0;
+  background-color: var(--u-orange);
+  color: var(--u-white);
+  transition: background-color 0.18s var(--u-ease);
+}
+.u-player .video-js:hover .vjs-big-play-button,
+.u-player .video-js .vjs-big-play-button:focus { background-color: var(--u-orange-deep); }
+.u-player .video-js .vjs-big-play-button .vjs-icon-placeholder::before { font-size: 2.1em; }
+
+/* La barra de control es el pie de la lámina: se ve siempre, también antes
+   de darle a reproducir, porque forma parte de la composición. */
+.u-player .video-js .vjs-control-bar {
+  display: flex;
+  visibility: visible;
+  opacity: 1;
+  height: 50px;
+  padding: 0 4px;
+  background-color: var(--u-ink);
+  border-top: 3px solid var(--u-orange);
+  align-items: center;
+}
+.u-player .video-js .vjs-button > .vjs-icon-placeholder::before { line-height: 50px; }
+.u-player .video-js .vjs-control:hover { background-color: rgba(244, 236, 217, 0.14); }
+
+/* Progreso: lo reproducido en segunda tinta, el buffer en papel velado. */
+.u-player .video-js .vjs-progress-control { min-width: 60px; }
+.u-player .video-js .vjs-progress-holder {
+  height: 8px;
+  margin: 0 12px;
+  background-color: rgba(244, 236, 217, 0.22);
+  border-radius: 0;
+}
+.u-player .video-js .vjs-play-progress { background-color: var(--u-orange); border-radius: 0; }
+.u-player .video-js .vjs-load-progress,
+.u-player .video-js .vjs-load-progress div {
+  background-color: rgba(244, 236, 217, 0.4);
+  border-radius: 0;
+}
+.u-player .video-js .vjs-play-progress::before {
+  content: "";
+  position: absolute;
+  right: -5px;
+  top: -3px;
+  width: 10px;
+  height: 14px;
+  background-color: var(--u-white);
+}
+.u-player .video-js .vjs-time-tooltip {
+  border-radius: 0;
+  background-color: var(--u-carbon);
+  color: var(--u-white);
+  font-family: var(--u-display);
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+
+/* Tiempos: la tipografía de la página, cifras tabulares. */
+.u-player .video-js .vjs-time-control {
+  display: flex;
+  align-items: center;
+  padding: 0 4px;
+  min-width: 0;
+  font-family: var(--u-display);
+  font-weight: 700;
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  font-variant-numeric: tabular-nums;
+  color: var(--u-cream);
+  line-height: 50px;
+}
+.u-player .video-js .vjs-remaining-time { display: none; }
+
+/* Volumen a escuadra. */
+.u-player .video-js .vjs-volume-bar,
+.u-player .video-js .vjs-volume-level { border-radius: 0; }
+.u-player .video-js .vjs-volume-level { background-color: var(--u-cream); }
+.u-player .video-js .vjs-volume-bar { background-color: rgba(244, 236, 217, 0.22); }
+
+/* Menús (velocidad, subtítulos): fichas de papel, no globos oscuros. */
+.u-player .video-js .vjs-menu .vjs-menu-content {
+  background-color: var(--u-paper-lit);
+  border: 1px solid var(--u-carbon);
+  border-radius: 0;
+}
+.u-player .video-js .vjs-menu li {
+  font-family: var(--u-text);
+  font-size: 0.7rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--u-carbon);
+}
+.u-player .video-js .vjs-menu li.vjs-selected,
+.u-player .video-js .vjs-menu li:hover {
+  background-color: var(--u-orange);
+  color: var(--u-white);
+}
+
 @media (prefers-reduced-motion: reduce) {
-  .u-orb { animation: none; }
-  .u-aura { transition: none; }
-  .u-hero-scroll .u-arrow,
-  .u-status-dot--live { animation: none; }
-  .umbra.js .u-reveal { opacity: 1; transform: none; transition: none; }
-  .u-mailto { transition: none; }
+  .u-player .video-js .vjs-big-play-button { transition: none; }
+}
+
+/* ── Movimiento: una sola gramática, la prensa pasando el filete ────────── */
+.umbra.js .u-reg { transform: scaleX(0); }
+.umbra.js .u-reg.in { transform: scaleX(1); transition: transform 0.62s var(--u-ease); }
+
+.umbra.js .u-rise { opacity: 0; transform: translateY(16px); }
+.umbra.js .u-rise.in {
+  opacity: 1;
+  transform: none;
+  transition: opacity 0.55s var(--u-ease), transform 0.55s var(--u-ease);
+  transition-delay: var(--u-delay, 0ms);
+}
+
+/* El colibrí se graba a la carga: un trazo que se dibuja una vez. CSS puro —
+   los largos van en el SVG, así que no espera a que hidrate. */
+.u-cover-art path {
+  stroke-dasharray: var(--len, 110);
+  /* El estado base es el dibujo COMPLETO y el escondido vive dentro del
+     keyframe: si la animación nunca corre (pestaña en segundo plano, motor
+     que la descarta), el colibrí se ve igual. Sin delay, para que no haya
+     parpadeo; el escalonado va por duración. */
+  stroke-dashoffset: 0;
+  animation: u-engrave calc(760ms + var(--i, 0) * 130ms) var(--u-ease) forwards;
+}
+.u-cover-art circle {
+  opacity: 1;
+  animation: u-ink-dot 1.15s var(--u-ease) forwards;
+}
+@keyframes u-engrave {
+  from { stroke-dashoffset: var(--len, 110); }
+  to { stroke-dashoffset: 0; }
+}
+@keyframes u-ink-dot {
+  0%, 72% { opacity: 0; }
+  100% { opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .umbra.js .u-reg,
+  .umbra.js .u-rise { opacity: 1; transform: none; transition: none; }
+  .u-cover-art path,
+  .u-cover-art circle { animation: none; }
+  .u-state--live b { animation: none; }
+  .u-act:hover { transform: none; }
+  a.u-exhibit:hover .u-plate-img img { transform: none; }
+}
+
+/* ── Impresión: ya es un documento ──────────────────────────────────────── */
+@media print {
+  .u-run, .u-form, .umbra::before { display: none; }
+  .umbra { background: var(--u-white); color: var(--u-carbon); }
+  .u-plate, .u-close { background: var(--u-white); color: var(--u-carbon); }
+  .u-cover-name, .u-close-h { color: var(--u-carbon); }
 }

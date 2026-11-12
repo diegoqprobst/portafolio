@@ -35,6 +35,11 @@ marketing/
 .roo
 .trae
 .windsurf
+.vercel
+.env*
+
+# Brainstorming visual companion (local only)
+.superpowers/
 
 # Kelvin demo clip (local dev only; production streams from Mux)
 /public/kelvin/media/
