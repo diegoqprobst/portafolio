@@ -7,7 +7,7 @@ import { useCallback, useEffect, useLayoutEffect, useRef, useState, type Keyboar
 import { Crosshair } from './crosshair';
 import { IconNote } from './icons';
 import { EXPOSURE_PALETTE, falseColor } from './lib/exposure';
-import { areaStats, deltaStops, linearRatio, rect, relLum, rulerLength, type AreaStats } from './lib/measure';
+import { areaStats, deltaStops, formatRatio, formatStops, linearRatio, rect, relLum, rulerLength, type AreaStats } from './lib/measure';
 import { formatLength, makeScale, type Unit } from './lib/scale';
 import { MeasureOverlay } from './measure-overlay';
 import { cctReading, formatCct, toHex } from './lib/color';
@@ -112,23 +112,6 @@ export function Loupe() {
       }
     } else setArea(null);
 
-    // Exposure map: the paused frame in false colour, at most 640 px wide.
-    const ex = exposureRef.current;
-    if (mode.exposure && ex) {
-      try {
-        const img = readRegion(video, { u: 0, v: 0, w: 1, h: 1 }, 640);
-        if (img) {
-          const fc = falseColor(img, EXPOSURE_PALETTE);
-          ex.width = fc.width;
-          ex.height = fc.height;
-          ex.getContext("2d")?.putImageData(new ImageData(new Uint8ClampedArray(fc.data), fc.width, fc.height), 0, 0);
-        }
-        setExposureBlocked(false);
-      } catch {
-        setExposureBlocked(true);
-      }
-    }
-
     const canvas = magRef.current;
     const context = canvas?.getContext('2d');
     if (canvas && context && video.videoWidth) {
@@ -151,7 +134,30 @@ export function Loupe() {
         /* drawing an unready frame can throw in some engines; the tag still shows the state */
       }
     }
-  }, [active, u, v, frame, getVideo, rootRef, mode.anchor, mode.drag, mode.tool, mode.exposure]);
+  }, [active, u, v, frame, getVideo, rootRef, mode.anchor, mode.drag, mode.tool]);
+
+  // The exposure map only changes with the frame, not with the reticle.
+  useLayoutEffect(() => {
+    const video = getVideo();
+    if (!active || !video) return;
+    // The paused frame in false colour, at most 640 px wide.
+    const ex = exposureRef.current;
+    if (mode.exposure && ex) {
+      try {
+        const img = readRegion(video, { u: 0, v: 0, w: 1, h: 1 }, 640);
+        if (img) {
+          const fc = falseColor(img, EXPOSURE_PALETTE);
+          ex.width = fc.width;
+          ex.height = fc.height;
+          ex.getContext("2d")?.putImageData(new ImageData(new Uint8ClampedArray(fc.data), fc.width, fc.height), 0, 0);
+        }
+        setExposureBlocked(false);
+      } catch {
+        setExposureBlocked(true);
+      }
+    }
+
+  }, [active, frame, mode.exposure, exposureBlocked, getVideo]);
 
   const hex = reading.status === 'ok' ? toHex(reading.rgb) : null;
   const cctR = reading.status === 'ok' ? cctReading(reading.rgb) : null;
@@ -272,6 +278,8 @@ export function Loupe() {
 
   const onKeyDown = useCallback(
     (event: KeyboardEvent<HTMLDivElement>) => {
+      // Keys pressed on buttons or fields inside the tag belong to them, not to the tool.
+      if (event.target !== event.currentTarget) return;
       if (noteOpen || routeKey(mode, event.key) !== 'loupe') return;
       event.preventDefault();
       event.stopPropagation();
@@ -391,14 +399,11 @@ export function Loupe() {
         {labels.loupeHint}
       </span>
 
-      {mode.exposure ? (
-        exposureBlocked ? (
-          <p className="kv-exposure-blocked" style={{ left: layout.pic.left + 8, top: layout.pic.top + 8 }}>
-            {labels.exposure}: {labels.readingUnavailable}
-          </p>
-        ) : (
-          <canvas ref={exposureRef} className="kv-exposure" style={layout.pic} aria-hidden="true" />
-        )
+      {mode.exposure ? <canvas ref={exposureRef} className="kv-exposure" style={layout.pic} aria-hidden="true" /> : null}
+      {mode.exposure && exposureBlocked ? (
+        <p className="kv-exposure-blocked" style={{ left: layout.pic.left + 8, top: layout.pic.top + 8 }}>
+          {labels.exposure}: {labels.readingUnavailable}
+        </p>
       ) : null}
 
       <Crosshair box={layout.pic} x={layout.x} y={layout.y} videoWidth={layout.vw} videoHeight={layout.vh} />
@@ -451,58 +456,7 @@ export function Loupe() {
         data-flip-y={flipY ? '' : undefined}
         style={{ left: layout.x, top: layout.y }}
       >
-        {reading.status !== 'ok' ? (
-          <p className="kv-tag-note">{reading.status === 'blocked' ? labels.readingUnavailable : labels.readingPending}</p>
-        ) : mode.tool === 'compare' && compare && cctA ? (
-          <>
-            <div className="kv-tag-row kv-tag-k">
-              <span className="kv-tag-label">{labels.deltaStops}</span>
-              <span className="kv-tag-value">
-                {compare.stops.floored ? '≥ ' : ''}
-                {Math.abs(compare.stops.stops) < 0.05 ? '' : compare.stops.stops > 0 ? '+' : '−'}
-                {Math.abs(compare.stops.stops).toFixed(1)} stops
-              </span>
-            </div>
-            <dl className="kv-tag-grid">
-              <dt>{labels.contrast}</dt>
-              <dd>
-                {compare.ratio.floored ? '≥ ' : ''}
-                {compare.ratio.ratio.toFixed(1)} : 1
-              </dd>
-              <dt>{labels.relLum}</dt>
-              <dd>
-                A {lumA!.toFixed(1)} % · B {lumB!.toFixed(1)} %
-              </dd>
-              <dt>{labels.temperature}</dt>
-              <dd>
-                A {formatCct(cctA, labels)} · B {cctText}
-              </dd>
-            </dl>
-          </>
-        ) : mode.tool === 'area' && area === 'blocked' ? (
-          <p className="kv-tag-note">{labels.readingUnavailable}</p>
-        ) : mode.tool === 'area' && area && area !== 'blocked' ? (
-          <>
-            <div className="kv-tag-row">
-              <span className="kv-swatch" style={{ background: area.meanHex }} aria-hidden="true" />
-              <span className="kv-tag-hex">{area.meanHex}</span>
-            </div>
-            <dl className="kv-tag-grid">
-              <dt>{labels.uniformity}</dt>
-              <dd>{area.u0.toFixed(2)}</dd>
-              <dt>
-                {labels.relLum} · {labels.mean}
-              </dt>
-              <dd>{area.mean.toFixed(1)} %</dd>
-              <dt>{labels.minMax}</dt>
-              <dd>
-                {area.min.toFixed(1)} – {area.max.toFixed(1)} %
-              </dd>
-              <dt>{labels.temperature}</dt>
-              <dd>{formatCct(area.cct, labels)}</dd>
-            </dl>
-          </>
-        ) : mode.tool === 'ruler' && ruler ? (
+        {mode.tool === 'ruler' && ruler ? (
           <>
             <div className="kv-tag-row kv-tag-k">
               <span className="kv-tag-label">{labels.length}</span>
@@ -551,6 +505,50 @@ export function Loupe() {
                 ) : null}
               </div>
             )}
+          </>
+        ) : reading.status !== 'ok' ? (
+          <p className="kv-tag-note">{reading.status === 'blocked' ? labels.readingUnavailable : labels.readingPending}</p>
+        ) : mode.tool === 'compare' && compare && cctA ? (
+          <>
+            <div className="kv-tag-row kv-tag-k">
+              <span className="kv-tag-label">{labels.deltaStops}</span>
+              <span className="kv-tag-value">{formatStops(compare.stops)}</span>
+            </div>
+            <dl className="kv-tag-grid">
+              <dt>{labels.contrast}</dt>
+              <dd>{formatRatio(compare.ratio)}</dd>
+              <dt>{labels.relLum}</dt>
+              <dd>
+                A {lumA!.toFixed(1)} % · B {lumB!.toFixed(1)} %
+              </dd>
+              <dt>{labels.temperature}</dt>
+              <dd>
+                A {formatCct(cctA, labels)} · B {cctText}
+              </dd>
+            </dl>
+          </>
+        ) : mode.tool === 'area' && area === 'blocked' ? (
+          <p className="kv-tag-note">{labels.readingUnavailable}</p>
+        ) : mode.tool === 'area' && area && area !== 'blocked' ? (
+          <>
+            <div className="kv-tag-row">
+              <span className="kv-swatch" style={{ background: area.meanHex }} aria-hidden="true" />
+              <span className="kv-tag-hex">{area.meanHex}</span>
+            </div>
+            <dl className="kv-tag-grid">
+              <dt>{labels.uniformity}</dt>
+              <dd>{area.u0.toFixed(2)}</dd>
+              <dt>
+                {labels.relLum} · {labels.mean}
+              </dt>
+              <dd>{area.mean.toFixed(1)} %</dd>
+              <dt>{labels.minMax}</dt>
+              <dd>
+                {area.min.toFixed(1)} – {area.max.toFixed(1)} %
+              </dd>
+              <dt>{labels.temperature}</dt>
+              <dd>{formatCct(area.cct, labels)}</dd>
+            </dl>
           </>
         ) : (
           <>

@@ -40,6 +40,7 @@ export function averagePatch(data: Uint8ClampedArray): RGB | null {
 }
 
 let scratch: HTMLCanvasElement | null = null;
+let bigScratch: HTMLCanvasElement | null = null;
 
 /** Copies a size×size patch of the current frame centred on (u, v). Throws on a tainted canvas. */
 export function readPatch(video: HTMLVideoElement, u: number, v: number, size: number): ImageData | null {
@@ -73,10 +74,11 @@ export function readRegion(
   const k = Math.min(1, max / Math.max(sw, sh));
   const w = Math.max(1, Math.round(sw * k));
   const h = Math.max(1, Math.round(sh * k));
-  scratch ??= document.createElement('canvas');
-  scratch.width = w;
-  scratch.height = h;
-  const context = scratch.getContext('2d', { willReadFrequently: true });
+  // Large reads (the exposure map) get their own canvas so the loupe's small one is not resized every move.
+  const canvas = max > 64 ? (bigScratch ??= document.createElement('canvas')) : (scratch ??= document.createElement('canvas'));
+  canvas.width = w;
+  canvas.height = h;
+  const context = canvas.getContext('2d', { willReadFrequently: true });
   if (!context) return null;
   context.clearRect(0, 0, w, h);
   context.drawImage(video, r.u * video.videoWidth, r.v * video.videoHeight, sw, sh, 0, 0, w, h);

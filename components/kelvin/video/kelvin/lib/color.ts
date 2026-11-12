@@ -17,7 +17,15 @@ export function fromHex(hex: string): RGB {
   };
 }
 
+/** sRGB → linear for every 8-bit value, precomputed (the exposure map calls this per pixel). */
+const LINEAR = Array.from({ length: 256 }, (_, i) => {
+  const c = i / 255;
+  return c <= 0.04045 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4;
+});
+
 function toLinear(value: number) {
+  const i = Math.round(value);
+  if (i >= 0 && i <= 255 && i === value) return LINEAR[i]!;
   const c = value / 255;
   return c <= 0.04045 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4;
 }
