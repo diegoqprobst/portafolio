@@ -19,6 +19,7 @@ import { DEFAULT_LABELS, type KelvinLabels } from './labels';
 import { parseColorStrip, stripMatches, type ColorStrip } from './lib/color-strip';
 import { INITIAL_MODE, modeReducer, type Mode, type ModeEvent } from './lib/mode';
 import { addNote as add, loadNotes, removeNote as remove, saveNotes, type Note, type NoteStorage } from './lib/notes';
+import { loadScale, saveScale, type Scale } from './lib/scale';
 
 export interface KelvinApi {
   mode: Mode;
@@ -33,6 +34,9 @@ export interface KelvinApi {
   setNoteOpen(open: boolean): void;
   rootRef: RefObject<HTMLDivElement | null>;
   getVideo(): HTMLVideoElement | null;
+  /** Ruler scale for this video (null = measure in px / % of frame). */
+  scale: Scale | null;
+  setScale(scale: Scale | null): void;
 }
 
 const KelvinContext = createContext<KelvinApi | null>(null);
@@ -67,6 +71,7 @@ export function KelvinContainer({ children, videoId, colorStrip, labels: labelOv
   const [mode, dispatch] = useReducer(modeReducer, INITIAL_MODE);
   const [notes, setNotes] = useState<Note[]>(() => loadNotes(getStorage(), videoId));
   const [noteOpen, setNoteOpen] = useState(false);
+  const [scale, setScaleState] = useState<Scale | null>(() => loadScale(getStorage(), videoId));
   const [rawStrip, setRawStrip] = useState<ColorStrip | null>(() =>
     typeof colorStrip === 'object' ? parseColorStrip(colorStrip) : null,
   );
@@ -88,7 +93,18 @@ export function KelvinContainer({ children, videoId, colorStrip, labels: labelOv
     };
   }, [colorStrip]);
 
-  useEffect(() => setNotes(loadNotes(getStorage(), videoId)), [videoId]);
+  useEffect(() => {
+    setNotes(loadNotes(getStorage(), videoId));
+    setScaleState(loadScale(getStorage(), videoId));
+  }, [videoId]);
+
+  const setScale = useCallback(
+    (next: Scale | null) => {
+      setScaleState(next);
+      saveScale(getStorage(), videoId, next);
+    },
+    [videoId],
+  );
 
   useEffect(() => {
     if (!started) return;
@@ -127,8 +143,8 @@ export function KelvinContainer({ children, videoId, colorStrip, labels: labelOv
   const strip = rawStrip && Number.isFinite(duration) && duration > 0 && stripMatches(rawStrip, duration) ? rawStrip : null;
 
   const api = useMemo<KelvinApi>(
-    () => ({ mode, dispatch, labels, strip, notes, addNote, removeNote, videoId, noteOpen, setNoteOpen, rootRef, getVideo }),
-    [mode, labels, strip, notes, addNote, removeNote, videoId, noteOpen, getVideo],
+    () => ({ mode, dispatch, labels, strip, notes, addNote, removeNote, videoId, noteOpen, setNoteOpen, rootRef, getVideo, scale, setScale }),
+    [mode, labels, strip, notes, addNote, removeNote, videoId, noteOpen, getVideo, scale, setScale],
   );
 
   return (

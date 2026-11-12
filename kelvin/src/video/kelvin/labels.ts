@@ -8,6 +8,22 @@ export type KelvinLabels = {
   readingPending: string;
   temperature: string;
   offCurve: string;
+  setA: string;
+  pin: string;
+  hintPoint: string;
+  hintCompare: string;
+  hintDrag: string;
+  deltaStops: string;
+  contrast: string;
+  relLum: string;
+  length: string;
+  setScale: string;
+  clearScale: string;
+  realLength: string;
+  referencePlane: string;
+  uniformity: string;
+  mean: string;
+  minMax: string;
   cctShort: string;
   tools: string;
   toolPoint: string;
@@ -45,6 +61,22 @@ export const DEFAULT_LABELS: KelvinLabels = {
   readingPending: 'Waiting for a frame',
   temperature: 'Apparent CCT',
   offCurve: 'off the light curve',
+  setA: 'Set A',
+  pin: 'Pin',
+  hintPoint: 'Click or ↵ to add a note',
+  hintCompare: 'Click or ↵ to set A, then aim at B',
+  hintDrag: 'Drag, or ↵ · arrows · ↵, to measure',
+  deltaStops: 'B − A',
+  contrast: 'Contrast',
+  relLum: 'Rel. luminance',
+  length: 'Length',
+  setScale: 'Set scale',
+  clearScale: 'Clear scale',
+  realLength: 'Real length of this line',
+  referencePlane: 'on the reference plane',
+  uniformity: 'Uniformity U₀',
+  mean: 'Mean',
+  minMax: 'Min – max',
   cctShort: 'CCT',
   tools: 'Measuring tool',
   toolPoint: 'Point',

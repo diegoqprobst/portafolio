@@ -5,6 +5,9 @@ import { useCallback, useEffect, useLayoutEffect, useRef, useState, type Keyboar
 
 import { Crosshair } from './crosshair';
 import { IconNote } from './icons';
+import { deltaStops, linearRatio, relLum, rulerLength } from './lib/measure';
+import { formatLength, makeScale, type Unit } from './lib/scale';
+import { MeasureOverlay } from './measure-overlay';
 import { cctReading, formatCct, toHex } from './lib/color';
 import { contentBox, pointToUv, uvToPoint } from './lib/geometry';
 import { routeKey, type ArrowKey } from './lib/mode';
@@ -30,12 +33,15 @@ type Layout = {
 
 /** Paused-only precision reticle: magnifier, exact colour, approximate temperature, pinned notes. */
 export function Loupe() {
-  const { mode, dispatch, labels, addNote, notes, noteOpen, setNoteOpen, getVideo, rootRef } = useKelvin();
+  const { mode, dispatch, labels, addNote, notes, noteOpen, setNoteOpen, getVideo, rootRef, scale, setScale } = useKelvin();
   const time = usePlayer((s) => s.currentTime);
   const layerRef = useRef<HTMLDivElement | null>(null);
   const magRef = useRef<HTMLCanvasElement | null>(null);
   const noteRef = useRef<HTMLTextAreaElement | null>(null);
   const [reading, setReading] = useState<PixelReading>({ status: 'notReady' });
+  const [readingA, setReadingA] = useState<PixelReading | null>(null);
+  const [scaleOpen, setScaleOpen] = useState(false);
+  const dragging = useRef(false);
   const [layout, setLayout] = useState<Layout>(null);
   const [frame, setFrame] = useState(0);
   const [announcement, setAnnouncement] = useState('');
@@ -89,6 +95,8 @@ export function Loupe() {
 
     const next = safeReadPixel(() => readPixel(video, u, v), video);
     setReading(next);
+    const a = mode.anchor;
+    setReadingA(a ? safeReadPixel(() => readPixel(video, a.u, a.v), video) : null);
 
     const canvas = magRef.current;
     const context = canvas?.getContext('2d');
@@ -112,7 +120,7 @@ export function Loupe() {
         /* drawing an unready frame can throw in some engines; the tag still shows the state */
       }
     }
-  }, [active, u, v, frame, getVideo, rootRef]);
+  }, [active, u, v, frame, getVideo, rootRef, mode.anchor]);
 
   const hex = reading.status === 'ok' ? toHex(reading.rgb) : null;
   const cctR = reading.status === 'ok' ? cctReading(reading.rgb) : null;
@@ -164,17 +172,39 @@ export function Loupe() {
     };
   }, [active, rootRef]);
 
+  /** Frame coordinates of a pointer, unclamped, so a drag can run past the picture edge (the reducer clamps). */
+  const toUv = useCallback(
+    (clientX: number, clientY: number) => {
+      const video = getVideo();
+      if (!video) return null;
+      const box = contentBox(video.getBoundingClientRect(), video.videoWidth, video.videoHeight);
+      if (!box.width || !box.height) return null;
+      return { u: (clientX - box.left) / box.width, v: (clientY - box.top) / box.height };
+    },
+    [getVideo],
+  );
+
   const onPointerMove = useCallback(
     (event: PointerEvent<HTMLDivElement>) => {
-      if (mode.loupe !== 'pointer' || noteOpen) return;
+      if (noteOpen) return;
+      if (dragging.current) {
+        const uv = toUv(event.clientX, event.clientY);
+        if (uv) {
+          dispatch({ type: 'pointer', ...uv });
+          dispatch({ type: 'dragTo', ...uv });
+        }
+        return;
+      }
+      if (mode.loupe !== 'pointer') return;
       const video = getVideo();
       if (!video) return;
       const uv = pointToUv(event.clientX, event.clientY, video.getBoundingClientRect(), video.videoWidth, video.videoHeight);
       if (uv) dispatch({ type: 'pointer', ...uv });
     },
-    [mode.loupe, noteOpen, getVideo, dispatch],
+    [mode.loupe, noteOpen, getVideo, dispatch, toUv],
   );
 
+  /** Mouse: click acts per tool. Touch: a tap only aims (Pin / Set A live in the tag). Area and ruler draw by dragging. */
   const onPointerDown = useCallback(
     (event: PointerEvent<HTMLDivElement>) => {
       if (noteOpen || event.button !== 0) return;
@@ -182,11 +212,31 @@ export function Loupe() {
       if (!video) return;
       const uv = pointToUv(event.clientX, event.clientY, video.getBoundingClientRect(), video.videoWidth, video.videoHeight);
       if (!uv) return;
-      event.preventDefault(); // keep focus for the note field instead of the layer
+      const touch = event.pointerType === 'touch';
       dispatch({ type: 'pointer', ...uv });
-      setNoteOpen(true);
+      if (mode.tool === 'area' || mode.tool === 'ruler') {
+        event.preventDefault();
+        event.currentTarget.setPointerCapture?.(event.pointerId);
+        dragging.current = true;
+        dispatch({ type: 'dragStart' });
+        return;
+      }
+      if (touch) return;
+      event.preventDefault(); // keep focus for the note field instead of the layer
+      if (mode.tool === 'compare') dispatch({ type: 'setAnchor' });
+      else setNoteOpen(true);
     },
-    [noteOpen, getVideo, dispatch, setNoteOpen],
+    [noteOpen, getVideo, dispatch, setNoteOpen, mode.tool],
+  );
+
+  const onPointerUp = useCallback(
+    (event: PointerEvent<HTMLDivElement>) => {
+      if (!dragging.current) return;
+      dragging.current = false;
+      event.currentTarget.releasePointerCapture?.(event.pointerId);
+      dispatch({ type: 'dragEnd' });
+    },
+    [dispatch],
   );
 
   const onKeyDown = useCallback(
@@ -194,8 +244,14 @@ export function Loupe() {
       if (noteOpen || routeKey(mode, event.key) !== 'loupe') return;
       event.preventDefault();
       event.stopPropagation();
-      if (event.key === 'Enter') setNoteOpen(true);
-      else dispatch({ type: 'move', key: event.key as ArrowKey, fine: event.shiftKey });
+      if (event.key !== 'Enter') {
+        dispatch({ type: 'move', key: event.key as ArrowKey, fine: event.shiftKey });
+        return;
+      }
+      if (mode.tool === 'compare') dispatch({ type: 'setAnchor' });
+      else if (mode.tool === 'area' || mode.tool === 'ruler')
+        dispatch({ type: mode.drag && !mode.drag.done ? 'dragEnd' : 'dragStart' });
+      else setNoteOpen(true);
     },
     [noteOpen, mode, dispatch, setNoteOpen],
   );
@@ -207,10 +263,33 @@ export function Loupe() {
     layerRef.current?.focus();
   };
 
+  const lumB = reading.status === 'ok' ? relLum(reading.rgb) : null;
+  const lumA = readingA?.status === 'ok' ? relLum(readingA.rgb) : null;
+  const cctA = readingA?.status === 'ok' ? cctReading(readingA.rgb) : null;
+  const compare =
+    mode.tool === 'compare' && lumA !== null && lumB !== null
+      ? { stops: deltaStops(lumA, lumB), ratio: linearRatio(lumA, lumB) }
+      : null;
+  const ruler =
+    mode.tool === 'ruler' && mode.drag && layout ? rulerLength(mode.drag.from, mode.drag.to, layout.vw, layout.vh) : null;
+  const rulerText = ruler ? formatLength(ruler.px, scale, ruler.pctWidth) : null;
+  const hint =
+    mode.tool === 'compare' ? labels.hintCompare : mode.tool === 'point' ? labels.hintPoint : labels.hintDrag;
+
+  const submitScale = (form: HTMLFormElement) => {
+    const data = new FormData(form);
+    const next = ruler ? makeScale(ruler.px, Number(data.get('length')), data.get('unit') as Unit) : null;
+    if (next) {
+      setScale(next);
+      setScaleOpen(false);
+      layerRef.current?.focus();
+    }
+  };
+
   if (!active || !layout) return null;
 
   // The tag stays on the picture: flip it left when it would cross the picture's right edge (or the sheet).
-  const flipX = layout.x + 84 + 240 > layout.picRight;
+  const flipX = layout.x + 84 + 272 > layout.picRight;
   const flipY = layout.y > layout.picBottom * 0.6;
   const pins = notes.filter((n) => Math.abs(n.t - time) < 0.35);
 
@@ -238,6 +317,8 @@ export function Loupe() {
         if ((event.target as HTMLElement).closest('.kv-tag')) return;
         onPointerDown(event);
       }}
+      onPointerUp={onPointerUp}
+      onPointerCancel={onPointerUp}
       onKeyDown={onKeyDown}
     >
       <span id="kv-loupe-hint" className="kv-visually-hidden">
@@ -245,6 +326,15 @@ export function Loupe() {
       </span>
 
       <Crosshair box={layout.pic} x={layout.x} y={layout.y} videoWidth={layout.vw} videoHeight={layout.vh} />
+
+      <MeasureOverlay
+        box={layout.pic}
+        tool={mode.tool}
+        anchor={mode.anchor}
+        from={mode.drag?.from ?? null}
+        to={mode.drag?.to ?? null}
+        label={rulerText ?? undefined}
+      />
 
       {pins.map((note) => {
         const video = getVideo();
@@ -285,7 +375,85 @@ export function Loupe() {
         data-flip-y={flipY ? '' : undefined}
         style={{ left: layout.x, top: layout.y }}
       >
-        {reading.status === 'ok' ? (
+        {reading.status !== 'ok' ? (
+          <p className="kv-tag-note">{reading.status === 'blocked' ? labels.readingUnavailable : labels.readingPending}</p>
+        ) : mode.tool === 'compare' && compare && cctA ? (
+          <>
+            <div className="kv-tag-row kv-tag-k">
+              <span className="kv-tag-label">{labels.deltaStops}</span>
+              <span className="kv-tag-value">
+                {compare.stops.floored ? '≥ ' : ''}
+                {Math.abs(compare.stops.stops) < 0.05 ? '' : compare.stops.stops > 0 ? '+' : '−'}
+                {Math.abs(compare.stops.stops).toFixed(1)} stops
+              </span>
+            </div>
+            <dl className="kv-tag-grid">
+              <dt>{labels.contrast}</dt>
+              <dd>
+                {compare.ratio.floored ? '≥ ' : ''}
+                {compare.ratio.ratio.toFixed(1)} : 1
+              </dd>
+              <dt>{labels.relLum}</dt>
+              <dd>
+                A {lumA!.toFixed(1)} % · B {lumB!.toFixed(1)} %
+              </dd>
+              <dt>{labels.temperature}</dt>
+              <dd>
+                A {formatCct(cctA, labels)} · B {cctText}
+              </dd>
+            </dl>
+          </>
+        ) : mode.tool === 'ruler' && ruler ? (
+          <>
+            <div className="kv-tag-row kv-tag-k">
+              <span className="kv-tag-label">{labels.length}</span>
+              <span className="kv-tag-value">{rulerText}</span>
+            </div>
+            <p className="kv-tag-note">
+              {scale ? `${labels.referencePlane} · ${Math.round(ruler.px)} px` : `${ruler.pctWidth} % of frame width`}
+            </p>
+            {scaleOpen ? (
+              <form
+                className="kv-scale-form"
+                onSubmit={(event) => {
+                  event.preventDefault();
+                  submitScale(event.currentTarget);
+                }}
+                onKeyDown={(event) => {
+                  event.stopPropagation();
+                  if (event.key === 'Escape') {
+                    setScaleOpen(false);
+                    layerRef.current?.focus();
+                  }
+                }}
+              >
+                <label className="kv-scale-field">
+                  <span>{labels.realLength}</span>
+                  <input name="length" type="number" min="0" step="any" required autoFocus className="kv-scale-input" />
+                </label>
+                <select name="unit" defaultValue={scale?.unit ?? 'm'} className="kv-scale-unit" aria-label="Unit">
+                  <option value="m">m</option>
+                  <option value="cm">cm</option>
+                  <option value="mm">mm</option>
+                </select>
+                <button type="submit" className="kv-button kv-button--primary">
+                  {labels.setScale}
+                </button>
+              </form>
+            ) : (
+              <div className="kv-tag-actions">
+                <button type="button" className="kv-button" onClick={() => setScaleOpen(true)} disabled={ruler.px <= 0}>
+                  {labels.setScale}
+                </button>
+                {scale ? (
+                  <button type="button" className="kv-button" onClick={() => setScale(null)}>
+                    {labels.clearScale}
+                  </button>
+                ) : null}
+              </div>
+            )}
+          </>
+        ) : (
           <>
             <div className="kv-tag-row">
               <span className="kv-swatch" style={{ background: hex ?? undefined }} aria-hidden="true" />
@@ -297,8 +465,6 @@ export function Loupe() {
             </div>
             <TemperatureScale kelvin={scaleK} />
           </>
-        ) : (
-          <p className="kv-tag-note">{reading.status === 'blocked' ? labels.readingUnavailable : labels.readingPending}</p>
         )}
 
         {noteOpen ? (
@@ -332,9 +498,21 @@ export function Loupe() {
             </button>
           </form>
         ) : (
-          <p className="kv-tag-hint" aria-hidden="true">
-            {labels.addNote} ↵
-          </p>
+          <div className="kv-tag-foot">
+            <p className="kv-tag-hint" aria-hidden="true">
+              {hint}
+            </p>
+            <div className="kv-tag-actions">
+              {mode.tool === 'compare' ? (
+                <button type="button" className="kv-button" onClick={() => dispatch({ type: 'setAnchor' })}>
+                  {labels.setA}
+                </button>
+              ) : null}
+              <button type="button" className="kv-button" onClick={() => setNoteOpen(true)}>
+                {labels.pin}
+              </button>
+            </div>
+          </div>
         )}
       </div>
 

@@ -657,7 +657,7 @@
 .kv .kv-tag {
   position: absolute;
   z-index: 21;
-  inline-size: 236px;
+  inline-size: 268px;
   translate: 84px -50%;
   padding: 10px 12px 10px;
   display: grid;
@@ -965,6 +965,126 @@
 .kv .kv-crosshair-coord--y {
   left: 4px;
   translate: 0 -50%;
+}
+
+/* ---------- Measurement marks ---------- */
+
+.kv .kv-measure {
+  position: absolute;
+  pointer-events: none;
+  overflow: visible;
+}
+
+.kv .kv-measure line,
+.kv .kv-measure rect,
+.kv .kv-measure circle {
+  fill: none;
+  stroke: var(--kv-orange);
+  stroke-width: 1.5;
+}
+
+.kv .kv-measure .kv-measure-edge,
+.kv .kv-measure .kv-measure-edge line {
+  stroke: rgb(10 16 39 / 0.7);
+  stroke-width: 3.5;
+}
+
+.kv .kv-measure-area rect:not(.kv-measure-edge) {
+  stroke-dasharray: 6 4;
+  fill: rgb(245 154 74 / 0.08);
+}
+
+.kv .kv-measure text {
+  font-family: var(--kv-font-ui);
+  font-size: 12px;
+  font-weight: 600;
+  fill: var(--kv-ink);
+  paint-order: stroke;
+  stroke: rgb(10 16 39 / 0.85);
+  stroke-width: 4px;
+  letter-spacing: 0.04em;
+}
+
+/* ---------- Tag readouts ---------- */
+
+.kv .kv-tag-grid {
+  margin: 0;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 3px 10px;
+  font-size: 12px;
+}
+
+.kv .kv-tag-grid dt {
+  color: var(--kv-ink-soft);
+}
+
+.kv .kv-tag-grid dd {
+  margin: 0;
+  text-align: end;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.kv .kv-tag-foot {
+  display: grid;
+  gap: 6px;
+}
+
+.kv .kv-tag-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.kv .kv-tag-actions .kv-button,
+.kv .kv-scale-form .kv-button {
+  min-block-size: 26px;
+  padding-inline: 10px;
+  font-size: 11px;
+}
+
+.kv .kv-button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.kv .kv-scale-form {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 6px;
+  align-items: end;
+}
+
+.kv .kv-scale-form .kv-button {
+  grid-column: 1 / -1;
+}
+
+.kv .kv-scale-field {
+  display: grid;
+  gap: 3px;
+  font-size: 11px;
+  color: var(--kv-ink-soft);
+}
+
+.kv .kv-scale-input,
+.kv .kv-scale-unit {
+  all: unset;
+  box-sizing: border-box;
+  min-block-size: 28px;
+  padding-inline: 8px;
+  font-family: var(--kv-font-ui);
+  font-size: 13px;
+  color: var(--kv-ink);
+  background: var(--kv-paper-hi);
+  border-radius: 2px;
+  box-shadow: 0 0 0 1px rgb(220 230 244 / 0.4) inset;
+}
+
+.kv .kv-scale-input:focus-visible,
+.kv .kv-scale-unit:focus-visible {
+  outline: 2px solid var(--kv-orange);
+  outline-offset: 1px;
 }
 
 /* ---------- Tool selector (header band, paused) ---------- */
