@@ -8,6 +8,11 @@ export type KelvinLabels = {
   readingPending: string;
   temperature: string;
   offCurve: string;
+  zone_crushed: string;
+  zone_shadow: string;
+  zone_mid: string;
+  zone_high: string;
+  zone_clipped: string;
   setA: string;
   pin: string;
   hintPoint: string;
@@ -61,6 +66,11 @@ export const DEFAULT_LABELS: KelvinLabels = {
   readingPending: 'Waiting for a frame',
   temperature: 'Apparent CCT',
   offCurve: 'off the light curve',
+  zone_crushed: 'Crushed',
+  zone_shadow: 'Shadows',
+  zone_mid: 'Mid (key grey)',
+  zone_high: 'Highlights',
+  zone_clipped: 'Clipped',
   setA: 'Set A',
   pin: 'Pin',
   hintPoint: 'Click or ↵ to add a note',

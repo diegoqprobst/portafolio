@@ -5,6 +5,7 @@ import { useEffect, useLayoutEffect, useState, type CSSProperties } from 'react'
 
 import { splitChapter } from './chapter-overlay';
 import { Gauge, SPECTRA } from './gauge';
+import { EXPOSURE_PALETTE, ZONE_RANGES, type Zone } from './lib/exposure';
 import { IconClose, IconDownload } from './icons';
 import { cctReading, formatCct, fromHex, hueOf, temperaturePosition } from './lib/color';
 import { sliceAt } from './lib/color-strip';
@@ -232,6 +233,21 @@ export function PauseSheet() {
           </button>
         ) : null}
       </div>
+      {mode.exposure ? (
+        <div className="kv-sheet-block">
+          <h3 className="kv-sheet-label">{labels.exposure}</h3>
+          <ul className="kv-zones">
+            {(Object.keys(ZONE_RANGES) as Zone[]).map((z) => (
+              <li key={z}>
+                <span className="kv-zone-chip" style={{ background: `rgb(${EXPOSURE_PALETTE[z].join(' ')})` }} aria-hidden="true" />
+                <span>{labels[`zone_${z}` as const]}</span>
+                <span className="kv-zone-range">{ZONE_RANGES[z]}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      ) : null}
+
       <footer className="kv-sheet-foot">
         <p className="kv-sheet-keys">{labels.keyLegend}</p>
         <p className="kv-sheet-meter">{labels.meterNote}</p>

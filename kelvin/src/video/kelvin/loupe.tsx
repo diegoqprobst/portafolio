@@ -5,6 +5,7 @@ import { useCallback, useEffect, useLayoutEffect, useRef, useState, type Keyboar
 
 import { Crosshair } from './crosshair';
 import { IconNote } from './icons';
+import { EXPOSURE_PALETTE, falseColor } from './lib/exposure';
 import { areaStats, deltaStops, linearRatio, rect, relLum, rulerLength, type AreaStats } from './lib/measure';
 import { formatLength, makeScale, type Unit } from './lib/scale';
 import { MeasureOverlay } from './measure-overlay';
@@ -37,6 +38,8 @@ export function Loupe() {
   const time = usePlayer((s) => s.currentTime);
   const layerRef = useRef<HTMLDivElement | null>(null);
   const magRef = useRef<HTMLCanvasElement | null>(null);
+  const exposureRef = useRef<HTMLCanvasElement | null>(null);
+  const [exposureBlocked, setExposureBlocked] = useState(false);
   const noteRef = useRef<HTMLTextAreaElement | null>(null);
   const [reading, setReading] = useState<PixelReading>({ status: 'notReady' });
   const [readingA, setReadingA] = useState<PixelReading | null>(null);
@@ -108,6 +111,23 @@ export function Loupe() {
       }
     } else setArea(null);
 
+    // Exposure map: the paused frame in false colour, at most 640 px wide.
+    const ex = exposureRef.current;
+    if (mode.exposure && ex) {
+      try {
+        const img = readRegion(video, { u: 0, v: 0, w: 1, h: 1 }, 640);
+        if (img) {
+          const fc = falseColor(img, EXPOSURE_PALETTE);
+          ex.width = fc.width;
+          ex.height = fc.height;
+          ex.getContext("2d")?.putImageData(new ImageData(new Uint8ClampedArray(fc.data), fc.width, fc.height), 0, 0);
+        }
+        setExposureBlocked(false);
+      } catch {
+        setExposureBlocked(true);
+      }
+    }
+
     const canvas = magRef.current;
     const context = canvas?.getContext('2d');
     if (canvas && context && video.videoWidth) {
@@ -130,7 +150,7 @@ export function Loupe() {
         /* drawing an unready frame can throw in some engines; the tag still shows the state */
       }
     }
-  }, [active, u, v, frame, getVideo, rootRef, mode.anchor, mode.drag, mode.tool]);
+  }, [active, u, v, frame, getVideo, rootRef, mode.anchor, mode.drag, mode.tool, mode.exposure]);
 
   const hex = reading.status === 'ok' ? toHex(reading.rgb) : null;
   const cctR = reading.status === 'ok' ? cctReading(reading.rgb) : null;
@@ -369,6 +389,16 @@ export function Loupe() {
       <span id="kv-loupe-hint" className="kv-visually-hidden">
         {labels.loupeHint}
       </span>
+
+      {mode.exposure ? (
+        exposureBlocked ? (
+          <p className="kv-exposure-blocked" style={{ left: layout.pic.left + 8, top: layout.pic.top + 8 }}>
+            {labels.exposure}: {labels.readingUnavailable}
+          </p>
+        ) : (
+          <canvas ref={exposureRef} className="kv-exposure" style={layout.pic} aria-hidden="true" />
+        )
+      ) : null}
 
       <Crosshair box={layout.pic} x={layout.x} y={layout.y} videoWidth={layout.vw} videoHeight={layout.vh} />
 
