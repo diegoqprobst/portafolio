@@ -35,3 +35,6 @@ marketing/
 .roo
 .trae
 .windsurf
+
+# Kelvin demo clip (local dev only; production streams from Mux)
+/public/kelvin/media/

@@ -1,0 +1,60 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1000" fill="none" stroke="#DCE6F4" stroke-opacity="0.2" stroke-linecap="round" stroke-linejoin="round">
+  <!-- Fresnel spotlight, side elevation, with yoke and dimension lines. Drawn for Kelvin. -->
+  <g transform="translate(150 140)" stroke-width="1.4">
+    <rect x="0" y="40" width="250" height="150" rx="10"/>
+    <rect x="12" y="52" width="226" height="126" rx="6" stroke-width="0.7"/>
+    <path d="M250 30v170M262 22v186M274 14v202"/>
+    <path d="M274 14a8 8 0 0 1 8 8v186a8 8 0 0 1-8 8" stroke-width="0.8"/>
+    <g stroke-width="0.6">
+      <path d="M262 50h12M262 80h12M262 115h12M262 150h12M262 180h12"/>
+      <path d="M30 40v150M60 40v150M90 40v150M120 40v150M150 40v150M180 40v150M210 40v150"/>
+    </g>
+    <path d="M125 190v40M125 230l-70 60M125 230l70 60M40 296h170" />
+    <circle cx="125" cy="115" r="14"/>
+    <circle cx="125" cy="115" r="4"/>
+    <path d="M-40 40h-6M-40 190h-6M-43 40v150M-48 46l5-6 5 6M-48 184l5 6 5-6" stroke-width="0.7"/>
+    <path d="M0 -24v-8M274 -24v-8M0 -28h274M6 -33l-6 5 6 5M268 -33l6 5-6 5" stroke-width="0.7"/>
+    <path d="M282 115h360" stroke-dasharray="12 6 2 6" stroke-width="0.7"/>
+    <path d="M282 30L640 -40M282 200L640 270" stroke-width="0.7" stroke-dasharray="4 6"/>
+  </g>
+  <!-- Ray diagram through a biconvex lens -->
+  <g transform="translate(900 120)" stroke-width="1.2">
+    <path d="M0 160h560" stroke-dasharray="14 6 2 6" stroke-width="0.7"/>
+    <path d="M280 40c34 40 34 200 0 240c-34-40-34-200 0-240z"/>
+    <path d="M40 100l240 0 200 60M40 160h480M40 220l240 0 200-60" stroke-width="0.8"/>
+    <path d="M40 130l240 0 200 30M40 190l240 0 200-30" stroke-width="0.5"/>
+    <circle cx="480" cy="160" r="4"/>
+    <circle cx="80" cy="160" r="4"/>
+    <path d="M280 300v20M480 300v20M280 312h200M286 307l-6 5 6 5M474 307l6 5-6 5" stroke-width="0.7"/>
+  </g>
+  <!-- Protractor dial with graduations -->
+  <g transform="translate(1180 700)" stroke-width="1.2">
+    <circle r="210"/>
+    <circle r="196" stroke-width="0.6"/>
+    <circle r="120" stroke-width="0.8"/>
+    <circle r="12"/>
+    <path d="M-230 0h460M0 -230v460" stroke-width="0.6" stroke-dasharray="10 6"/>
+    <g stroke-width="0.7">
+      <path d="M0 -196v-14" transform="rotate(0)"/>
+      <path d="M0 -196v-14" transform="rotate(15)"/><path d="M0 -196v-14" transform="rotate(30)"/><path d="M0 -196v-14" transform="rotate(45)"/>
+      <path d="M0 -196v-14" transform="rotate(60)"/><path d="M0 -196v-14" transform="rotate(75)"/><path d="M0 -196v-14" transform="rotate(90)"/>
+      <path d="M0 -196v-14" transform="rotate(105)"/><path d="M0 -196v-14" transform="rotate(120)"/><path d="M0 -196v-14" transform="rotate(135)"/>
+      <path d="M0 -196v-14" transform="rotate(150)"/><path d="M0 -196v-14" transform="rotate(165)"/><path d="M0 -196v-14" transform="rotate(180)"/>
+      <path d="M0 -196v-14" transform="rotate(195)"/><path d="M0 -196v-14" transform="rotate(210)"/><path d="M0 -196v-14" transform="rotate(225)"/>
+      <path d="M0 -196v-14" transform="rotate(240)"/><path d="M0 -196v-14" transform="rotate(255)"/><path d="M0 -196v-14" transform="rotate(270)"/>
+      <path d="M0 -196v-14" transform="rotate(285)"/><path d="M0 -196v-14" transform="rotate(300)"/><path d="M0 -196v-14" transform="rotate(315)"/>
+      <path d="M0 -196v-14" transform="rotate(330)"/><path d="M0 -196v-14" transform="rotate(345)"/>
+    </g>
+    <path d="M0 0L150 -110" stroke-width="1"/>
+    <path d="M0 0L-60 -180" stroke-width="0.6"/>
+    <path d="M60 0a60 60 0 0 0 -24.5 -48.4" stroke-width="0.7"/>
+  </g>
+  <!-- Lamp filament detail -->
+  <g transform="translate(220 640)" stroke-width="1.1">
+    <path d="M80 0c-60 0-80 60-80 100s30 70 40 100h80c10-30 40-60 40-100S140 0 80 0z"/>
+    <path d="M40 200v40h80v-40M44 214h72M44 228h72" stroke-width="0.8"/>
+    <path d="M60 200V120l10-20 10 20 10-20 10 20V200" stroke-width="0.7"/>
+    <path d="M-40 100h-20M200 100h20M80 -30v-20" stroke-width="0.7"/>
+    <path d="M-20 40l-16-14M180 40l16-14M-20 160l-16 14M180 160l16 14" stroke-width="0.7"/>
+  </g>
+</svg>

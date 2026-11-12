@@ -1,0 +1,182 @@
+/* /kelvin — the case page wears the skin's own catalog world. Scoped under .kvp. */
+
+.kvp {
+  --kvp-blue: #7db4ee;
+  --kvp-paper: #0d1838;
+  --kvp-carbon: #dce6f4;
+  --kvp-soft: #a3b4cf;
+  --kvp-orange: #f59a4a;
+  --kvp-line: rgb(220 230 244 / 0.24);
+  /* The mark reads these role names. */
+  --kv-paper: #13224a;
+  --kv-carbon: #dce6f4;
+  --kv-orange: #f59a4a;
+  color-scheme: dark;
+  min-height: 100vh;
+  background-color: var(--kvp-paper);
+  background-image:
+    url("/kelvin/kelvin-engravings.svg"),
+    linear-gradient(rgb(125 180 238 / 0.09) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(125 180 238 / 0.09) 1px, transparent 1px),
+    linear-gradient(rgb(125 180 238 / 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(125 180 238 / 0.04) 1px, transparent 1px);
+  background-size: 1600px auto, 40px 40px, 40px 40px, 8px 8px, 8px 8px;
+  background-position: center top, 0 0, 0 0, 0 0, 0 0;
+  background-repeat: repeat-y, repeat, repeat, repeat, repeat;
+  color: var(--kvp-carbon);
+  font-family: "Libre Caslon Text", Georgia, serif;
+  font-size: 17px;
+  line-height: 1.55;
+  padding: 48px 24px 64px;
+}
+
+.kvp > * {
+  max-width: 1120px;
+  margin-inline: auto;
+}
+
+.kvp-masthead {
+  border-bottom: 1px solid var(--kvp-carbon);
+  box-shadow: 0 4px 0 -3px var(--kvp-line);
+  padding-bottom: 20px;
+}
+
+.kvp-kicker {
+  font-family: "Barlow Condensed", sans-serif;
+  font-weight: 600;
+  font-size: 14px;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  color: var(--kvp-blue);
+}
+
+.kvp h1 {
+  font-family: "Barlow Condensed", sans-serif;
+  font-weight: 600;
+  font-size: clamp(56px, 9vw, 96px);
+  line-height: 0.95;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--kvp-carbon);
+  margin: 4px 0 12px;
+}
+
+.kvp-lede {
+  max-width: 36em;
+  font-size: 20px;
+  line-height: 1.45;
+}
+
+.kvp-stage {
+  margin-block: 32px 8px;
+}
+
+/* Player elements only provide state; the skin is the box that gets sized. */
+.kvp video-player {
+  display: contents;
+}
+
+.kvp-stage .media-skin {
+  aspect-ratio: 16 / 9;
+  width: 100%;
+  box-shadow:
+    0 0 0 1px rgb(220 230 244 / 0.5),
+    0 0 0 8px var(--kvp-paper),
+    0 0 0 9px var(--kvp-line),
+    0 24px 48px rgb(0 0 0 / 0.45);
+}
+
+.kvp-caption {
+  margin-top: 12px;
+  font-style: italic;
+  font-size: 15px;
+  color: var(--kvp-soft);
+}
+
+.kvp-caption span {
+  font-family: "Barlow Condensed", sans-serif;
+  font-style: normal;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--kvp-blue);
+  margin-inline-end: 8px;
+}
+
+.kvp-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 32px;
+  margin-top: 36px;
+  padding-block: 28px;
+  border-top: 1px solid var(--kvp-line);
+  border-bottom: 1px solid var(--kvp-line);
+}
+
+.kvp-grid h2,
+.kvp-notes h2 {
+  font-family: "Barlow Condensed", sans-serif;
+  font-weight: 600;
+  font-size: 22px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+
+.kvp-grid ul {
+  list-style: none;
+  display: grid;
+  gap: 8px;
+}
+
+.kvp-grid li {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 10px;
+  align-items: baseline;
+}
+
+.kvp-grid li::before {
+  content: "";
+  inline-size: 9px;
+  block-size: 7px;
+  background: var(--kvp-orange);
+  clip-path: polygon(0 0, 100% 0, 50% 100%);
+}
+
+.kvp-grid strong {
+  font-family: "Barlow Condensed", sans-serif;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.kvp-notes {
+  padding-top: 28px;
+}
+
+.kvp-notes p {
+  max-width: 48em;
+}
+
+.kvp-notes a {
+  color: var(--kvp-blue);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.kvp-notes a:focus-visible {
+  outline: 2px solid var(--kvp-orange);
+  outline-offset: 2px;
+}
+
+@media (max-width: 820px) {
+  .kvp {
+    padding: 28px 16px 48px;
+  }
+
+  .kvp-grid {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+}

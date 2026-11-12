@@ -11,6 +11,22 @@ export type FeaturedWork = {
 
 export const FEATURED_WORK: FeaturedWork[] = [
   {
+    title: "Kelvin — Video Player for Looking at Light",
+    year: "2026",
+    client: "Personal project · Video.js v10",
+    service: {
+      en: "Interface design · Front-end engineering · Accessibility",
+      es: "Diseño de interfaz · Desarrollo front-end · Accesibilidad",
+    },
+    outcome: {
+      en: "Designed and built a video player skin that turns a paused frame into a catalog page: a loupe that reads colour and temperature, a colour timeline and notes.",
+      es: "Diseñé y construí un reproductor de video que convierte un fotograma en pausa en una página de catálogo: una lupa que lee color y temperatura, una línea de tiempo de color y notas.",
+    },
+    image: "/assets/projects/kelvin-cover.jpg",
+    href: "/kelvin",
+    kind: "case-study",
+  },
+  {
     title: "Saratoga Public Lighting Submittal",
     year: "2026",
     client: "Public infrastructure · United States",

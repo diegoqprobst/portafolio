@@ -1,0 +1,332 @@
+/* The demo page: a sheet from the same set of drawings the player comes from. */
+
+:root {
+  --kv-navy: #0d1838;
+  --kv-panel: #13224a;
+  --kv-chrome: #0a1027;
+  --kv-ink: #dce6f4;
+  --kv-ink-soft: #a3b4cf;
+  --kv-cyan: #7db4ee;
+  --kv-orange: #f59a4a;
+  /* The mark reads these role names. */
+  --kv-paper: var(--kv-panel);
+  --kv-carbon: var(--kv-ink);
+  --demo-rule: rgb(220 230 244 / 0.24);
+  color-scheme: dark;
+  accent-color: var(--kv-orange);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+::selection {
+  background: rgb(245 154 74 / 0.4);
+  color: #ffffff;
+}
+
+html {
+  scrollbar-color: rgb(125 180 238 / 0.5) var(--kv-chrome);
+}
+
+body {
+  margin: 0;
+  color: var(--kv-ink);
+  font-family: 'Libre Caslon Text', Georgia, serif;
+  font-size: 17px;
+  line-height: 1.6;
+  background-color: var(--kv-navy);
+  background-image:
+    url('../../kelvin-engravings.svg'),
+    linear-gradient(rgb(125 180 238 / 0.09) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(125 180 238 / 0.09) 1px, transparent 1px),
+    linear-gradient(rgb(125 180 238 / 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(125 180 238 / 0.04) 1px, transparent 1px);
+  background-size:
+    1600px auto,
+    40px 40px,
+    40px 40px,
+    8px 8px,
+    8px 8px;
+  background-position:
+    center top,
+    0 0,
+    0 0,
+    0 0,
+    0 0;
+  background-repeat: repeat-y, repeat, repeat, repeat, repeat;
+  background-attachment: fixed, scroll, scroll, scroll, scroll;
+}
+
+#root {
+  position: relative;
+}
+
+.demo {
+  max-inline-size: 1160px;
+  margin-inline: auto;
+  padding: 48px 24px 56px;
+}
+
+.demo-masthead {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: end;
+  gap: 16px 56px;
+  padding-bottom: 22px;
+  border-bottom: 1px solid var(--kv-ink);
+  box-shadow: 0 4px 0 -3px var(--demo-rule);
+}
+
+.demo-brand {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.demo-glyph {
+  display: grid;
+}
+
+.demo h1 {
+  margin: 0;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 600;
+  font-size: clamp(52px, 8vw, 88px);
+  line-height: 0.9;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--kv-ink);
+}
+
+.demo-lede {
+  margin: 0;
+  max-inline-size: 34em;
+  font-size: 20px;
+  line-height: 1.5;
+  justify-self: end;
+  color: var(--kv-ink);
+  text-wrap: balance;
+}
+
+.demo-stage {
+  margin-block: 36px 12px;
+}
+
+.demo-caption {
+  margin: 12px 0 0;
+  font-style: italic;
+  font-size: 15px;
+  color: var(--kv-ink-soft);
+}
+
+.demo-caption span {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-style: normal;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--kv-cyan);
+  margin-inline-end: 8px;
+}
+
+/* Player elements only provide state; the skin inside them is the box that gets sized. */
+video-player {
+  display: contents;
+}
+
+.demo-stage .media-skin {
+  aspect-ratio: 16 / 9;
+  box-shadow:
+    0 0 0 1px rgb(220 230 244 / 0.5),
+    0 0 0 8px var(--kv-navy),
+    0 0 0 9px var(--demo-rule),
+    0 24px 48px rgb(0 0 0 / 0.45);
+}
+
+.demo-columns {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 40px;
+  padding-block: 32px;
+  border-top: 1px solid var(--demo-rule);
+  border-bottom: 1px solid var(--demo-rule);
+  margin-top: 40px;
+}
+
+.demo h2 {
+  margin: 0 0 8px;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 600;
+  font-size: 22px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--kv-ink);
+}
+
+.demo-columns p,
+.demo-spec p {
+  margin: 0 0 12px;
+  max-inline-size: 38em;
+  color: var(--kv-ink);
+}
+
+.demo-spec {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 56px;
+  padding-block: 36px 40px;
+}
+
+.demo-keys {
+  inline-size: 100%;
+  border-collapse: collapse;
+  font-size: 15px;
+}
+
+.demo-keys th,
+.demo-keys td {
+  text-align: start;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--demo-rule);
+  vertical-align: top;
+}
+
+.demo-keys th {
+  inline-size: 9.5em;
+  font-weight: 400;
+}
+
+kbd {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 600;
+  font-size: 15px;
+  letter-spacing: 0.06em;
+  padding: 1px 7px;
+  border-radius: 2px;
+  background: var(--kv-ink);
+  color: var(--kv-chrome);
+  white-space: nowrap;
+}
+
+/* Footer: an engineering drawing's title block. */
+.demo-footer {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.demo-titleblock {
+  border-collapse: collapse;
+  min-inline-size: min(100%, 640px);
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 15px;
+  letter-spacing: 0.04em;
+  border: 1px solid var(--kv-ink);
+  background: rgb(10 16 39 / 0.7);
+}
+
+.demo-titleblock th,
+.demo-titleblock td {
+  border: 1px solid var(--demo-rule);
+  padding: 6px 10px;
+  text-align: start;
+  vertical-align: top;
+}
+
+.demo-titleblock th {
+  font-weight: 600;
+  font-size: 12px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--kv-cyan);
+  white-space: nowrap;
+}
+
+.demo-titleblock td {
+  color: var(--kv-ink);
+}
+
+.demo-titleblock tr:first-child td {
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.demo-visually-hidden {
+  position: absolute;
+  inline-size: 1px;
+  block-size: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.demo a {
+  color: var(--kv-cyan);
+  text-underline-offset: 3px;
+}
+
+.demo a:focus-visible {
+  outline: 2px solid var(--kv-orange);
+  outline-offset: 2px;
+}
+
+@media (max-width: 820px) {
+  .demo {
+    padding: 28px 16px 40px;
+  }
+
+  .demo-masthead {
+    grid-template-columns: 1fr;
+  }
+
+  .demo-lede {
+    justify-self: start;
+    font-size: 18px;
+  }
+
+  .demo-columns,
+  .demo-spec {
+    grid-template-columns: 1fr;
+    gap: 28px;
+  }
+}
+
+@media (forced-colors: active) {
+  kbd,
+  .demo-titleblock {
+    border: 1px solid CanvasText;
+  }
+}
+
+/* ?hero: the player alone, for the cover image. */
+.demo-hero body {
+  background: var(--kv-navy);
+}
+
+.demo-hero .demo {
+  max-inline-size: none;
+  padding: 0;
+}
+
+.demo-hero :is(.demo-masthead, .demo-caption, .demo-columns, .demo-spec, .demo-footer) {
+  display: none;
+}
+
+.demo-hero .demo-stage {
+  margin: 0;
+}
+
+.demo-hero .demo-stage .media-skin {
+  border-radius: 0;
+  box-shadow: none;
+}
+
+/* The cover is a still: no transitions, so it never catches a half-finished one. */
+.demo-hero *,
+.demo-hero *::before,
+.demo-hero *::after {
+  transition: none !important;
+  animation: none !important;
+}

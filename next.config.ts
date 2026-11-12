@@ -45,6 +45,9 @@ const csp = [
   "img-src 'self' data: blob: https:",
   "font-src 'self'",
   "connect-src 'self' https:",
+  // /kelvin streams video from Mux (HLS via MediaSource blobs + a worker).
+  "media-src 'self' blob: https://stream.mux.com https://*.mux.com",
+  "worker-src 'self' blob:",
   "object-src 'none'",
   "base-uri 'self'",
   "form-action 'self'",

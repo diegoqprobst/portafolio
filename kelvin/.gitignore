@@ -1,0 +1,12 @@
+node_modules
+dist
+*.local
+.DS_Store
+
+# Hosting CLIs keep their project links here.
+.vercel
+.netlify
+.wrangler
+
+# Demo media (large; regenerate from the source clip)
+apps/preview/public/media/
