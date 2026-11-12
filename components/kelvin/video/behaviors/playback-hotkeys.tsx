@@ -7,9 +7,11 @@ export interface PlaybackHotkeysProps {
   disabled?: boolean | undefined;
   /** Kelvin: arrows belong to the loupe reticle while it is aimed with the keyboard. */
   arrowsDisabled?: boolean | undefined;
+  /** Kelvin: digits pick measurement tools while paused. */
+  digitsDisabled?: boolean | undefined;
 }
 
-export function PlaybackHotkeys({ disabled = false, arrowsDisabled = false }: PlaybackHotkeysProps = {}) {
+export function PlaybackHotkeys({ disabled = false, arrowsDisabled = false, digitsDisabled = false }: PlaybackHotkeysProps = {}) {
   const arrows = disabled || arrowsDisabled;
   return (
     <>
@@ -22,7 +24,7 @@ export function PlaybackHotkeys({ disabled = false, arrowsDisabled = false }: Pl
       <Hotkey disabled={disabled} keys="j" action="seekStep" />
       <Hotkey disabled={arrows} keys="ArrowUp" action="volumeStep" />
       <Hotkey disabled={arrows} keys="ArrowDown" action="volumeStep" />
-      <Hotkey disabled={disabled} keys="0-9" action="seekToPercent" />
+      <Hotkey disabled={disabled || digitsDisabled} keys="0-9" action="seekToPercent" />
       <Hotkey disabled={disabled} keys="Home" action="seekToPercent" value={0} />
       <Hotkey disabled={disabled} keys="End" action="seekToPercent" value={100} />
       <Hotkey disabled={disabled} keys=">" action="speedUp" />

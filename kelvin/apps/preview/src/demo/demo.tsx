@@ -8,9 +8,12 @@ import { Player } from '../frame/player';
 
 const KEYS: [string, string][] = [
   ['Space · K', 'Play or pause'],
-  ['X', 'Aim the loupe with the keyboard (while paused)'],
+  ['1 · 2 · 3 · 4', 'Point · A–B compare · Area · Ruler (while paused)'],
+  ['E', 'Exposure map on or off'],
+  ['X', 'Aim with the keyboard'],
   ['← ↑ → ↓', 'Move the reticle · Shift for fine steps'],
-  ['Enter', 'Pin a note where the reticle is'],
+  ['Enter', 'Set: a note, point A, or the start and end of an area or ruler'],
+  ['P', 'Pin the current measurement as a note'],
   ['Esc', 'Step back: keyboard aim → pointer → close the sheet'],
   ['F · M · C', 'Fullscreen · mute · captions'],
 ];
@@ -49,8 +52,9 @@ function Demo() {
           <article>
             <h2>Loupe</h2>
             <p>
-              Pause and a reticle follows your pointer: a magnified patch, the exact colour and an approximate colour
-              temperature on a scale from cool to warm. Click, or press Enter, to pin a note to that point and moment.
+              Pause and a drafting crosshair follows your pointer: a magnified patch, the exact colour and its apparent
+              colour temperature as the camera recorded it. Switch tools with 1–4 to compare two points in stops, draw an
+              area for its uniformity, or set a scale and measure lengths. E lays an exposure map over the frame.
             </p>
           </article>
           <article>
@@ -81,6 +85,11 @@ function Demo() {
             </p>
             <p>
               During playback there is one row of controls and nothing else. The tools exist only when you stop to look.
+            </p>
+            <p>
+              Every reading comes from the picture, not a light meter. Kelvin gives relative luminance and differences in
+              stops, never lux: lux needs the camera's exposure and a calibrated reference, which a video file does not
+              carry. Lengths stay in pixels until you give it a known length.
             </p>
           </div>
           <div>

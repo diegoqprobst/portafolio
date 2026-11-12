@@ -7,7 +7,7 @@ import "./kelvin-page.css";
 // One project among several on the site (see the umbrella profile at /).
 const TITLE = "Kelvin · A Video.js skin for looking at light — Diego Quinde";
 const DESCRIPTION =
-  "Kelvin is a Video.js v10 skin styled like an instrument from a mid-century technical catalog: a loupe that reads colour and temperature, a colour timeline, and a specimen sheet with notes.";
+  "Kelvin is a Video.js v10 skin styled like an instrument from a mid-century technical catalog: a loupe and measuring tools (colour, apparent CCT, stops between two points, areas and lengths), a colour timeline, an exposure map and a sheet with notes.";
 
 export const metadata: Metadata = {
   title: TITLE,
@@ -59,8 +59,11 @@ export default function Page() {
             <h2>What it does</h2>
             <ul>
               <li>
-                <strong>Loupe.</strong> A reticle with magnifier, exact colour and approximate temperature, aimable with
-                the keyboard.
+                <strong>Loupe and tools.</strong> A drafting crosshair with magnifier, exact colour and apparent CCT; compare
+                two points in stops, measure an area&apos;s uniformity, or set a scale and measure lengths.
+              </li>
+              <li>
+                <strong>Exposure map.</strong> False colour by luminance zone, from crushed shadows to clipped highlights.
               </li>
               <li>
                 <strong>Colour timeline.</strong> The seek track printed with the video&apos;s own dominant colours.
@@ -76,7 +79,8 @@ export default function Page() {
         <section className="kvp-notes">
           <h2>Built with care for</h2>
           <p>
-            Full keyboard use, visible focus, contrast checked against bright and dark frames, nothing communicated by
+            Honest readings: relative luminance and stops, never lux, because a video file carries no exposure or
+            calibration. Full keyboard use, visible focus, contrast checked against bright and dark frames, nothing communicated by
             colour alone, and respect for reduced motion, reduced transparency, high contrast and forced colours. Built
             on Video.js v10 and released under Apache 2.0.
             {CONTEST_URL ? (

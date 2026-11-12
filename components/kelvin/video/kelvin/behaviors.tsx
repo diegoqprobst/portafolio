@@ -5,7 +5,7 @@ import { useEffect } from 'react';
 
 import { VideoGestures } from '../behaviors/gestures';
 import { VideoHotkeys } from '../behaviors/hotkeys';
-import { routeKey } from './lib/mode';
+import { routeKey, TOOL_KEYS } from './lib/mode';
 import { useKelvin } from './state';
 
 const isEditable = (el: EventTarget | null) =>
@@ -17,7 +17,7 @@ const isEditable = (el: EventTarget | null) =>
  * Adds X (aim with keyboard) and the Escape ladder: keyboard aim → pointer → close sheet (focus back to Play).
  */
 export function KelvinBehaviors() {
-  const { mode, dispatch, noteOpen, rootRef } = useKelvin();
+  const { mode, dispatch, noteOpen, setNoteOpen, rootRef } = useKelvin();
 
   useEffect(() => {
     const root = rootRef.current;
@@ -30,7 +30,16 @@ export function KelvinBehaviors() {
         dispatch({ type: 'loupeKeyboard' });
         return;
       }
-      if (routeKey(mode, event.key) !== 'escape' || (!mode.sheet && mode.loupe === 'off')) return;
+      const route = routeKey(mode, event.key);
+      if (route === 'tool' && !event.metaKey && !event.ctrlKey && !event.altKey) {
+        event.preventDefault();
+        const tool = TOOL_KEYS[event.key];
+        if (tool) dispatch({ type: 'tool', tool });
+        else if (event.key === 'e' || event.key === 'E') dispatch({ type: 'exposure' });
+        else setNoteOpen(true);
+        return;
+      }
+      if (route !== 'escape' || (!mode.sheet && mode.loupe === 'off')) return;
       event.preventDefault();
       const closing = mode.loupe !== 'keyboard';
       dispatch({ type: 'escape' });
@@ -38,11 +47,11 @@ export function KelvinBehaviors() {
     };
     root.addEventListener('keydown', onKeyDown);
     return () => root.removeEventListener('keydown', onKeyDown);
-  }, [mode, dispatch, noteOpen, rootRef]);
+  }, [mode, dispatch, noteOpen, setNoteOpen, rootRef]);
 
   return (
     <>
-      <VideoHotkeys disabled={noteOpen} arrowsDisabled={mode.loupe === 'keyboard'} />
+      <VideoHotkeys disabled={noteOpen} arrowsDisabled={mode.loupe === 'keyboard'} digitsDisabled={mode.sheet} />
       <VideoGestures disabled={mode.loupe !== 'off'} />
     </>
   );

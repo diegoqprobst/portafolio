@@ -339,8 +339,8 @@ export default function UmbrellaClient() {
                 </h2>
                 <p className="u-lede u-head-sub">
                   <T
-                    en="Kelvin, a Video.js player I designed for reviewing light. It plays with one row of controls; pause it and the frame becomes an instrument: a loupe that reads colour and temperature, a colour timeline, and notes pinned to the picture."
-                    es="Kelvin, un reproductor Video.js que diseñé para revisar la luz. Se reproduce con una sola fila de controles; al pausar, el fotograma se vuelve un instrumento: una lupa que lee color y temperatura, una línea de tiempo de color y notas fijadas en la imagen."
+                    en="Kelvin, a Video.js player I designed for reviewing light. It plays with one row of controls; pause it and the frame becomes an instrument: a loupe, a drafting crosshair and tools that compare two points in stops, measure areas and lengths, and map the exposure."
+                    es="Kelvin, un reproductor Video.js que diseñé para revisar la luz. Se reproduce con una sola fila de controles; al pausar, el fotograma se vuelve un instrumento: una lupa, una retícula de dibujo y herramientas que comparan dos puntos en pasos f, miden áreas y longitudes y mapean la exposición."
                   />
                 </p>
               </div>

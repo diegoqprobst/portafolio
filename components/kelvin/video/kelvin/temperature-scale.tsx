@@ -18,7 +18,7 @@ export function TemperatureScale({ kelvin }: { kelvin: number | null }) {
         <span>2000 K</span>
       </div>
       <span className="kv-visually-hidden">
-        {labels.temperature}: {kelvin === null ? '—' : `${labels.approx} ${kelvin} K`}
+        {labels.temperature}: {kelvin === null ? labels.offCurve : `${labels.approx} ${kelvin} K`}
       </span>
     </div>
   );

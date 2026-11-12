@@ -64,3 +64,53 @@ export function hueOf({ r, g, b }: RGB): number | null {
   else h = (r - g) / d + 4;
   return Math.round((h * 60 + 360) % 360);
 }
+
+function toUv({ r, g, b }: RGB) {
+  const [R, G, B] = [toLinear(r), toLinear(g), toLinear(b)];
+  const X = 0.4124 * R + 0.3576 * G + 0.1805 * B;
+  const Y = 0.2126 * R + 0.7152 * G + 0.0722 * B;
+  const Z = 0.0193 * R + 0.1192 * G + 0.9505 * B;
+  const d = X + 15 * Y + 3 * Z || 1;
+  return { u: (4 * X) / d, v: (6 * Y) / d };
+}
+
+/** Planckian locus in CIE 1960 uv (Krystek 1985 rational approximation, 1000–15000 K). */
+function planckUv(t: number) {
+  const u = (0.860117757 + 1.54118254e-4 * t + 1.28641212e-7 * t * t) / (1 + 8.42420235e-4 * t + 7.08145163e-7 * t * t);
+  const v = (0.317398726 + 4.22806245e-5 * t + 4.20481691e-8 * t * t) / (1 - 2.89741816e-5 * t + 1.61456053e-7 * t * t);
+  return { u, v };
+}
+
+/** Signed distance from the blackbody locus in CIE 1960 uv (Duv); positive = greenish, negative = magenta. */
+export function duv(c: RGB): number {
+  const p = toUv(c);
+  let best = Infinity;
+  let sign = 1;
+  for (let t = 1500; t <= 15000; t += 50) {
+    const q = planckUv(t);
+    const d = Math.hypot(p.u - q.u, p.v - q.v);
+    if (d < best) {
+      best = d;
+      sign = p.v >= q.v ? 1 : -1;
+    }
+  }
+  return sign * best;
+}
+
+export type CctReading = { kind: 'ok'; k: number } | { kind: 'above' } | { kind: 'off' };
+
+const DUV_LIMIT = 0.02;
+const SCALE_MAX_K = 10000;
+
+/** Apparent CCT of a colour as recorded (after the camera's white balance), with honest bounds. */
+export function cctReading(c: RGB): CctReading {
+  const k = estimateCct(c);
+  if (k === null || Math.abs(duv(c)) > DUV_LIMIT) return { kind: 'off' };
+  return k > SCALE_MAX_K ? { kind: 'above' } : { kind: 'ok', k };
+}
+
+export function formatCct(r: CctReading, _labels: { offCurve: string }): string {
+  if (r.kind === 'ok') return `≈ ${r.k.toLocaleString('en-US')} K`;
+  if (r.kind === 'above') return '> 10 000 K';
+  return '—';
+}

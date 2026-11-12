@@ -658,7 +658,7 @@
 .kv .kv-tag {
   position: absolute;
   z-index: 21;
-  inline-size: 236px;
+  inline-size: 268px;
   translate: 84px -50%;
   padding: 10px 12px 10px;
   display: grid;
@@ -896,29 +896,439 @@
     bottom: calc(var(--kv-key) + var(--kv-bar-pad) * 2 + 14px);
     translate: none;
     inline-size: auto;
-    grid-template-columns: auto 1fr;
+    display: flex;
+    flex-wrap: wrap;
     align-items: center;
-    column-gap: 12px;
+    gap: 4px 12px;
     padding: 6px 10px;
+    max-block-size: 46%;
+    overflow-y: auto;
   }
 
   .kv .kv-tag .kv-temp,
-  .kv .kv-tag .kv-tag-hint {
+  .kv .kv-tag .kv-tag-hint,
+  .kv .kv-tag .kv-tag-note {
     display: none;
   }
 
   .kv .kv-tag-k {
     border-top: 0;
     padding-top: 0;
+    gap: 8px;
   }
 
-  .kv .kv-tag .kv-note-form {
-    grid-column: 1 / -1;
+  .kv .kv-tag-hex {
+    font-size: 15px;
   }
 
-  .kv[data-sheet-layout='compact'] .kv-header {
+  .kv .kv-tag-row:not(.kv-tag-k) + .kv-tag-k .kv-tag-label {
     display: none;
   }
+
+  .kv .kv-tag-grid {
+    flex-basis: 100%;
+    font-size: 11px;
+  }
+
+  .kv .kv-tag .kv-note-form,
+  .kv .kv-tag .kv-scale-form {
+    flex-basis: 100%;
+  }
+
+  .kv .kv-tag-foot {
+    display: flex;
+    margin-inline-start: auto;
+  }
+
+  /* The header keeps only the tool controls; the compact strip is dropped so the picture stays clear. */
+  .kv .kv-header .kv-mark {
+    display: none;
+  }
+}
+
+/* Same docking in the compact sheet layout (small landscape players). */
+.kv[data-sheet-layout='compact'] .kv-mag {
+  inline-size: 72px;
+  block-size: 72px;
+}
+
+.kv[data-sheet-layout='compact'] .kv-tag,
+.kv[data-sheet-layout='compact'] .kv-tag[data-flip-x],
+.kv[data-sheet-layout='compact'] .kv-tag[data-flip-y],
+.kv[data-sheet-layout='compact'] .kv-tag[data-flip-x][data-flip-y] {
+  left: 8px !important;
+  right: 8px;
+  top: auto !important;
+  bottom: calc(var(--kv-key) + var(--kv-bar-pad) * 2 + 14px);
+  translate: none;
+  inline-size: auto;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 12px;
+  padding: 6px 10px;
+  max-block-size: 46%;
+  overflow-y: auto;
+}
+
+.kv[data-sheet-layout='compact'] .kv-tag .kv-temp,
+.kv[data-sheet-layout='compact'] .kv-tag .kv-tag-hint,
+.kv[data-sheet-layout='compact'] .kv-tag .kv-tag-note {
+  display: none;
+}
+
+.kv[data-sheet-layout='compact'] .kv-tag-k {
+  border-top: 0;
+  padding-top: 0;
+  gap: 8px;
+}
+
+.kv[data-sheet-layout='compact'] .kv-tag-grid {
+  flex-basis: 100%;
+  font-size: 11px;
+}
+
+.kv[data-sheet-layout='compact'] .kv-tag .kv-note-form,
+.kv[data-sheet-layout='compact'] .kv-tag .kv-scale-form,
+.kv[data-sheet-layout='compact'] .kv-tag-foot {
+  flex-basis: 100%;
+}
+
+.kv[data-sheet-layout='compact'] .kv-tag-foot {
+  display: flex;
+  justify-content: flex-end;
+}
+
+/* The header keeps only the tool controls; the compact strip is dropped so the picture stays clear. */
+.kv[data-sheet-layout='compact'] .kv-header .kv-mark {
+  display: none;
+}
+
+/* ---------- Drafting crosshair ---------- */
+
+.kv .kv-crosshair-frame {
+  position: absolute;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.kv .kv-crosshair-h,
+.kv .kv-crosshair-v {
+  position: absolute;
+  background: rgb(220 230 244 / 0.7);
+  box-shadow: 0 0 0 1px rgb(10 16 39 / 0.45);
+}
+
+.kv .kv-crosshair-h {
+  inset-inline: 0;
+  block-size: 1px;
+}
+
+.kv .kv-crosshair-v {
+  inset-block: 0;
+  inline-size: 1px;
+}
+
+.kv .kv-crosshair-coord {
+  position: absolute;
+  padding: 1px 5px;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  color: var(--kv-ink);
+  background: rgb(10 16 39 / 0.78);
+  border-radius: 1px;
+  white-space: nowrap;
+}
+
+.kv .kv-crosshair-coord--x {
+  top: 4px;
+  translate: -50% 0;
+}
+
+.kv .kv-crosshair-coord--y {
+  left: 4px;
+  translate: 0 -50%;
+}
+
+/* ---------- Exposure map ---------- */
+
+.kv .kv-exposure {
+  position: absolute;
+  pointer-events: none;
+  opacity: 0.75;
+  image-rendering: pixelated;
+}
+
+.kv .kv-exposure-blocked {
+  position: absolute;
+  margin: 0;
+  padding: 4px 8px;
+  font-size: 11px;
+  color: var(--kv-ink);
+  background: rgb(10 16 39 / 0.85);
+  border-radius: 2px;
+  pointer-events: none;
+}
+
+.kv .kv-zones {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 2px;
+  font-size: 12px;
+}
+
+.kv .kv-zones li {
+  display: grid;
+  grid-template-columns: 14px 1fr auto;
+  align-items: center;
+  gap: 10px;
+  min-block-size: 20px;
+}
+
+.kv .kv-zone-chip {
+  inline-size: 14px;
+  block-size: 10px;
+  border-radius: 1px;
+  box-shadow: 0 0 0 1px rgb(220 230 244 / 0.4);
+}
+
+.kv .kv-zone-range {
+  font-size: 11px;
+  color: var(--kv-ink-soft);
+}
+
+/* ---------- Measurement marks ---------- */
+
+.kv .kv-measure {
+  position: absolute;
+  pointer-events: none;
+  overflow: visible;
+}
+
+.kv .kv-measure line,
+.kv .kv-measure rect,
+.kv .kv-measure circle {
+  fill: none;
+  stroke: var(--kv-orange);
+  stroke-width: 1.5;
+}
+
+.kv .kv-measure .kv-measure-edge,
+.kv .kv-measure .kv-measure-edge line {
+  stroke: rgb(10 16 39 / 0.7);
+  stroke-width: 3.5;
+}
+
+.kv .kv-measure-area rect:not(.kv-measure-edge) {
+  stroke-dasharray: 6 4;
+  fill: rgb(245 154 74 / 0.08);
+}
+
+.kv .kv-measure text {
+  font-family: var(--kv-font-ui);
+  font-size: 12px;
+  font-weight: 600;
+  fill: var(--kv-ink);
+  paint-order: stroke;
+  stroke: rgb(10 16 39 / 0.85);
+  stroke-width: 4px;
+  letter-spacing: 0.04em;
+}
+
+/* ---------- Tag readouts ---------- */
+
+.kv .kv-tag-grid {
+  margin: 0;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 3px 10px;
+  font-size: 12px;
+}
+
+.kv .kv-tag-grid dt {
+  color: var(--kv-ink-soft);
+}
+
+.kv .kv-tag-grid dd {
+  margin: 0;
+  text-align: end;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.kv .kv-tag-foot {
+  display: grid;
+  gap: 6px;
+}
+
+.kv .kv-tag-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.kv .kv-tag-actions .kv-button,
+.kv .kv-scale-form .kv-button {
+  min-block-size: 26px;
+  padding-inline: 10px;
+  font-size: 11px;
+}
+
+.kv .kv-button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.kv .kv-scale-form {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 6px;
+  align-items: end;
+}
+
+.kv .kv-scale-form .kv-button {
+  grid-column: 1 / -1;
+}
+
+.kv .kv-scale-field {
+  display: grid;
+  gap: 3px;
+  font-size: 11px;
+  color: var(--kv-ink-soft);
+}
+
+.kv .kv-scale-input,
+.kv .kv-scale-unit {
+  all: unset;
+  box-sizing: border-box;
+  min-block-size: 28px;
+  padding-inline: 8px;
+  font-family: var(--kv-font-ui);
+  font-size: 13px;
+  color: var(--kv-ink);
+  background: var(--kv-paper-hi);
+  border-radius: 2px;
+  box-shadow: 0 0 0 1px rgb(220 230 244 / 0.4) inset;
+}
+
+.kv .kv-scale-input:focus-visible,
+.kv .kv-scale-unit:focus-visible {
+  outline: 2px solid var(--kv-orange);
+  outline-offset: 1px;
+}
+
+/* ---------- Tool selector (header band, paused) ---------- */
+
+.kv .kv-header:has(.kv-toolbar) {
+  pointer-events: auto;
+}
+
+.kv .kv-toolbar {
+  margin-inline-start: auto;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.kv .kv-tools {
+  display: flex;
+  border: 1px solid rgb(220 230 244 / 0.3);
+  border-radius: var(--kv-radius-inner);
+}
+
+.kv .kv-tool {
+  all: unset;
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-block-size: 26px;
+  padding-inline: 9px;
+  font-family: var(--kv-font-ui);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--kv-ink-soft);
+  cursor: pointer;
+}
+
+.kv .kv-tools .kv-tool + .kv-tool {
+  border-inline-start: 1px solid rgb(220 230 244 / 0.2);
+}
+
+.kv .kv-tool[aria-checked='true'] {
+  color: var(--kv-chrome);
+  background: var(--kv-ink);
+}
+
+.kv .kv-exposure-switch {
+  border: 1px solid rgb(220 230 244 / 0.3);
+  border-radius: var(--kv-radius-inner);
+}
+
+.kv .kv-exposure-switch[aria-checked='true'] {
+  color: var(--kv-chrome);
+  background: var(--kv-orange);
+  border-color: var(--kv-orange);
+}
+
+.kv .kv-tool-key {
+  font-size: 10px;
+  opacity: 0.7;
+}
+
+@media (hover: hover) {
+  .kv .kv-tool:hover {
+    color: var(--kv-ink);
+  }
+}
+
+.kv .kv-tool:focus-visible {
+  outline: 2px solid var(--kv-orange);
+  outline-offset: 1px;
+}
+
+.kv .kv-tool-cycle {
+  display: none;
+}
+
+@container kelvin (max-width: 720px) {
+  .kv .kv-tools {
+    display: none;
+  }
+
+  .kv .kv-tool-cycle {
+    display: inline-flex;
+    border: 1px solid rgb(220 230 244 / 0.3);
+    border-radius: var(--kv-radius-inner);
+    color: var(--kv-ink);
+  }
+}
+
+/* Sheet footer: keys and what the readings are not. */
+.kv .kv-sheet-foot {
+  margin-top: auto;
+  display: grid;
+  gap: 4px;
+  border-top: 1px solid var(--kv-line);
+  padding-top: 8px;
+}
+
+.kv .kv-sheet-keys,
+.kv .kv-sheet-meter {
+  margin: 0;
+  font-size: 11px;
+  line-height: 1.45;
+  color: var(--kv-ink-soft);
+}
+
+.kv .kv-sheet-keys {
+  letter-spacing: 0.04em;
+  color: var(--kv-ink);
 }
 
 /* ---------- Pause sheet ---------- */
