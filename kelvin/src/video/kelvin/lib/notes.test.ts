@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'vitest';
 
-import { addNote, loadNotes, notesKey, notesToCsv, removeNote, saveNotes, type Note, type NoteStorage } from './notes';
+import { addNote, loadNotes, normalizeNote, notesKey, notesToCsv, removeNote, saveNotes, type Note, type NoteStorage } from './notes';
 
 function memory(): NoteStorage & { data: Map<string, string> } {
   const data = new Map<string, string>();
@@ -60,15 +60,50 @@ describe('notesToCsv', () => {
   test('header and quoting', () => {
     const csv = notesToCsv(addNote([], draft(4.2, 'He said "hi", then left'), 'a'));
     const [header, row] = csv.trim().split('\n');
-    expect(header).toBe('time,x,y,hex,cct_k,text');
-    expect(row).toBe('00:04.20,0.500,0.250,#AABBCC,5400,"He said ""hi"", then left"');
+    expect(header).toBe('time,kind,x,y,x2,y2,hex,cct_k,rel_lum_pct,delta_stops,contrast,uniformity,length,unit,text');
+    expect(row).toBe('00:04.20,point,0.500,0.250,,,#AABBCC,5400,,,,,,,"He said ""hi"", then left"');
   });
   test('empty cells for missing readings', () => {
     const csv = notesToCsv(addNote([], { ...draft(0, 'plain'), hex: null, cct: null }, 'a'));
-    expect(csv.trim().split('\n')[1]).toBe('00:00.00,0.500,0.250,,,plain');
+    expect(csv.trim().split('\n')[1]).toBe('00:00.00,point,0.500,0.250,,,,,,,,,,,plain');
   });
   test('newlines in text are quoted', () => {
     const csv = notesToCsv(addNote([], draft(0, 'a\nb'), 'a'));
     expect(csv).toContain('"a\nb"');
+  });
+});
+
+describe('measurement notes', () => {
+  test('an old note without kind loads as a point', () => {
+    const n = normalizeNote({ id: 'a', t: 1, u: 0.1, v: 0.2, text: 'x', hex: null, cct: null });
+    expect(n?.kind).toBe('point');
+  });
+  test('a corrupt geometry is dropped, the note survives', () => {
+    const n = normalizeNote({ id: 'a', t: 1, u: 0.1, v: 0.2, text: 'x', hex: null, cct: null, kind: 'ruler', geom: 'x' });
+    expect(n).not.toBeNull();
+    expect(n?.geom).toBeUndefined();
+  });
+  test('not a note at all is rejected', () => expect(normalizeNote({ t: 1 })).toBeNull());
+  test('a compare note exports stops and contrast', () => {
+    const csv = notesToCsv(
+      addNote(
+        [],
+        { t: 2, u: 0.1, v: 0.2, text: '', hex: null, cct: null, kind: 'compare', geom: { u2: 0.5, v2: 0.6 }, data: { deltaStops: 1.5, contrast: 2.83, relLum: 30 } },
+        'c',
+      ),
+    );
+    expect(csv.trim().split('\n')[1]).toBe('00:02.00,compare,0.100,0.200,0.500,0.600,,,30.0,1.50,2.83,,,,');
+  });
+  test('an area note exports uniformity', () => {
+    const csv = notesToCsv(
+      addNote([], { t: 0, u: 0, v: 0, text: 'water', hex: '#7E99A9', cct: null, kind: 'area', geom: { u2: 1, v2: 1 }, data: { relLum: 26, uniformity: 0.42 } }, 'a'),
+    );
+    expect(csv.trim().split('\n')[1]).toBe('00:00.00,area,0.000,0.000,1.000,1.000,#7E99A9,,26.0,,,0.42,,,water');
+  });
+  test('a ruler note exports length and unit', () => {
+    const csv = notesToCsv(
+      addNote([], { t: 0, u: 0, v: 0.5, text: '', hex: null, cct: null, kind: 'ruler', geom: { u2: 0.5, v2: 0.5 }, data: { length: 10 }, unit: 'm' }, 'r'),
+    );
+    expect(csv.trim().split('\n')[1]).toBe('00:00.00,ruler,0.000,0.500,0.500,0.500,,,,,,,10.00,m,');
   });
 });

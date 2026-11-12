@@ -8,7 +8,7 @@ import { Gauge, SPECTRA } from './gauge';
 import { IconClose, IconDownload } from './icons';
 import { cctReading, formatCct, fromHex, hueOf, temperaturePosition } from './lib/color';
 import { sliceAt } from './lib/color-strip';
-import { formatTimecode, notesToCsv } from './lib/notes';
+import { formatTimecode, notesToCsv, type Note } from './lib/notes';
 import { useKelvin } from './state';
 
 type Layout = 'side' | 'below' | 'compact';
@@ -52,9 +52,36 @@ function downloadCsv(name: string, csv: string) {
   window.setTimeout(() => URL.revokeObjectURL(url), 1000);
 }
 
+/** A pinned measurement without text still reads as something. */
+function noteSummary(note: Note): string {
+  const d = note.data ?? {};
+  if (note.kind === 'compare' && d.deltaStops !== undefined)
+    return `A–B ${d.deltaStops >= 0 ? '+' : '−'}${Math.abs(d.deltaStops).toFixed(1)} stops`;
+  if (note.kind === 'area' && d.uniformity !== undefined) return `Area · U₀ ${d.uniformity.toFixed(2)}`;
+  if (note.kind === 'ruler' && d.length !== undefined)
+    return `Ruler · ${note.unit === 'px' ? Math.round(d.length) : d.length.toFixed(2)} ${note.unit ?? 'px'}`;
+  return '';
+}
+
 /** The paused frame as a page from the catalog: chapter, timecode, palette, gauges, notes. */
 export function PauseSheet() {
   const { mode, dispatch, labels, strip, notes, removeNote, videoId, rootRef, getVideo } = useKelvin();
+
+  /** Back to a pinned measurement: its tool, its points, its drawing. */
+  const restoreNote = (note: Note) => {
+    const kind = note.kind ?? 'point';
+    dispatch({ type: 'tool', tool: kind });
+    dispatch({ type: 'pointer', u: note.u, v: note.v });
+    if (!note.geom) return;
+    if (kind === 'compare') {
+      dispatch({ type: 'setAnchor' });
+      dispatch({ type: 'pointer', u: note.geom.u2, v: note.geom.v2 });
+    } else if (kind === 'area' || kind === 'ruler') {
+      dispatch({ type: 'dragStart' });
+      dispatch({ type: 'dragTo', u: note.geom.u2, v: note.geom.v2 });
+      dispatch({ type: 'dragEnd' });
+    }
+  };
   const store = usePlayer();
   const time = usePlayer((s) => s.currentTime);
   const chapters = usePlayer((s) => s.chaptersCues);
@@ -190,12 +217,12 @@ export function PauseSheet() {
                   className="kv-note-time"
                   onClick={() => {
                     store.seek(note.t);
-                    dispatch({ type: 'pointer', u: note.u, v: note.v });
+                    restoreNote(note);
                   }}
                 >
                   {formatTimecode(note.t)}
                 </button>
-                <span className="kv-note-text">{note.text}</span>
+                <span className="kv-note-text">{note.text || noteSummary(note)}</span>
                 <button
                   type="button"
                   className="kv-icon-button kv-icon-button--small"

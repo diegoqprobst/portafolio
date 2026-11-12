@@ -59,3 +59,25 @@ export function readPixel(video: HTMLVideoElement, u: number, v: number): RGB | 
   const patch = readPatch(video, u, v, 5);
   return patch ? averagePatch(patch.data) : null;
 }
+
+/** Pixels of a frame region (normalised rect), downsampled to at most `max` px per side. Throws on a tainted canvas. */
+export function readRegion(
+  video: HTMLVideoElement,
+  r: { u: number; v: number; w: number; h: number },
+  max = 64,
+): ImageData | null {
+  if (!video.videoWidth || !video.videoHeight || r.w <= 0 || r.h <= 0) return null;
+  const sw = r.w * video.videoWidth;
+  const sh = r.h * video.videoHeight;
+  const k = Math.min(1, max / Math.max(sw, sh));
+  const w = Math.max(1, Math.round(sw * k));
+  const h = Math.max(1, Math.round(sh * k));
+  scratch ??= document.createElement('canvas');
+  scratch.width = w;
+  scratch.height = h;
+  const context = scratch.getContext('2d', { willReadFrequently: true });
+  if (!context) return null;
+  context.clearRect(0, 0, w, h);
+  context.drawImage(video, r.u * video.videoWidth, r.v * video.videoHeight, sw, sh, 0, 0, w, h);
+  return context.getImageData(0, 0, w, h);
+}

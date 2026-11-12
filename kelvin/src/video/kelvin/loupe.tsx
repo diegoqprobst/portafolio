@@ -5,13 +5,13 @@ import { useCallback, useEffect, useLayoutEffect, useRef, useState, type Keyboar
 
 import { Crosshair } from './crosshair';
 import { IconNote } from './icons';
-import { deltaStops, linearRatio, relLum, rulerLength } from './lib/measure';
+import { areaStats, deltaStops, linearRatio, rect, relLum, rulerLength, type AreaStats } from './lib/measure';
 import { formatLength, makeScale, type Unit } from './lib/scale';
 import { MeasureOverlay } from './measure-overlay';
 import { cctReading, formatCct, toHex } from './lib/color';
 import { contentBox, pointToUv, uvToPoint } from './lib/geometry';
 import { routeKey, type ArrowKey } from './lib/mode';
-import { readPixel, safeReadPixel, type PixelReading } from './lib/pixels';
+import { readPixel, readRegion, safeReadPixel, type PixelReading } from './lib/pixels';
 import { useKelvin } from './state';
 import { TemperatureScale } from './temperature-scale';
 
@@ -40,6 +40,7 @@ export function Loupe() {
   const noteRef = useRef<HTMLTextAreaElement | null>(null);
   const [reading, setReading] = useState<PixelReading>({ status: 'notReady' });
   const [readingA, setReadingA] = useState<PixelReading | null>(null);
+  const [area, setArea] = useState<AreaStats | 'blocked' | null>(null);
   const [scaleOpen, setScaleOpen] = useState(false);
   const dragging = useRef(false);
   const [layout, setLayout] = useState<Layout>(null);
@@ -97,6 +98,15 @@ export function Loupe() {
     setReading(next);
     const a = mode.anchor;
     setReadingA(a ? safeReadPixel(() => readPixel(video, a.u, a.v), video) : null);
+    const d = mode.drag;
+    if (mode.tool === 'area' && d) {
+      try {
+        const img = readRegion(video, rect(d.from, d.to));
+        setArea(img ? areaStats(img) : null);
+      } catch {
+        setArea('blocked');
+      }
+    } else setArea(null);
 
     const canvas = magRef.current;
     const context = canvas?.getContext('2d');
@@ -120,7 +130,7 @@ export function Loupe() {
         /* drawing an unready frame can throw in some engines; the tag still shows the state */
       }
     }
-  }, [active, u, v, frame, getVideo, rootRef, mode.anchor]);
+  }, [active, u, v, frame, getVideo, rootRef, mode.anchor, mode.drag, mode.tool]);
 
   const hex = reading.status === 'ok' ? toHex(reading.rgb) : null;
   const cctR = reading.status === 'ok' ? cctReading(reading.rgb) : null;
@@ -256,13 +266,6 @@ export function Loupe() {
     [noteOpen, mode, dispatch, setNoteOpen],
   );
 
-  const save = () => {
-    const text = noteRef.current?.value.trim() ?? '';
-    if (text) addNote({ t: time, u, v, text, hex, cct });
-    setNoteOpen(false);
-    layerRef.current?.focus();
-  };
-
   const lumB = reading.status === 'ok' ? relLum(reading.rgb) : null;
   const lumA = readingA?.status === 'ok' ? relLum(readingA.rgb) : null;
   const cctA = readingA?.status === 'ok' ? cctReading(readingA.rgb) : null;
@@ -275,6 +278,48 @@ export function Loupe() {
   const rulerText = ruler ? formatLength(ruler.px, scale, ruler.pctWidth) : null;
   const hint =
     mode.tool === 'compare' ? labels.hintCompare : mode.tool === 'point' ? labels.hintPoint : labels.hintDrag;
+
+  /** Pin the current reading. Measurements keep their geometry and numbers; their text may be empty. */
+  const save = () => {
+    const text = noteRef.current?.value.trim() ?? '';
+    const base = { t: time, text, hex, cct };
+    const d = mode.drag;
+    if (mode.tool === 'compare' && mode.anchor && compare) {
+      addNote({
+        ...base,
+        kind: 'compare',
+        u: mode.anchor.u,
+        v: mode.anchor.v,
+        geom: { u2: u, v2: v },
+        data: { deltaStops: compare.stops.stops, contrast: compare.ratio.ratio, relLum: lumB ?? undefined },
+      });
+    } else if (mode.tool === 'area' && d && area && area !== 'blocked') {
+      addNote({
+        ...base,
+        hex: area.meanHex,
+        cct: area.cct.kind === 'ok' ? area.cct.k : null,
+        kind: 'area',
+        u: d.from.u,
+        v: d.from.v,
+        geom: { u2: d.to.u, v2: d.to.v },
+        data: { relLum: area.mean, uniformity: area.u0 },
+      });
+    } else if (mode.tool === 'ruler' && d && ruler) {
+      addNote({
+        ...base,
+        kind: 'ruler',
+        u: d.from.u,
+        v: d.from.v,
+        geom: { u2: d.to.u, v2: d.to.v },
+        data: { length: scale ? ruler.px / scale.pxPerUnit : ruler.px },
+        unit: scale?.unit ?? 'px',
+      });
+    } else if (text) {
+      addNote({ ...base, kind: 'point', u, v });
+    }
+    setNoteOpen(false);
+    layerRef.current?.focus();
+  };
 
   const submitScale = (form: HTMLFormElement) => {
     const data = new FormData(form);
@@ -401,6 +446,29 @@ export function Loupe() {
               <dd>
                 A {formatCct(cctA, labels)} · B {cctText}
               </dd>
+            </dl>
+          </>
+        ) : mode.tool === 'area' && area === 'blocked' ? (
+          <p className="kv-tag-note">{labels.readingUnavailable}</p>
+        ) : mode.tool === 'area' && area && area !== 'blocked' ? (
+          <>
+            <div className="kv-tag-row">
+              <span className="kv-swatch" style={{ background: area.meanHex }} aria-hidden="true" />
+              <span className="kv-tag-hex">{area.meanHex}</span>
+            </div>
+            <dl className="kv-tag-grid">
+              <dt>{labels.uniformity}</dt>
+              <dd>{area.u0.toFixed(2)}</dd>
+              <dt>
+                {labels.relLum} · {labels.mean}
+              </dt>
+              <dd>{area.mean.toFixed(1)} %</dd>
+              <dt>{labels.minMax}</dt>
+              <dd>
+                {area.min.toFixed(1)} – {area.max.toFixed(1)} %
+              </dd>
+              <dt>{labels.temperature}</dt>
+              <dd>{formatCct(area.cct, labels)}</dd>
             </dl>
           </>
         ) : mode.tool === 'ruler' && ruler ? (
