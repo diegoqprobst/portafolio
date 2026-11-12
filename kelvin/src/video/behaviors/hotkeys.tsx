@@ -7,12 +7,13 @@ import { PlaybackHotkeys } from './playback-hotkeys';
 export interface VideoHotkeysProps {
   disabled?: boolean | undefined;
   arrowsDisabled?: boolean | undefined;
+  digitsDisabled?: boolean | undefined;
 }
 
-export function VideoHotkeys({ disabled = false, arrowsDisabled = false }: VideoHotkeysProps = {}) {
+export function VideoHotkeys({ disabled = false, arrowsDisabled = false, digitsDisabled = false }: VideoHotkeysProps = {}) {
   return (
     <>
-      <PlaybackHotkeys disabled={disabled} arrowsDisabled={arrowsDisabled} />
+      <PlaybackHotkeys disabled={disabled} arrowsDisabled={arrowsDisabled} digitsDisabled={digitsDisabled} />
       <Hotkey disabled={disabled} keys="f" action="toggleFullscreen" />
       <Hotkey disabled={disabled} keys="c" action="toggleSubtitles" />
       <Hotkey disabled={disabled} keys="i" action="togglePictureInPicture" />

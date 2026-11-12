@@ -1,14 +1,45 @@
 export type ArrowKey = 'ArrowUp' | 'ArrowDown' | 'ArrowLeft' | 'ArrowRight';
-export type Mode = { sheet: boolean; loupe: 'off' | 'pointer' | 'keyboard'; reticle: { u: number; v: number } };
+import type { Pt } from './measure';
+
+export type { Pt };
+export type Tool = 'point' | 'compare' | 'area' | 'ruler';
+export type Drag = { from: Pt; to: Pt; done: boolean };
+export type Mode = {
+  sheet: boolean;
+  loupe: 'off' | 'pointer' | 'keyboard';
+  reticle: Pt;
+  tool: Tool;
+  exposure: boolean;
+  /** Point A of the A–B comparison. */
+  anchor: Pt | null;
+  /** The live area rectangle or ruler line. */
+  drag: Drag | null;
+};
 export type ModeEvent =
   | { type: 'pause' }
+  | { type: 'tool'; tool: Tool }
+  | { type: 'exposure' }
+  | { type: 'setAnchor' }
+  | { type: 'dragStart' }
+  | { type: 'dragTo'; u: number; v: number }
+  | { type: 'dragEnd' }
   | { type: 'play' }
   | { type: 'loupeKeyboard' }
   | { type: 'pointer'; u: number; v: number }
   | { type: 'escape' }
   | { type: 'move'; key: ArrowKey; fine: boolean };
 
-export const INITIAL_MODE: Mode = { sheet: false, loupe: 'off', reticle: { u: 0.5, v: 0.5 } };
+export const INITIAL_MODE: Mode = {
+  sheet: false,
+  loupe: 'off',
+  reticle: { u: 0.5, v: 0.5 },
+  tool: 'point',
+  exposure: false,
+  anchor: null,
+  drag: null,
+};
+
+export const TOOL_KEYS: Record<string, Tool> = { '1': 'point', '2': 'compare', '3': 'area', '4': 'ruler' };
 
 const clamp = (n: number) => Math.min(1, Math.max(0, n));
 const DELTA: Record<ArrowKey, [number, number]> = {
@@ -23,12 +54,28 @@ export function modeReducer(state: Mode, event: ModeEvent): Mode {
     case 'pause':
       return { ...state, sheet: true, loupe: 'pointer' };
     case 'play':
-      return { ...INITIAL_MODE, reticle: state.reticle };
+      return { ...INITIAL_MODE, reticle: state.reticle, tool: state.tool, exposure: state.exposure };
+    case 'tool':
+      return { ...state, tool: event.tool, anchor: null, drag: null };
+    case 'exposure':
+      return { ...state, exposure: !state.exposure };
+    case 'setAnchor':
+      return state.sheet ? { ...state, anchor: { ...state.reticle } } : state;
+    case 'dragStart':
+      return state.sheet ? { ...state, drag: { from: { ...state.reticle }, to: { ...state.reticle }, done: false } } : state;
+    case 'dragTo':
+      return state.drag && !state.drag.done
+        ? { ...state, drag: { ...state.drag, to: { u: clamp(event.u), v: clamp(event.v) } } }
+        : state;
+    case 'dragEnd':
+      return state.drag ? { ...state, drag: { ...state.drag, done: true } } : state;
     case 'loupeKeyboard':
       return state.sheet ? { ...state, loupe: 'keyboard' } : state;
     case 'pointer':
       return state.loupe === 'off' ? state : { ...state, reticle: { u: clamp(event.u), v: clamp(event.v) } };
     case 'escape':
+      if (state.drag) return { ...state, drag: null };
+      if (state.anchor) return { ...state, anchor: null };
       if (state.loupe === 'keyboard') return { ...state, loupe: 'pointer' };
       if (state.sheet) return { ...state, sheet: false, loupe: 'off' };
       return state;
@@ -36,14 +83,17 @@ export function modeReducer(state: Mode, event: ModeEvent): Mode {
       if (state.loupe !== 'keyboard') return state;
       const step = event.fine ? 0.005 : 0.02;
       const [du, dv] = DELTA[event.key];
-      return { ...state, reticle: { u: clamp(state.reticle.u + du * step), v: clamp(state.reticle.v + dv * step) } };
+      const reticle = { u: clamp(state.reticle.u + du * step), v: clamp(state.reticle.v + dv * step) };
+      const drag = state.drag && !state.drag.done ? { ...state.drag, to: reticle } : state.drag;
+      return { ...state, reticle, drag };
     }
   }
 }
 
 /** Who handles a keydown: Kelvin's loupe, the scaffold hotkeys, or the Escape ladder. */
-export function routeKey(mode: Mode, key: string): 'loupe' | 'player' | 'escape' {
+export function routeKey(mode: Mode, key: string): 'loupe' | 'player' | 'escape' | 'tool' {
   if (key === 'Escape') return 'escape';
+  if (mode.sheet && (key in TOOL_KEYS || /^[eEpP]$/.test(key))) return 'tool';
   if (mode.loupe === 'keyboard' && (key in DELTA || key === 'Enter')) return 'loupe';
   return 'player';
 }

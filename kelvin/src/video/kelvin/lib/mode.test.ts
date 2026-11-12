@@ -6,7 +6,8 @@ const paused = modeReducer(INITIAL_MODE, { type: 'pause' });
 const keyboard = modeReducer(paused, { type: 'loupeKeyboard' });
 
 describe('modeReducer', () => {
-  test('starts closed', () => expect(INITIAL_MODE).toEqual({ sheet: false, loupe: 'off', reticle: { u: 0.5, v: 0.5 } }));
+  test('starts closed', () =>
+    expect(INITIAL_MODE).toEqual({ sheet: false, loupe: 'off', reticle: { u: 0.5, v: 0.5 }, tool: 'point', exposure: false, anchor: null, drag: null }));
   test('pause opens sheet with pointer loupe', () => expect(paused).toMatchObject({ sheet: true, loupe: 'pointer' }));
   test('play closes everything and keeps the reticle', () => {
     const moved = modeReducer(keyboard, { type: 'move', key: 'ArrowRight', fine: false });
@@ -46,4 +47,63 @@ describe('routeKey', () => {
   test('Enter goes to the loupe in keyboard mode', () => expect(routeKey(keyboard, 'Enter')).toBe('loupe'));
   test('arrows seek when not in keyboard mode', () => expect(routeKey(paused, 'ArrowLeft')).toBe('player'));
   test('K still reaches the player in keyboard mode', () => expect(routeKey(keyboard, 'k')).toBe('player'));
+});
+
+describe('measurement tools', () => {
+  const at = (m: Mode, u: number, v: number) => modeReducer(m, { type: 'pointer', u, v });
+
+  test('choosing a tool clears A and any drag', () => {
+    const withA = modeReducer(modeReducer(paused, { type: 'tool', tool: 'compare' }), { type: 'setAnchor' });
+    const next = modeReducer(withA, { type: 'tool', tool: 'ruler' });
+    expect(next).toMatchObject({ tool: 'ruler', anchor: null, drag: null });
+  });
+  test('setAnchor drops A at the reticle', () => {
+    const m = modeReducer(at(modeReducer(paused, { type: 'tool', tool: 'compare' }), 0.2, 0.3), { type: 'setAnchor' });
+    expect(m.anchor).toEqual({ u: 0.2, v: 0.3 });
+  });
+  test('play keeps the tool and exposure but drops A and drags', () => {
+    let m = modeReducer(modeReducer(paused, { type: 'tool', tool: 'area' }), { type: 'exposure' });
+    m = modeReducer(m, { type: 'dragStart' });
+    const played = modeReducer(m, { type: 'play' });
+    expect(played).toMatchObject({ tool: 'area', exposure: true, anchor: null, drag: null, sheet: false });
+  });
+  test('exposure toggles', () => {
+    const on = modeReducer(paused, { type: 'exposure' });
+    expect(on.exposure).toBe(true);
+    expect(modeReducer(on, { type: 'exposure' }).exposure).toBe(false);
+  });
+  test('a drag starts at the reticle, follows, clamps and ends', () => {
+    let m = at(modeReducer(paused, { type: 'tool', tool: 'ruler' }), 0.1, 0.1);
+    m = modeReducer(m, { type: 'dragStart' });
+    m = modeReducer(m, { type: 'dragTo', u: 1.4, v: -0.3 });
+    expect(m.drag).toEqual({ from: { u: 0.1, v: 0.1 }, to: { u: 1, v: 0 }, done: false });
+    expect(modeReducer(m, { type: 'dragEnd' }).drag?.done).toBe(true);
+  });
+  test('keyboard arrows grow an unfinished drag', () => {
+    let m = modeReducer(modeReducer(paused, { type: 'tool', tool: 'area' }), { type: 'loupeKeyboard' });
+    m = modeReducer(m, { type: 'dragStart' });
+    m = modeReducer(m, { type: 'move', key: 'ArrowRight', fine: false });
+    expect(m.drag?.to.u).toBeCloseTo(0.52);
+  });
+  test('escape clears a drag, then A, then steps back as before', () => {
+    let m = modeReducer(modeReducer(keyboard, { type: 'tool', tool: 'compare' }), { type: 'setAnchor' });
+    m = modeReducer(m, { type: 'dragStart' });
+    m = modeReducer(m, { type: 'escape' });
+    expect(m).toMatchObject({ drag: null, loupe: 'keyboard' });
+    expect(m.anchor).not.toBeNull();
+    m = modeReducer(m, { type: 'escape' });
+    expect(m).toMatchObject({ anchor: null, loupe: 'keyboard' });
+    m = modeReducer(m, { type: 'escape' });
+    expect(m.loupe).toBe('pointer');
+  });
+});
+
+describe('routeKey with tools', () => {
+  test('digits seek while playing', () => expect(routeKey(INITIAL_MODE, '3')).toBe('player'));
+  test('digits pick a tool while paused', () => expect(routeKey(paused, '3')).toBe('tool'));
+  test('E and P are tool keys while paused', () => {
+    expect(routeKey(paused, 'e')).toBe('tool');
+    expect(routeKey(paused, 'P')).toBe('tool');
+  });
+  test('5 is not a tool', () => expect(routeKey(paused, '5')).toBe('player'));
 });
