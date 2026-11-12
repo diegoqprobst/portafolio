@@ -50,3 +50,16 @@ describe('geometry', () => {
     expect(rulerLength({ u: 0, v: 0 }, { u: 1, v: 0 }, 1920, 1080)).toEqual({ px: 1920, pctWidth: 100 }));
   test('a zero-length line is 0', () => expect(rulerLength({ u: 0.4, v: 0.4 }, { u: 0.4, v: 0.4 }, 1920, 1080).px).toBe(0));
 });
+
+import { formatRatio, formatStops } from './measure';
+
+describe('formatStops / formatRatio (review fix)', () => {
+  test('normal positive', () => expect(formatStops(deltaStops(10, 20))).toBe('+1.0 stops'));
+  test('near zero has no sign', () => expect(formatStops(deltaStops(10, 10.01))).toBe('0.0 stops'));
+  test('B on black reads as at most, not at least', () => expect(formatStops(deltaStops(50, 0))).toMatch(/^≤ −\d+\.\d stops$/));
+  test('A on black reads as at least', () => expect(formatStops(deltaStops(0, 50))).toMatch(/^≥ \+\d+\.\d stops$/));
+  test('both on black means nothing', () => expect(formatStops(deltaStops(0, 0))).toBe('—'));
+  test('ratio with a floored point is a lower bound', () => expect(formatRatio(linearRatio(0, 50))).toMatch(/^≥ \d+(\.\d)? : 1$/));
+  test('ratio with both on black means nothing', () => expect(formatRatio(linearRatio(0, 0))).toBe('—'));
+  test('plain ratio', () => expect(formatRatio(linearRatio(10, 40))).toBe('4.0 : 1'));
+});

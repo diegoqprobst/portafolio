@@ -97,3 +97,8 @@ export function routeKey(mode: Mode, key: string): 'loupe' | 'player' | 'escape'
   if (mode.loupe === 'keyboard' && (key in DELTA || key === 'Enter')) return 'loupe';
   return 'player';
 }
+
+/** Whether Escape will close the sheet (so focus should go back to Play), rather than step back one rung. */
+export function escapeCloses(mode: Mode): boolean {
+  return mode.sheet && !mode.drag && !mode.anchor && mode.loupe !== 'keyboard';
+}

@@ -4,7 +4,7 @@ import { useEffect } from 'react';
 
 import { VideoGestures } from '../behaviors/gestures';
 import { VideoHotkeys } from '../behaviors/hotkeys';
-import { routeKey, TOOL_KEYS } from './lib/mode';
+import { escapeCloses, routeKey, TOOL_KEYS } from './lib/mode';
 import { useKelvin } from './state';
 
 const isEditable = (el: EventTarget | null) =>
@@ -40,7 +40,7 @@ export function KelvinBehaviors() {
       }
       if (route !== 'escape' || (!mode.sheet && mode.loupe === 'off')) return;
       event.preventDefault();
-      const closing = mode.loupe !== 'keyboard';
+      const closing = escapeCloses(mode);
       dispatch({ type: 'escape' });
       if (closing) root.querySelector<HTMLElement>('.kv-key--play')?.focus();
     };

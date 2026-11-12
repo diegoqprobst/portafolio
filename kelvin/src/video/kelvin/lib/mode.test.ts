@@ -107,3 +107,16 @@ describe('routeKey with tools', () => {
   });
   test('5 is not a tool', () => expect(routeKey(paused, '5')).toBe('player'));
 });
+
+import { escapeCloses } from './mode';
+
+describe('escapeCloses (review fix)', () => {
+  test('clearing A does not close the sheet', () => {
+    const withA = modeReducer(modeReducer(paused, { type: 'tool', tool: 'compare' }), { type: 'setAnchor' });
+    expect(escapeCloses(withA)).toBe(false);
+  });
+  test('clearing a drag does not close the sheet', () =>
+    expect(escapeCloses(modeReducer(modeReducer(paused, { type: 'tool', tool: 'ruler' }), { type: 'dragStart' }))).toBe(false));
+  test('leaving keyboard aim does not close the sheet', () => expect(escapeCloses(keyboard)).toBe(false));
+  test('plain pointer mode with nothing set closes the sheet', () => expect(escapeCloses(paused)).toBe(true));
+});

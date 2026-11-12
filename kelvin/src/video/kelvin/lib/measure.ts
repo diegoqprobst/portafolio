@@ -66,3 +66,18 @@ export function rulerLength(a: Pt, b: Pt, vw: number, vh: number): { px: number;
   const px = Math.hypot((b.u - a.u) * vw, (b.v - a.v) * vh);
   return { px: Math.round(px * 10) / 10, pctWidth: vw ? Math.round((px / vw) * 1000) / 10 : 0 };
 }
+
+/** "+1.0 stops"; a floored side turns it into a bound (≥ when A was black, ≤ when B was); both black → "—". */
+export function formatStops(d: { stops: number; floored: boolean }): string {
+  if (d.floored && Math.abs(d.stops) < 0.05) return '—';
+  const sign = Math.abs(d.stops) < 0.05 ? '' : d.stops > 0 ? '+' : '−';
+  const value = `${sign}${Math.abs(d.stops).toFixed(1)} stops`;
+  if (!d.floored) return value;
+  return `${d.stops > 0 ? '≥' : '≤'} ${value}`;
+}
+
+/** "4.0 : 1"; with a black point it is a lower bound; both black → "—". */
+export function formatRatio(r: { ratio: number; floored: boolean }): string {
+  if (r.floored && r.ratio < 1.05) return '—';
+  return `${r.floored ? '≥ ' : ''}${r.ratio.toFixed(1)} : 1`;
+}
