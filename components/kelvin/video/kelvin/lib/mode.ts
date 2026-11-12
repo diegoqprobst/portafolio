@@ -106,6 +106,11 @@ export function specimenTime(t: number, duration: number): number {
   return Number.isFinite(duration) && duration > 0 ? Math.min(from, Math.max(0, duration - 0.1)) : from;
 }
 
+/** The magnified patch helps read a colour; while drawing an area or a ruler it only hides the end being placed. */
+export function showsMagnifier(tool: Tool): boolean {
+  return tool === 'point' || tool === 'compare';
+}
+
 /** Who handles a keydown: Kelvin's loupe, the scaffold hotkeys, or the Escape ladder. */
 export function routeKey(mode: Mode, key: string): 'loupe' | 'player' | 'escape' | 'tool' {
   if (key === 'Escape') return 'escape';

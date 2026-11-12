@@ -55,6 +55,7 @@ export type KelvinLabels = {
   noNotes: string;
   plate: string;
   sheetTitle: string;
+  reading: string;
 };
 
 export const DEFAULT_LABELS: KelvinLabels = {
@@ -113,4 +114,5 @@ export const DEFAULT_LABELS: KelvinLabels = {
   noNotes: 'No notes in this chapter yet.',
   plate: 'Plate',
   sheetTitle: 'Specimen sheet',
+  reading: 'Reading',
 };

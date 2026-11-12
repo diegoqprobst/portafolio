@@ -69,7 +69,7 @@ function noteSummary(note: Note): string {
 
 /** The paused frame as a page from the catalog: chapter, timecode, palette, gauges, notes. */
 export function PauseSheet() {
-  const { mode, dispatch, labels, strip, notes, removeNote, videoId, rootRef, getVideo } = useKelvin();
+  const { mode, dispatch, labels, strip, notes, removeNote, videoId, rootRef, getVideo, setSheetLayout, setReadingSlot } = useKelvin();
 
   /** Back to a pinned measurement: its tool, its points, its drawing. */
   const restoreNote = (note: Note) => {
@@ -120,6 +120,13 @@ export function PauseSheet() {
     };
   }, [geometry, rootRef, getVideo]);
 
+  // The loupe needs to know where its reading goes: into this sheet, or docked over a small player.
+  const layoutNow = geometry?.layout ?? null;
+  useEffect(() => {
+    setSheetLayout(layoutNow);
+    return () => setSheetLayout(null);
+  }, [layoutNow, setSheetLayout]);
+
   if (!mode.sheet || !geometry) return null;
 
   const chapterIndex = chapters?.findIndex((c) => time >= c.startTime && time < c.endTime) ?? -1;
@@ -162,20 +169,15 @@ export function PauseSheet() {
         </dl>
       </div>
 
+      {/* The loupe's live reading is drawn here (see Loupe), so the picture carries only the reticle. */}
+      <div className="kv-sheet-block kv-sheet-reading">
+        <h3 className="kv-sheet-label">{labels.reading}</h3>
+        <div ref={setReadingSlot} />
+      </div>
+
+      {/* Frame read-outs: the dials first, they are the ones to keep in view when the sheet is short. */}
       {slice ? (
         <>
-          <div className="kv-sheet-block">
-            <h3 className="kv-sheet-label">{labels.palette}</h3>
-            <ul className="kv-palette">
-              {slice.swatches.map((s) => (
-                <li key={s.hex}>
-                  <span className="kv-palette-chip" style={{ background: s.hex }} aria-hidden="true" />
-                  <span className="kv-palette-hex">{s.hex}</span>
-                  <span className="kv-palette-share">{Math.round(s.share * 100)}%</span>
-                </li>
-              ))}
-            </ul>
-          </div>
           <div className="kv-sheet-gauges">
             <Gauge
               label={labels.cctShort}
@@ -190,6 +192,18 @@ export function PauseSheet() {
               spectrum={SPECTRA.hue}
             />
             <Gauge label={labels.luminance} position={slice.luminance} display={lumDisplay} spectrum={SPECTRA.luminance} />
+          </div>
+          <div className="kv-sheet-block">
+            <h3 className="kv-sheet-label">{labels.palette}</h3>
+            <ul className="kv-palette">
+              {slice.swatches.map((s) => (
+                <li key={s.hex}>
+                  <span className="kv-palette-chip" style={{ background: s.hex }} aria-hidden="true" />
+                  <span className="kv-palette-hex">{s.hex}</span>
+                  <span className="kv-palette-share">{Math.round(s.share * 100)}%</span>
+                </li>
+              ))}
+            </ul>
           </div>
         </>
       ) : null}

@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'vitest';
 
-import { INITIAL_MODE, modeReducer, routeKey, specimenTime, type Mode } from './mode';
+import { INITIAL_MODE, modeReducer, routeKey, showsMagnifier, specimenTime, type Mode } from './mode';
 
 const paused = modeReducer(INITIAL_MODE, { type: 'pause' });
 const keyboard = modeReducer(paused, { type: 'loupeKeyboard' });
@@ -78,6 +78,17 @@ describe('specimenTime', () => {
   test('without a known duration it trusts the time', () => {
     expect(specimenTime(6.2, Number.NaN)).toBe(6.2);
     expect(specimenTime(6.2, Number.POSITIVE_INFINITY)).toBe(6.2);
+  });
+});
+
+describe('showsMagnifier', () => {
+  test('reading a point or comparing two needs the magnified patch', () => {
+    expect(showsMagnifier('point')).toBe(true);
+    expect(showsMagnifier('compare')).toBe(true);
+  });
+  test('drawing an area or a ruler does not: it would hide the end being placed', () => {
+    expect(showsMagnifier('area')).toBe(false);
+    expect(showsMagnifier('ruler')).toBe(false);
   });
 });
 

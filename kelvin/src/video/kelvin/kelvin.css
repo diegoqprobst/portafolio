@@ -674,6 +674,50 @@
   translate: calc(-100% - 84px) -50%;
 }
 
+/* In the sheet (beside or below the picture) the reading is a block of the page: it does not float,
+   so the picture carries only the reticle and whatever is being measured. */
+.kv .kv-tag.kv-tag--docked {
+  position: static;
+  z-index: auto;
+  inline-size: auto;
+  translate: none;
+  padding: 0;
+  background: none;
+  border-radius: 0;
+  box-shadow: none;
+  grid-template-columns: minmax(0, 1fr) auto;
+  column-gap: 10px;
+}
+
+.kv .kv-tag--docked > * {
+  grid-column: 1 / -1;
+}
+
+/* Colour and its temperature share one line: the sheet is narrow and short. */
+.kv .kv-tag--docked > .kv-tag-row:first-child {
+  grid-column: 1;
+}
+
+.kv .kv-tag--docked > .kv-tag-row:first-child + .kv-tag-k {
+  grid-column: 2;
+  display: grid;
+  justify-items: end;
+  gap: 0;
+  border-top: 0;
+  padding-top: 0;
+}
+
+/* The sheet's own key legend already says how to add a note. */
+.kv .kv-tag--docked .kv-tag-hint {
+  display: none;
+}
+
+.kv .kv-sheet-facts > div {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+
 .kv .kv-tag[data-flip-y] {
   translate: 84px calc(-100% + 30px);
 }

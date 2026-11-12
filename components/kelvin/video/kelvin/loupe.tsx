@@ -3,6 +3,7 @@
 // Generated from kelvin/src — edit there, then `npm run sync:kelvin`.
 import { usePlayer } from '@videojs/react/video';
 import { useCallback, useEffect, useLayoutEffect, useRef, useState, type KeyboardEvent, type PointerEvent } from 'react';
+import { createPortal } from 'react-dom';
 
 import { Crosshair } from './crosshair';
 import { IconNote } from './icons';
@@ -12,7 +13,7 @@ import { formatLength, makeScale, type Unit } from './lib/scale';
 import { MeasureOverlay } from './measure-overlay';
 import { cctReading, formatCct, toHex } from './lib/color';
 import { contentBox, pointToUv, uvToPoint } from './lib/geometry';
-import { routeKey, type ArrowKey } from './lib/mode';
+import { routeKey, showsMagnifier, type ArrowKey } from './lib/mode';
 import { readPixel, readRegion, safeReadPixel, type PixelReading } from './lib/pixels';
 import { useKelvin } from './state';
 import { TemperatureScale } from './temperature-scale';
@@ -35,7 +36,8 @@ type Layout = {
 
 /** Paused-only precision reticle: magnifier, exact colour, approximate temperature, pinned notes. */
 export function Loupe() {
-  const { mode, dispatch, labels, addNote, notes, noteOpen, setNoteOpen, getVideo, rootRef, scale, setScale } = useKelvin();
+  const { mode, dispatch, labels, addNote, notes, noteOpen, setNoteOpen, getVideo, rootRef, scale, setScale, sheetLayout, readingSlot } =
+    useKelvin();
   const time = usePlayer((s) => s.currentTime);
   const layerRef = useRef<HTMLDivElement | null>(null);
   const magRef = useRef<HTMLCanvasElement | null>(null);
@@ -367,6 +369,174 @@ export function Loupe() {
   const flipY = layout.y > layout.picBottom * 0.6;
   const pins = notes.filter((n) => Math.abs(n.t - time) < 0.35);
 
+  // The reading. With a sheet beside or below the picture it is a block of that sheet, so nothing covers
+  // what is being measured; on a small player, with no sheet, it docks over the picture as before.
+  const docked = sheetLayout === 'side' || sheetLayout === 'below';
+  const tag = (
+    <div
+      className={docked ? 'kv-tag kv-tag--docked' : 'kv-tag'}
+      data-flip-x={!docked && flipX ? '' : undefined}
+      data-flip-y={!docked && flipY ? '' : undefined}
+      style={docked ? undefined : { left: layout.x, top: layout.y }}
+    >
+      {mode.tool === 'ruler' && ruler ? (
+        <>
+          <div className="kv-tag-row kv-tag-k">
+            <span className="kv-tag-label">{labels.length}</span>
+            <span className="kv-tag-value">{rulerText}</span>
+          </div>
+          <p className="kv-tag-note">
+            {scale ? `${labels.referencePlane} · ${Math.round(ruler.px)} px` : `${ruler.pctWidth} % of frame width`}
+          </p>
+          {scaleOpen ? (
+            <form
+              className="kv-scale-form"
+              onSubmit={(event) => {
+                event.preventDefault();
+                submitScale(event.currentTarget);
+              }}
+              onKeyDown={(event) => {
+                event.stopPropagation();
+                if (event.key === 'Escape') {
+                  setScaleOpen(false);
+                  layerRef.current?.focus();
+                }
+              }}
+            >
+              <label className="kv-scale-field">
+                <span>{labels.realLength}</span>
+                <input name="length" type="number" min="0" step="any" required autoFocus className="kv-scale-input" />
+              </label>
+              <select name="unit" defaultValue={scale?.unit ?? 'm'} className="kv-scale-unit" aria-label="Unit">
+                <option value="m">m</option>
+                <option value="cm">cm</option>
+                <option value="mm">mm</option>
+              </select>
+              <button type="submit" className="kv-button kv-button--primary">
+                {labels.setScale}
+              </button>
+            </form>
+          ) : (
+            <div className="kv-tag-actions">
+              <button type="button" className="kv-button" onClick={() => setScaleOpen(true)} disabled={ruler.px <= 0}>
+                {labels.setScale}
+              </button>
+              {scale ? (
+                <button type="button" className="kv-button" onClick={() => setScale(null)}>
+                  {labels.clearScale}
+                </button>
+              ) : null}
+            </div>
+          )}
+        </>
+      ) : reading.status !== 'ok' ? (
+        <p className="kv-tag-note">{reading.status === 'blocked' ? labels.readingUnavailable : labels.readingPending}</p>
+      ) : mode.tool === 'compare' && compare && cctA ? (
+        <>
+          <div className="kv-tag-row kv-tag-k">
+            <span className="kv-tag-label">{labels.deltaStops}</span>
+            <span className="kv-tag-value">{formatStops(compare.stops)}</span>
+          </div>
+          <dl className="kv-tag-grid">
+            <dt>{labels.contrast}</dt>
+            <dd>{formatRatio(compare.ratio)}</dd>
+            <dt>{labels.relLum}</dt>
+            <dd>
+              A {lumA!.toFixed(1)} % · B {lumB!.toFixed(1)} %
+            </dd>
+            <dt>{labels.temperature}</dt>
+            <dd>
+              A {formatCct(cctA, labels)} · B {cctText}
+            </dd>
+          </dl>
+        </>
+      ) : mode.tool === 'area' && area === 'blocked' ? (
+        <p className="kv-tag-note">{labels.readingUnavailable}</p>
+      ) : mode.tool === 'area' && area && area !== 'blocked' ? (
+        <>
+          <div className="kv-tag-row">
+            <span className="kv-swatch" style={{ background: area.meanHex }} aria-hidden="true" />
+            <span className="kv-tag-hex">{area.meanHex}</span>
+          </div>
+          <dl className="kv-tag-grid">
+            <dt>{labels.uniformity}</dt>
+            <dd>{area.u0.toFixed(2)}</dd>
+            <dt>
+              {labels.relLum} · {labels.mean}
+            </dt>
+            <dd>{area.mean.toFixed(1)} %</dd>
+            <dt>{labels.minMax}</dt>
+            <dd>
+              {area.min.toFixed(1)} – {area.max.toFixed(1)} %
+            </dd>
+            <dt>{labels.temperature}</dt>
+            <dd>{formatCct(area.cct, labels)}</dd>
+          </dl>
+        </>
+      ) : (
+        <>
+          <div className="kv-tag-row">
+            <span className="kv-swatch" style={{ background: hex ?? undefined }} aria-hidden="true" />
+            <span className="kv-tag-hex">{hex}</span>
+          </div>
+          <div className="kv-tag-row kv-tag-k">
+            <span className="kv-tag-label">{labels.temperature}</span>
+            <span className="kv-tag-value" title={cctR?.kind === 'off' ? labels.offCurve : undefined}>{cctText}</span>
+          </div>
+          <TemperatureScale kelvin={scaleK} />
+        </>
+      )}
+
+      {noteOpen ? (
+        <form
+          className="kv-note-form"
+          onSubmit={(event) => {
+            event.preventDefault();
+            save();
+          }}
+        >
+          <textarea
+            ref={noteRef}
+            className="kv-note-input"
+            rows={2}
+            aria-label={labels.addNote}
+            placeholder={labels.notePlaceholder}
+            onKeyDown={(event) => {
+              event.stopPropagation();
+              if (event.key === 'Enter' && !event.shiftKey) {
+                event.preventDefault();
+                save();
+              } else if (event.key === 'Escape') {
+                event.preventDefault();
+                setNoteOpen(false);
+                layerRef.current?.focus();
+              }
+            }}
+          />
+          <button type="submit" className="kv-button kv-button--primary">
+            {labels.saveNote}
+          </button>
+        </form>
+      ) : (
+        <div className="kv-tag-foot">
+          <p className="kv-tag-hint" aria-hidden="true">
+            {hint}
+          </p>
+          <div className="kv-tag-actions">
+            {mode.tool === 'compare' ? (
+              <button type="button" className="kv-button" onClick={() => dispatch({ type: 'setAnchor' })}>
+                {labels.setA}
+              </button>
+            ) : null}
+            <button type="button" className="kv-button" onClick={() => setNoteOpen(true)}>
+              {labels.pin}
+            </button>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+
   return (
     <div
       ref={layerRef}
@@ -381,7 +551,9 @@ export function Loupe() {
         hadFocus.current = true;
       }}
       onBlur={(event) => {
-        if (!event.currentTarget.contains(event.relatedTarget as Node | null)) hadFocus.current = false;
+        // The reading lives in the sheet, outside this layer's DOM, but it is still the loupe's.
+        const next = event.relatedTarget as Node | null;
+        if (!event.currentTarget.contains(next) && !readingSlot?.contains(next)) hadFocus.current = false;
       }}
       onPointerMove={(event) => {
         if ((event.target as HTMLElement).closest('.kv-tag')) return;
@@ -431,13 +603,15 @@ export function Loupe() {
       })}
 
       <div className="kv-reticle" style={{ left: layout.x, top: layout.y }} aria-hidden="true">
-        <canvas
-          ref={magRef}
-          className="kv-mag"
-          width={MAG_SIZE}
-          height={MAG_SIZE}
-          data-hidden={reading.status === 'blocked' ? '' : undefined}
-        />
+        {showsMagnifier(mode.tool) ? (
+          <canvas
+            ref={magRef}
+            className="kv-mag"
+            width={MAG_SIZE}
+            height={MAG_SIZE}
+            data-hidden={reading.status === 'blocked' ? '' : undefined}
+          />
+        ) : null}
         <svg className="kv-crosshair" viewBox="-30 -30 60 60" width="60" height="60">
           <g className="kv-crosshair-edge">
             <circle r="9" />
@@ -450,168 +624,7 @@ export function Loupe() {
         </svg>
       </div>
 
-      <div
-        className="kv-tag"
-        data-flip-x={flipX ? '' : undefined}
-        data-flip-y={flipY ? '' : undefined}
-        style={{ left: layout.x, top: layout.y }}
-      >
-        {mode.tool === 'ruler' && ruler ? (
-          <>
-            <div className="kv-tag-row kv-tag-k">
-              <span className="kv-tag-label">{labels.length}</span>
-              <span className="kv-tag-value">{rulerText}</span>
-            </div>
-            <p className="kv-tag-note">
-              {scale ? `${labels.referencePlane} · ${Math.round(ruler.px)} px` : `${ruler.pctWidth} % of frame width`}
-            </p>
-            {scaleOpen ? (
-              <form
-                className="kv-scale-form"
-                onSubmit={(event) => {
-                  event.preventDefault();
-                  submitScale(event.currentTarget);
-                }}
-                onKeyDown={(event) => {
-                  event.stopPropagation();
-                  if (event.key === 'Escape') {
-                    setScaleOpen(false);
-                    layerRef.current?.focus();
-                  }
-                }}
-              >
-                <label className="kv-scale-field">
-                  <span>{labels.realLength}</span>
-                  <input name="length" type="number" min="0" step="any" required autoFocus className="kv-scale-input" />
-                </label>
-                <select name="unit" defaultValue={scale?.unit ?? 'm'} className="kv-scale-unit" aria-label="Unit">
-                  <option value="m">m</option>
-                  <option value="cm">cm</option>
-                  <option value="mm">mm</option>
-                </select>
-                <button type="submit" className="kv-button kv-button--primary">
-                  {labels.setScale}
-                </button>
-              </form>
-            ) : (
-              <div className="kv-tag-actions">
-                <button type="button" className="kv-button" onClick={() => setScaleOpen(true)} disabled={ruler.px <= 0}>
-                  {labels.setScale}
-                </button>
-                {scale ? (
-                  <button type="button" className="kv-button" onClick={() => setScale(null)}>
-                    {labels.clearScale}
-                  </button>
-                ) : null}
-              </div>
-            )}
-          </>
-        ) : reading.status !== 'ok' ? (
-          <p className="kv-tag-note">{reading.status === 'blocked' ? labels.readingUnavailable : labels.readingPending}</p>
-        ) : mode.tool === 'compare' && compare && cctA ? (
-          <>
-            <div className="kv-tag-row kv-tag-k">
-              <span className="kv-tag-label">{labels.deltaStops}</span>
-              <span className="kv-tag-value">{formatStops(compare.stops)}</span>
-            </div>
-            <dl className="kv-tag-grid">
-              <dt>{labels.contrast}</dt>
-              <dd>{formatRatio(compare.ratio)}</dd>
-              <dt>{labels.relLum}</dt>
-              <dd>
-                A {lumA!.toFixed(1)} % · B {lumB!.toFixed(1)} %
-              </dd>
-              <dt>{labels.temperature}</dt>
-              <dd>
-                A {formatCct(cctA, labels)} · B {cctText}
-              </dd>
-            </dl>
-          </>
-        ) : mode.tool === 'area' && area === 'blocked' ? (
-          <p className="kv-tag-note">{labels.readingUnavailable}</p>
-        ) : mode.tool === 'area' && area && area !== 'blocked' ? (
-          <>
-            <div className="kv-tag-row">
-              <span className="kv-swatch" style={{ background: area.meanHex }} aria-hidden="true" />
-              <span className="kv-tag-hex">{area.meanHex}</span>
-            </div>
-            <dl className="kv-tag-grid">
-              <dt>{labels.uniformity}</dt>
-              <dd>{area.u0.toFixed(2)}</dd>
-              <dt>
-                {labels.relLum} · {labels.mean}
-              </dt>
-              <dd>{area.mean.toFixed(1)} %</dd>
-              <dt>{labels.minMax}</dt>
-              <dd>
-                {area.min.toFixed(1)} – {area.max.toFixed(1)} %
-              </dd>
-              <dt>{labels.temperature}</dt>
-              <dd>{formatCct(area.cct, labels)}</dd>
-            </dl>
-          </>
-        ) : (
-          <>
-            <div className="kv-tag-row">
-              <span className="kv-swatch" style={{ background: hex ?? undefined }} aria-hidden="true" />
-              <span className="kv-tag-hex">{hex}</span>
-            </div>
-            <div className="kv-tag-row kv-tag-k">
-              <span className="kv-tag-label">{labels.temperature}</span>
-              <span className="kv-tag-value" title={cctR?.kind === 'off' ? labels.offCurve : undefined}>{cctText}</span>
-            </div>
-            <TemperatureScale kelvin={scaleK} />
-          </>
-        )}
-
-        {noteOpen ? (
-          <form
-            className="kv-note-form"
-            onSubmit={(event) => {
-              event.preventDefault();
-              save();
-            }}
-          >
-            <textarea
-              ref={noteRef}
-              className="kv-note-input"
-              rows={2}
-              aria-label={labels.addNote}
-              placeholder={labels.notePlaceholder}
-              onKeyDown={(event) => {
-                event.stopPropagation();
-                if (event.key === 'Enter' && !event.shiftKey) {
-                  event.preventDefault();
-                  save();
-                } else if (event.key === 'Escape') {
-                  event.preventDefault();
-                  setNoteOpen(false);
-                  layerRef.current?.focus();
-                }
-              }}
-            />
-            <button type="submit" className="kv-button kv-button--primary">
-              {labels.saveNote}
-            </button>
-          </form>
-        ) : (
-          <div className="kv-tag-foot">
-            <p className="kv-tag-hint" aria-hidden="true">
-              {hint}
-            </p>
-            <div className="kv-tag-actions">
-              {mode.tool === 'compare' ? (
-                <button type="button" className="kv-button" onClick={() => dispatch({ type: 'setAnchor' })}>
-                  {labels.setA}
-                </button>
-              ) : null}
-              <button type="button" className="kv-button" onClick={() => setNoteOpen(true)}>
-                {labels.pin}
-              </button>
-            </div>
-          </div>
-        )}
-      </div>
+      {docked ? (readingSlot ? createPortal(tag, readingSlot) : null) : sheetLayout === 'compact' ? tag : null}
 
       <span className="kv-visually-hidden" aria-live="polite">
         {announcement}

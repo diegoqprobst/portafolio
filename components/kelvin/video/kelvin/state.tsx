@@ -18,7 +18,7 @@ import {
 
 import { DEFAULT_LABELS, type KelvinLabels } from './labels';
 import { parseColorStrip, stripMatches, type ColorStrip } from './lib/color-strip';
-import { sheetLayout } from './lib/geometry';
+import { sheetLayout, type SheetLayout } from './lib/geometry';
 import { INITIAL_MODE, modeReducer, specimenTime, type Mode, type ModeEvent } from './lib/mode';
 import { addNote as add, loadNotes, removeNote as remove, saveNotes, type Note, type NoteStorage } from './lib/notes';
 import { loadScale, saveScale, type Scale } from './lib/scale';
@@ -39,6 +39,12 @@ export interface KelvinApi {
   /** Ruler scale for this video (null = measure in px / % of frame). */
   scale: Scale | null;
   setScale(scale: Scale | null): void;
+  /** How the pause sheet is laid out right now (null while it is closed or not measured yet). */
+  sheetLayout: SheetLayout | null;
+  setSheetLayout(layout: SheetLayout | null): void;
+  /** The place in the sheet where the loupe's reading is shown, so nothing floats over the picture. */
+  readingSlot: HTMLElement | null;
+  setReadingSlot(slot: HTMLElement | null): void;
 }
 
 const KelvinContext = createContext<KelvinApi | null>(null);
@@ -91,6 +97,8 @@ export function KelvinContainer({
   const [mode, dispatch] = useReducer(modeReducer, INITIAL_MODE);
   const [notes, setNotes] = useState<Note[]>(() => loadNotes(getStorage(), videoId));
   const [noteOpen, setNoteOpen] = useState(false);
+  const [sheetLayoutNow, setSheetLayout] = useState<SheetLayout | null>(null);
+  const [readingSlot, setReadingSlot] = useState<HTMLElement | null>(null);
   const [scale, setScaleState] = useState<Scale | null>(() => loadScale(getStorage(), videoId));
   const [rawStrip, setRawStrip] = useState<ColorStrip | null>(() =>
     typeof colorStrip === 'object' ? parseColorStrip(colorStrip) : null,
@@ -205,8 +213,11 @@ export function KelvinContainer({
   const strip = rawStrip && Number.isFinite(duration) && duration > 0 && stripMatches(rawStrip, duration) ? rawStrip : null;
 
   const api = useMemo<KelvinApi>(
-    () => ({ mode, dispatch, labels, strip, notes, addNote, removeNote, videoId, noteOpen, setNoteOpen, rootRef, getVideo, scale, setScale }),
-    [mode, labels, strip, notes, addNote, removeNote, videoId, noteOpen, getVideo, scale, setScale],
+    () => ({
+      mode, dispatch, labels, strip, notes, addNote, removeNote, videoId, noteOpen, setNoteOpen, rootRef, getVideo, scale, setScale,
+      sheetLayout: sheetLayoutNow, setSheetLayout, readingSlot, setReadingSlot,
+    }),
+    [mode, labels, strip, notes, addNote, removeNote, videoId, noteOpen, getVideo, scale, setScale, sheetLayoutNow, readingSlot],
   );
 
   return (
