@@ -57,8 +57,8 @@ export function modeReducer(state: Mode, event: ModeEvent): Mode {
     case 'pause':
       return { ...state, sheet: true, loupe: 'pointer' };
     case 'specimen':
-      // Only from the closed state: it never moves a reticle the viewer is already using.
-      if (state.sheet || state.loupe !== 'off') return state;
+      // Opens the sheet, or aims one the seek has just opened by itself. Never disturbs work in progress.
+      if (state.anchor || state.drag || state.loupe === 'keyboard') return state;
       return { ...state, sheet: true, loupe: 'pointer', reticle: { u: clamp(event.u), v: clamp(event.v) } };
     case 'play':
       return { ...INITIAL_MODE, reticle: state.reticle, tool: state.tool, exposure: state.exposure };

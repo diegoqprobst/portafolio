@@ -53,10 +53,21 @@ describe('specimen (opening as an instrument)', () => {
     expect(escapeCloses(opened)).toBe(true);
     expect(modeReducer(opened, { type: 'escape' })).toMatchObject({ sheet: false, loupe: 'off' });
   });
-  test('does nothing once something is already open', () => {
-    const aimed = modeReducer(paused, { type: 'pointer', u: 0.1, v: 0.1 });
-    expect(modeReducer(aimed, { type: 'specimen', u: 0.46, v: 0.6 })).toBe(aimed);
+  test('aims a sheet that the seek itself has just opened', () =>
+    // Seeking to the frame can already count as "started and paused" and open the sheet at the centre.
+    expect(modeReducer(paused, { type: 'specimen', u: 0.46, v: 0.6 })).toMatchObject({
+      sheet: true,
+      loupe: 'pointer',
+      reticle: { u: 0.46, v: 0.6 },
+    }));
+  test('leaves a measurement in progress alone', () => {
+    const withA = modeReducer(modeReducer(paused, { type: 'tool', tool: 'compare' }), { type: 'setAnchor' });
+    expect(modeReducer(withA, { type: 'specimen', u: 0.46, v: 0.6 })).toBe(withA);
+    const dragging = modeReducer(modeReducer(paused, { type: 'tool', tool: 'ruler' }), { type: 'dragStart' });
+    expect(modeReducer(dragging, { type: 'specimen', u: 0.46, v: 0.6 })).toBe(dragging);
   });
+  test('leaves keyboard aiming alone', () =>
+    expect(modeReducer(keyboard, { type: 'specimen', u: 0.46, v: 0.6 })).toBe(keyboard));
 });
 
 describe('specimenTime', () => {

@@ -154,7 +154,8 @@ export function KelvinContainer({
       const r = root.getBoundingClientRect();
       return sheetLayout(r.width, r.height) !== 'compact';
     };
-    const untouched = () => live && !startedRef.current && video.paused && roomy();
+    // "Nothing has played", read from the element: seeking alone can already flip the store's `started`.
+    const untouched = () => live && video.paused && video.played.length === 0 && roomy();
     const open = () => {
       if (untouched()) dispatch({ type: 'specimen', u: specimenU, v: specimenV });
     };
