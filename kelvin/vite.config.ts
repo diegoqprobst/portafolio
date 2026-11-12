@@ -27,9 +27,10 @@ export default defineConfig({
     rolldownOptions: {
       // The workbench shell, and the preview page it frames.
       input: {
-        workbench: path('./apps/preview/index.html'),
+        // The contest demo is the site root; the CLI's workbench stays available at /workbench.html.
+        demo: path('./apps/preview/index.html'),
+        workbench: path('./apps/preview/workbench.html'),
         preview: path('./apps/preview/preview.html'),
-        demo: path('./apps/preview/demo.html'),
       },
     },
   },

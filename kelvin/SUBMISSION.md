@@ -3,8 +3,8 @@
 **Title:** Kelvin — a Video.js skin for looking at light
 
 **Links**
-- Demo (public, no login): _<Vercel URL after deploy>_
-- Live site using the skin: https://diegoquinde.com/kelvin _(after deploy)_
+- Demo (public, no login): https://kelvin-videojs.vercel.app
+- Live site using the skin: https://diegoquinde.com (home page, plate 01) and https://diegoquinde.com/kelvin
 - Video: Diego's own footage, hosted on Mux (public playback ID _<id>_)
 
 **Design thinking (≈190 words)**
