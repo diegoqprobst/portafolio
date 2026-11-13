@@ -12,6 +12,7 @@ import "./umbrella.css";
 const KelvinPlayer = dynamic(() => import("./kelvin/KelvinPlayer"), { ssr: false });
 import { FEATURED_WORK } from "@/lib/featured-work";
 import { HACKATHONS } from "@/lib/hackathons";
+import ZoomPlates from "./ZoomPlates";
 
 // Raíz umbrella de diegoquinde.com — el folleto de exposición técnica.
 // Una sola narrativa impresa: portada de tinta plana, banda de especificación,
@@ -483,6 +484,9 @@ export default function UmbrellaClient() {
             </a>
           </div>
         </section>
+
+        {/* ── El zoom: de la ciudad a la ficha técnica ── */}
+        <ZoomPlates />
 
         {/* ── Declaración ── */}
         <section className="u-statement" id="statement">

@@ -1,0 +1,260 @@
+/* ==========================================================================
+   El zoom de siete planos (app/ZoomPlates.tsx).
+   Todo vive bajo `.uz`. Usa las tintas del folleto (umbrella.css) y añade dos
+   que solo existen en la ficha: el naranja de las láminas de color y el azul
+   de plano. Sombras duras y desplazadas, nunca difusas.
+   ========================================================================== */
+
+.uz {
+  --uz-orange: #DF9F40;
+  --uz-blue: #14244F;
+  position: relative;
+  background: var(--u-paper);
+  color: var(--u-ink);
+  font-family: var(--u-display);
+}
+
+/* ── Estado por defecto: sin JS o con movimiento reducido → solo la ficha ── */
+.uz .uz-art,
+.uz .uz-runway,
+.uz .uz-probe,
+.uz .uz-hint,
+.uz .uz-skip { display: none; }
+
+.uz-stage { background: var(--u-paper); }
+.uz-doc { min-height: 100vh; min-height: 100svh; display: flex; flex-direction: column; }
+.uz-doc:focus { outline: none; }
+
+/* ── Estado animado (lo activa el componente) ── */
+.uz.is-live .uz-probe {
+  display: block;
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%;
+  height: 100vh; height: 100svh;
+  visibility: hidden;
+  pointer-events: none;
+}
+.uz.is-live .uz-stage { position: relative; height: 100vh; height: 100svh; overflow: hidden; }
+.uz.is-live.is-scroll .uz-stage,
+.uz.is-live.is-gesture .uz-stage { position: sticky; top: 0; }
+.uz.is-live.is-scroll .uz-runway,
+.uz.is-live.is-gesture .uz-runway { display: block; }
+
+.uz.is-live .uz-art { display: block; position: absolute; inset: 0; }
+/* Cada plano es un cuadrado "cover" centrado, en su propia capa de GPU. */
+.uz-art > img {
+  position: absolute;
+  left: 50%; top: 50%;
+  width: var(--uz-s); height: var(--uz-s);
+  max-width: none;
+  margin: calc(var(--uz-s) / -2) 0 0 calc(var(--uz-s) / -2);
+  display: block;
+  will-change: transform, opacity;
+  pointer-events: none;
+  -webkit-user-select: none; user-select: none;
+}
+/* El primer plano se ve antes de que el script lo coloque; el resto espera oculto. */
+.uz-art > img:not([data-plane="1"]) { display: none; }
+
+.uz.is-live .uz-doc {
+  position: relative;
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
+  opacity: 0;
+  pointer-events: none;
+  transform-origin: 50% 50%;
+}
+
+.uz.is-live .uz-hint {
+  display: block;
+  position: absolute;
+  left: 0; right: 0; bottom: 22px;
+  margin: 0;
+  text-align: center;
+  font-size: 10px; font-weight: 600;
+  letter-spacing: 0.32em; text-transform: uppercase;
+  color: var(--u-cream);
+  pointer-events: none;
+}
+.uz.is-live.is-auto .uz-hint { display: none; }
+
+/* Saltar la animación: visible desde el principio. Va abajo a la derecha porque arriba está la cabecera fija. */
+.uz.is-live .uz-skip {
+  display: inline-flex;
+  align-items: center;
+  position: absolute;
+  right: 14px; bottom: 14px;
+  z-index: 3;
+  min-height: 44px;
+  padding: 0 14px;
+  background: var(--u-paper);
+  color: var(--u-ink);
+  border: 2px solid var(--u-ink);
+  text-decoration: none;
+  font-size: 10px; font-weight: 700;
+  letter-spacing: 0.24em; text-transform: uppercase;
+}
+.uz.is-live .uz-skip:hover,
+.uz.is-live .uz-skip:focus-visible { background: var(--u-ink); color: var(--u-white); }
+.uz.is-live .uz-skip:focus-visible { outline: 2px solid var(--u-orange); outline-offset: 3px; }
+
+/* Aterrizado: la ficha vuelve al flujo normal */
+.uz.is-live .uz-stage.is-landed { height: auto; min-height: 100vh; min-height: 100svh; overflow: visible; }
+.uz.is-live .uz-stage.is-landed .uz-art,
+.uz.is-live .uz-stage.is-landed .uz-hint,
+.uz.is-live .uz-stage.is-landed .uz-skip { display: none; }
+.uz.is-live .uz-stage.is-landed .uz-doc {
+  height: auto;
+  min-height: 100vh; min-height: 100svh;
+  overflow: visible;
+  opacity: 1 !important;
+  transform: none !important;
+  pointer-events: auto;
+}
+
+/* ── Plano 7 · la ficha ── */
+.uz-doc-in {
+  width: min(100% - 40px, 1040px);
+  margin: auto;
+  /* arriba deja sitio a la cabecera fija de la página */
+  padding: max(72px, clamp(16px, 4vh, 48px)) 0 clamp(16px, 4vh, 48px);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  row-gap: clamp(12px, 2.4vh, 26px);
+  grid-template-areas: "head" "plano" "claves" "specs" "foot";
+}
+.uz-label {
+  margin: 0;
+  font-size: clamp(9px, 0.72vw + 7px, 11px);
+  font-weight: 600;
+  letter-spacing: 0.24em; text-transform: uppercase;
+}
+.uz-head { grid-area: head; border-top: 6px solid var(--u-ink); padding-top: clamp(8px, 1.6vh, 16px); }
+.uz-head h2 {
+  margin: clamp(6px, 1.2vh, 12px) 0 4px;
+  font-family: var(--u-display);
+  font-size: clamp(26px, 3.4vw, 46px);
+  line-height: 1.02; font-weight: 800;
+  letter-spacing: -0.01em; text-transform: uppercase;
+  color: var(--u-ink);
+}
+.uz-sub { margin: 0; font-size: clamp(12px, 0.6vw + 9px, 15px); font-weight: 500; line-height: 1.35; }
+
+/* Lámina de plano */
+.uz-plano {
+  grid-area: plano;
+  position: relative;
+  margin: 0 8px 8px 0;
+  background-color: var(--uz-blue);
+  color: var(--u-paper);
+  box-shadow: 8px 8px 0 var(--uz-orange);
+  background-image:
+    linear-gradient(rgba(243, 240, 231, 0.1) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(243, 240, 231, 0.1) 1px, transparent 1px);
+  background-size: 20px 20px;
+}
+.uz-plano svg { display: block; width: 100%; height: auto; }
+.uz-plano path { fill: none; stroke: currentColor; stroke-width: 1.25; vector-effect: non-scaling-stroke; stroke-linecap: square; }
+.uz-plano pattern path { stroke-width: 1; }
+.uz-plano .uz-tenue { opacity: 0.38; }
+.uz-plano .uz-eje { stroke-dasharray: 12 4 2 4; }
+.uz-plano .uz-corte { fill: url(#uz-rayado); }
+.uz-plano .uz-luz { fill: var(--uz-orange); stroke: var(--uz-orange); }
+.uz-plano .uz-lobulo { stroke: var(--uz-orange); stroke-width: 2.25; }
+.uz-cota {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  padding: 0 4px;
+  background: var(--uz-blue);
+  font-size: clamp(8px, 0.3vw + 7px, 10px);
+  font-weight: 600; letter-spacing: 0.16em;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+.uz-cajetin {
+  display: flex;
+  border-top: 1px solid currentColor;
+  font-size: clamp(8px, 0.3vw + 7px, 10px);
+  font-weight: 600; letter-spacing: 0.2em; text-transform: uppercase;
+}
+.uz-cajetin > span { flex: 1; padding: 7px 10px; border-right: 1px solid currentColor; white-space: nowrap; }
+.uz-cajetin > span:nth-child(2) { flex: 2; text-align: center; }
+.uz-cajetin > span:last-child { border-right: 0; text-align: right; }
+
+/* Cifras clave */
+.uz-claves {
+  grid-area: claves;
+  list-style: none;
+  margin: 0 5px 5px 0; padding: 0;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: clamp(10px, 1.4vw, 18px);
+}
+.uz-claves li { display: flex; flex-direction: column; gap: 3px; padding: clamp(7px, 1.1vh, 12px) 10px; border: 2px solid var(--u-ink); }
+.uz-claves b { font-size: clamp(20px, 2.6vw, 36px); font-weight: 800; line-height: 1; font-variant-numeric: tabular-nums; }
+.uz-claves li > span { font-size: clamp(9px, 0.4vw + 7px, 11px); font-weight: 600; letter-spacing: 0.22em; text-transform: uppercase; }
+.uz-claves .uz-clave-o { background: var(--uz-orange); border-color: var(--uz-blue); color: var(--uz-blue); box-shadow: 5px 5px 0 var(--u-ink); }
+
+/* Tabla con puntos conductores, como en un catálogo antiguo */
+.uz-specs {
+  grid-area: specs;
+  margin: 0;
+  border-top: 3px solid var(--u-ink);
+  padding-top: clamp(4px, 0.8vh, 8px);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  column-gap: 56px;
+}
+.uz-specs > div { display: flex; align-items: baseline; gap: 8px; padding: clamp(4px, 0.85vh, 9px) 0; }
+.uz-specs dt {
+  flex: 1;
+  display: flex; align-items: baseline; gap: 8px;
+  font-size: clamp(9px, 0.5vw + 7px, 11px);
+  font-weight: 600; letter-spacing: 0.2em; text-transform: uppercase;
+  white-space: nowrap;
+}
+.uz-specs dt::after { content: ""; flex: 1; min-width: 12px; border-bottom: 2px dotted currentColor; opacity: 0.5; transform: translateY(-3px); }
+.uz-specs dd { margin: 0; font-size: clamp(13px, 0.6vw + 9px, 16px); font-weight: 700; text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+
+.uz-foot {
+  grid-area: foot;
+  display: flex; flex-wrap: wrap;
+  gap: 14px 28px;
+  align-items: center; justify-content: space-between;
+  border-top: 3px solid var(--u-ink);
+  padding: clamp(10px, 2vh, 20px) 5px 5px 0;
+}
+.uz-closing { margin: 0; flex: 1 1 240px; font-size: clamp(15px, 1.1vw + 9px, 22px); font-weight: 700; line-height: 1.2; }
+.uz-closing[data-placeholder] { color: var(--u-orange); }
+.uz-btn {
+  display: inline-block;
+  padding: 13px 24px;
+  background: var(--u-ink); color: var(--u-white);
+  text-decoration: none;
+  font-size: 11px; font-weight: 700;
+  letter-spacing: 0.24em; text-transform: uppercase;
+  border: 2px solid var(--u-ink);
+  box-shadow: 5px 5px 0 var(--uz-orange);
+}
+.uz-btn:hover,
+.uz-btn:focus-visible { background: var(--u-white); color: var(--u-ink); }
+.uz-btn:focus-visible { outline: 2px solid var(--u-orange); outline-offset: 3px; }
+
+@media (max-width: 599px) {
+  /* móvil: que la ficha entera quepa en una pantalla al aterrizar */
+  .uz-doc-in { padding-bottom: clamp(12px, 2.4vh, 24px); row-gap: clamp(9px, 1.7vh, 16px); }
+  .uz-label { letter-spacing: 0.16em; }
+  .uz-specs > div { padding: clamp(2px, 0.5vh, 6px) 0; }
+  .uz-foot { padding-top: clamp(8px, 1.4vh, 14px); }
+}
+@media (min-width: 900px) {
+  .uz-doc-in {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr);
+    column-gap: 56px;
+    grid-template-areas: "head plano" "claves plano" "specs specs" "foot foot";
+  }
+  .uz-plano, .uz-claves { align-self: end; }
+  .uz-specs { grid-template-columns: 1fr 1fr; }
+}

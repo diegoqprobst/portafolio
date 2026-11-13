@@ -86,7 +86,10 @@ html:has(.umbra), html:has(.umbra) body { background: var(--u-ink); }
   font-family: var(--u-text);
   font-size: 17px;
   line-height: 1.58;
+  /* clip, no hidden: hidden convierte la hoja en contenedor de scroll y rompe el
+     `position: sticky` del zoom. Los navegadores sin clip se quedan con hidden. */
   overflow-x: hidden;
+  overflow-x: clip;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
   --u-selection-bg: var(--u-ink);
