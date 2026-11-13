@@ -50,7 +50,8 @@
   max-width: none;
   margin: calc(var(--uz-s) / -2) 0 0 calc(var(--uz-s) / -2);
   display: block;
-  will-change: transform, opacity;
+  /* Sin will-change: son dibujos vectoriales y así el navegador los vuelve a trazar nítidos a cada
+     escala en vez de estirar una textura. */
   pointer-events: none;
   -webkit-user-select: none; user-select: none;
 }

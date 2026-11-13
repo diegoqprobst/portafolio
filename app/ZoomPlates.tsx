@@ -20,16 +20,18 @@ const TRIGGER: "scroll" | "auto" | "gesture" = "scroll";
 type Segment = { type: "zoom" | "hold" | "relay" | "land"; dur: number; zoom?: number };
 
 // dur = ms en "auto" y "gesture"; en "scroll" es el peso relativo del tramo, y las pausas se omiten.
-// zoom = cuántas veces crece el plano saliente hasta que el siguiente llena el cuadro.
+// zoom = cuántas veces crece el plano saliente hasta que el siguiente llena el cuadro. Los planos
+// están dibujados uno dentro de otro (scripts/gen-zoom-plates.py), así que este número no es libre:
+// es 1200 / el tamaño al que el plano siguiente aparece dentro de este.
 const SEGMENTS: Segment[] = [
-  { type: "zoom", dur: 2800, zoom: 9.6 }, //  1→2 ciudad → edificio
-  { type: "zoom", dur: 1500, zoom: 3.05 }, //  2→3 edificio → ventana
-  { type: "zoom", dur: 1800, zoom: 5.05 }, // 3→4 ventana → sala
-  { type: "zoom", dur: 1700, zoom: 3.25 }, // 4→5 sala → luminaria
+  { type: "zoom", dur: 2200, zoom: 6 }, // 1→2 ciudad → fachada
+  { type: "zoom", dur: 1900, zoom: 6 }, // 2→3 fachada → ventana
+  { type: "zoom", dur: 1100, zoom: 2 }, // 3→4 ventana → sala
+  { type: "zoom", dur: 2000, zoom: 6 }, // 4→5 sala → luminaria
   { type: "hold", dur: 400 },
-  { type: "relay", dur: 1500 }, //            5→6 relevo: la caja
+  { type: "relay", dur: 1500 }, //         5→6 relevo: la caja
   { type: "hold", dur: 400 },
-  { type: "land", dur: 2400 }, //             6→7 aterrizaje en la ficha
+  { type: "land", dur: 2400 }, //          6→7 aterrizaje en la ficha
 ];
 
 const SCROLL_SCREENS = 4; //    modo scroll: pantallas de recorrido en total, con la sección pegada
@@ -38,22 +40,17 @@ const SCROLL_SCREENS = 4; //    modo scroll: pantallas de recorrido en total, co
 const SCROLL_END_HOLD = 0.6; // en pantallas
 const GESTURE_SCREENS = 1.5; // modo gesture: pantallas que la sección queda pegada
 const SCROLL_SMOOTHING = 0.18; // 1 = sin suavizado; no toca el scroll nativo
-const FADE_IN = 0.7; //        fracción del tramo en la que el plano entrante termina de fundirse
+const FADE_IN = 0.35; //        fracción del tramo en la que el plano entrante termina de fundirse
 const VIEWBOX = 1200; //        lado de cada plano en unidades propias
 
 // La hoja que aterriza, tal como está en el plano 6, en unidades de VIEWBOX: el rectángulo blanco que
 // cabe dentro de ella y su centro respecto al centro del plano. No está en el centro del dibujo, así
 // que el aterrizaje acerca y desplaza la cámara a la vez.
-const PAPER = { w: 143, h: 124, cx: -128.6, cy: 333.3, bleed: 1.06 };
+const PAPER = { w: 170, h: 130, cx: 120, cy: 315, bleed: 1.06 };
 
-// Hacia dónde apunta la cámara al salir de cada plano, en unidades de VIEWBOX desde su centro. El
-// plano siguiente nace ahí y la cámara se desplaza mientras se acerca, hasta dejarlo centrado.
-const FOCUS: [number, number][] = [
-  [0, 0], //       ciudad: la torre está en el centro
-  [242, -144], //  edificio: la ventana de la planta, arriba a la derecha
-  [132, -35], //   ventana: el panel de techo encendido
-  [0, 0], //       sala: la luminaria
-];
+// Hacia dónde apunta la cámara al salir de cada plano, en unidades de VIEWBOX desde su centro. Con
+// los planos dibujados uno dentro de otro, el siguiente siempre está en el centro.
+const FOCUS: [number, number][] = [];
 
 const PLATES = ["1-ciudad", "2-edificio", "3-ventana", "4-sala", "5-luminaria"];
 
@@ -133,7 +130,7 @@ function startZoom(root: HTMLElement): () => void {
   if (!p6 || planes.length !== zoomSegs.length + 1) return () => {};
   const touched: HTMLElement[] = [...planes, p6, doc, ...(hint ? [hint] : [])];
 
-  // Las imágenes no se piden hasta que la sección se acerca: son 1,7 MB que la portada no paga antes.
+  // Las imágenes no se piden hasta que la sección se acerca: la portada no las paga antes.
   const images = Array.from(art.querySelectorAll<HTMLImageElement>("img[data-src]"));
   const loadImages = () => {
     for (const img of images) {
@@ -464,10 +461,10 @@ export default function ZoomPlates() {
         <div className="uz-art" aria-hidden="true">
           {PLATES.map((name, i) => (
             // eslint-disable-next-line @next/next/no-img-element
-            <img key={name} data-plane={i + 1} data-src={`/zoom/${name}.jpg`} alt="" aria-hidden="true" />
+            <img key={name} data-plane={i + 1} data-src={`/zoom/${name}.svg`} alt="" aria-hidden="true" />
           ))}
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img data-relay-in="" data-src="/zoom/6-caja.jpg" alt="" aria-hidden="true" />
+          <img data-relay-in="" data-src="/zoom/6-caja.svg" alt="" aria-hidden="true" />
         </div>
 
         {/* Plano 7: la ficha. Texto vivo, en el DOM desde el principio. */}
