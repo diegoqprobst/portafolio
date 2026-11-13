@@ -23,7 +23,7 @@ type Segment = { type: "zoom" | "hold" | "relay" | "land"; dur: number; zoom?: n
 // zoom = cuántas veces crece el plano saliente hasta que el siguiente llena el cuadro.
 const SEGMENTS: Segment[] = [
   { type: "zoom", dur: 2800, zoom: 9.6 }, //  1→2 ciudad → edificio
-  { type: "zoom", dur: 1100, zoom: 2.6 }, //  2→3 edificio → ventana
+  { type: "zoom", dur: 1500, zoom: 3.05 }, //  2→3 edificio → ventana
   { type: "zoom", dur: 1800, zoom: 5.05 }, // 3→4 ventana → sala
   { type: "zoom", dur: 1700, zoom: 3.25 }, // 4→5 sala → luminaria
   { type: "hold", dur: 400 },
@@ -38,13 +38,22 @@ const SCROLL_SCREENS = 4; //    modo scroll: pantallas de recorrido en total, co
 const SCROLL_END_HOLD = 0.6; // en pantallas
 const GESTURE_SCREENS = 1.5; // modo gesture: pantallas que la sección queda pegada
 const SCROLL_SMOOTHING = 0.18; // 1 = sin suavizado; no toca el scroll nativo
-const FADE_IN = 0.35; //        fracción del tramo en la que el plano entrante termina de fundirse
+const FADE_IN = 0.7; //        fracción del tramo en la que el plano entrante termina de fundirse
 const VIEWBOX = 1200; //        lado de cada plano en unidades propias
 
 // La hoja que aterriza, tal como está en el plano 6, en unidades de VIEWBOX: el rectángulo blanco que
 // cabe dentro de ella y su centro respecto al centro del plano. No está en el centro del dibujo, así
 // que el aterrizaje acerca y desplaza la cámara a la vez.
 const PAPER = { w: 143, h: 124, cx: -128.6, cy: 333.3, bleed: 1.06 };
+
+// Hacia dónde apunta la cámara al salir de cada plano, en unidades de VIEWBOX desde su centro. El
+// plano siguiente nace ahí y la cámara se desplaza mientras se acerca, hasta dejarlo centrado.
+const FOCUS: [number, number][] = [
+  [0, 0], //       ciudad: la torre está en el centro
+  [242, -144], //  edificio: la ventana de la planta, arriba a la derecha
+  [132, -35], //   ventana: el panel de techo encendido
+  [0, 0], //       sala: la luminaria
+];
 
 const PLATES = ["1-ciudad", "2-edificio", "3-ventana", "4-sala", "5-luminaria"];
 
@@ -191,7 +200,17 @@ function startZoom(root: HTMLElement): () => void {
       if (!on) continue;
       const s = Math.exp(L - offs[j]);
       if (j === lastI) setT(p, s * landS, panX, panY);
-      else setT(p, s);
+      else if (L < offs[j]) {
+        // entrando: sentado en el punto de mira del plano anterior, que va camino del centro
+        const [fx, fy] = FOCUS[j - 1] ?? [0, 0];
+        const k = (1 - smooth(clamp((L - offs[j - 1]) / (offs[j] - offs[j - 1])))) * U;
+        setT(p, s, fx * k, fy * k);
+      } else {
+        // saliendo: crece alrededor de su punto de mira mientras lo lleva al centro
+        const [fx, fy] = FOCUS[j] ?? [0, 0];
+        const k = (1 - smooth(clamp((L - offs[j]) / (offs[j + 1] - offs[j]))) - s) * U;
+        setT(p, s, fx * k, fy * k);
+      }
       put(p, "o", j ? clamp((L - offs[j - 1]) / (offs[j] - offs[j - 1]) / FADE_IN).toFixed(3) : "1");
     }
 
