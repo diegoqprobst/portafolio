@@ -122,6 +122,59 @@ def carton():
 
 # ───────────────────────── 4 · la sala ─────────────────────────
 
+def back_wall_works():
+    """Dos trabajos colgados de frente, a la izquierda de la luminaria."""
+    # Submittal de alumbrado público: lámina de plano con un báculo y su cono de luz.
+    x0, y0, x1, y1 = -236, -138, -128, -62
+    submittal = rect(x0, y0, x1, y1, NIGHT, INK, 2) + lines(
+        [(x0 + 8, y1 - 12, x1 - 8, y1 - 12), (x0 + 30, y1 - 12, x0 + 30, y0 + 16), (x0 + 30, y0 + 16, x0 + 52, y0 + 16),
+         (x1 - 34, y0 + 10, x1 - 34, y0 + 40), (x1 - 34, y0 + 25, x1 - 10, y0 + 25), (x1 - 34, y0 + 48, x1 - 10, y0 + 48),
+         (x1 - 34, y0 + 54, x1 - 18, y0 + 54)], PAPER, 1.5) + \
+        poly([(x0 + 46, y0 + 18), (x0 + 58, y0 + 18), (x0 + 74, y1 - 12), (x0 + 30, y1 - 12)], ORANGE, None) + \
+        rect(x0 + 44, y0 + 13, x0 + 60, y0 + 18, PAPER, None)
+    # Kelvin: un reproductor con su lupa y la tira de color.
+    x0, y0, x1, y1 = -236, -46, -128, 30
+    kelvin = rect(x0, y0, x1, y1, WHITE, INK, 2) + rect(x0 + 6, y0 + 6, x1 - 6, y1 - 18, INK, None) + \
+        poly([(x0 + 6, y1 - 18), (x0 + 44, y0 + 26), (x0 + 70, y1 - 30), (x1 - 6, y0 + 22), (x1 - 6, y1 - 18)], NIGHT, None) + \
+        f'<circle cx="{x0 + 66}" cy="{y0 + 26}" r="13" fill="{ORANGE}" stroke="{PAPER}" stroke-width="2"/>' + \
+        "".join(rect(x0 + 6 + i * 16, y1 - 14, x0 + 22 + i * 16, y1 - 6, c, None)
+                for i, c in enumerate([NIGHT, INK, HAZE, ORANGE_L, ORANGE, RUST]))
+    return submittal + kelvin
+
+
+def side_wall_works():
+    """Tres trabajos en la pared derecha, en fuga hacia el fondo."""
+    def pt(s_, v, a, b, s0, s1, v0, v1):
+        sc = s0 + (s1 - s0) * a
+        return 260 * sc, (v0 + (v1 - v0) * b) * sc
+
+    out = []
+    frames = [(1.14, 1.42, "catalog"), (1.52, 1.86, "deck"), (1.98, 2.3, "guide")]
+    for s0, s1, kind in frames:
+        v0, v1 = -78, 18
+        P = lambda a, b: pt(None, None, a, b, s0, s1, v0, v1)
+        quad = lambda a0, b0, a1, b1: [P(a0, b0), P(a1, b0), P(a1, b1), P(a0, b1)]
+        seg = lambda a0, b0, a1, b1: (*P(a0, b0), *P(a1, b1))
+        if kind == "catalog":  # catálogo de producto: retícula de fichas
+            out.append(poly(quad(0, 0, 1, 1), WHITE, INK, 2))
+            for r in range(2):
+                for c in range(3):
+                    a, b = 0.1 + c * 0.29, 0.12 + r * 0.42
+                    out.append(poly(quad(a, b, a + 0.22, b + 0.24), ORANGE if (r + c) % 2 == 0 else NIGHT, None))
+                    out.append(lines([seg(a, b + 0.3, a + 0.22, b + 0.3)], INK, 1.5))
+        elif kind == "deck":  # presentación comercial: barras que suben
+            out.append(poly(quad(0, 0, 1, 1), INK, INK, 2))
+            out.append(lines([seg(0.1, 0.16, 0.6, 0.16), seg(0.1, 0.84, 0.9, 0.84)], PAPER, 3))
+            for i, h in enumerate([0.22, 0.34, 0.3, 0.5]):
+                a = 0.14 + i * 0.2
+                out.append(poly(quad(a, 0.84 - h, a + 0.13, 0.84), ORANGE if i == 3 else PAPER, None))
+        else:  # guía: portada con título y texto
+            out.append(poly(quad(0, 0, 1, 1), RUST, INK, 2))
+            out.append(poly(quad(0.14, 0.14, 0.86, 0.34), PAPER, None))
+            out.append(lines([seg(0.14, 0.5 + i * 0.1, 0.86 if i < 3 else 0.5, 0.5 + i * 0.1) for i in range(4)], PAPER, 2))
+    return "".join(out)
+
+
 def room(center):
     k = 392.31  # donde las aristas cortan el borde: 600 · 170 / 260
     ceiling_grid = lines(
@@ -136,9 +189,7 @@ def room(center):
         poly([(-380, -95), (-560, -140), (-560, 59), (-380, 40)], INK)
         + lines([(-470, -117.5, -470, 49.5), (-380, -27.5, -560, -40.5)], PAPER, 3)
     )
-    plan = rect(-228, -98, -132, -24, NIGHT) + lines(
-        [(-216, -84, -144, -84), (-216, -38, -144, -38), (-216, -84, -216, -38), (-144, -84, -144, -38),
-         (-190, -84, -190, -38), (-190, -60, -144, -60)], PAPER, 1.5)
+    works = back_wall_works() + side_wall_works()
     door = rect(150, -40, 232, 170, SHADE) + rect(160, -30, 222, 60, PAPER, INK, 1.5) + \
         f'<circle cx="166" cy="76" r="4" fill="{INK}"/>'
     desk = rect(-96, 112, 96, 122, WOOD) + lines([(-84, 122, -84, 170), (84, 122, 84, 170), (-84, 150, 84, 150)])
@@ -155,7 +206,7 @@ def room(center):
         ceiling_grid, floor_grid,
         lines([(-260, -170, -600, -k), (260, -170, 600, -k), (-260, 170, -600, k), (260, 170, 600, k)]),
         rect(-260, -170, 260, 170),
-        side_window, plan, door, desk, hangers,
+        side_window, works, door, desk, hangers,
         nest(center, NEST["luminaire"]),
     ])
 
