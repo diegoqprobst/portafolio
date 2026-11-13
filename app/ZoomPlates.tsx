@@ -25,11 +25,11 @@ type Segment = { type: "zoom" | "hold" | "relay" | "land"; dur: number; zoom?: n
 // es 1200 / el tamaño al que el plano siguiente aparece dentro de este.
 const SEGMENTS: Segment[] = [
   { type: "zoom", dur: 2200, zoom: 6 }, // 1→2 ciudad → fachada
-  { type: "zoom", dur: 1900, zoom: 6 }, // 2→3 fachada → ventana
-  { type: "zoom", dur: 1100, zoom: 2 }, // 3→4 ventana → sala
-  { type: "zoom", dur: 2000, zoom: 6 }, // 4→5 sala → luminaria
+  { type: "zoom", dur: 1500, zoom: 6 }, // 2→3 fachada → ventana
+  { type: "zoom", dur: 1300, zoom: 2 }, // 3→4 ventana → sala
+  { type: "zoom", dur: 2700, zoom: 6 }, // 4→5 sala → luminaria (aquí están los trabajos: más tiempo)
   { type: "hold", dur: 400 },
-  { type: "relay", dur: 1500 }, //         5→6 relevo: la caja
+  { type: "relay", dur: 2400 }, //         5→6 relevo: la caja se forma alrededor de la luminaria
   { type: "hold", dur: 400 },
   { type: "land", dur: 2400 }, //          6→7 aterrizaje en la ficha
 ];
@@ -137,8 +137,10 @@ function startZoom(root: HTMLElement): () => void {
 
   const planes = Array.from(art.querySelectorAll<HTMLElement>("[data-plane]"));
   const p6 = art.querySelector<HTMLElement>("[data-relay-in]");
-  if (!p6 || planes.length !== zoomSegs.length + 1) return () => {};
-  const touched: HTMLElement[] = [...planes, p6, doc, ...(hint ? [hint] : [])];
+  const p6front = art.querySelector<HTMLElement>("[data-relay-front]");
+  const p6sheet = art.querySelector<HTMLElement>("[data-relay-sheet]");
+  if (!p6 || !p6front || !p6sheet || planes.length !== zoomSegs.length + 1) return () => {};
+  const touched: HTMLElement[] = [...planes, p6, p6front, p6sheet, doc, ...(hint ? [hint] : [])];
 
   // Las imágenes no se piden hasta que la sección se acerca: la portada no las paga antes.
   const images = Array.from(art.querySelectorAll<HTMLImageElement>("img[data-src]"));
@@ -166,6 +168,7 @@ function startZoom(root: HTMLElement): () => void {
 
   let Z = 8; //       zoom del aterrizaje: lo que hace falta para que la hoja cubra el cuadro
   let U = 1; //       px de pantalla por unidad de VIEWBOX
+  let viewH = 1;
   let runwayH = 1;
   let zoomH = 1; //   tramo del recorrido en el que avanza el zoom (el resto es reposo final)
   const measure = () => {
@@ -173,6 +176,7 @@ function startZoom(root: HTMLElement): () => void {
     const H = probe.clientHeight;
     const S = Math.max(W, H);
     U = S / VIEWBOX;
+    viewH = H;
     K = Math.min(1, (W / S) * (VIEWBOX / WIDE_CONTENT));
     buildCam();
     Z = PAPER.bleed * Math.max(W / (PAPER.w * U * K), H / (PAPER.h * U * K));
@@ -227,10 +231,25 @@ function startZoom(root: HTMLElement): () => void {
     }
 
     // Relevo 5 → 6: nada cambia de escala; un dibujo se funde en el otro.
+    // en tres tiempos. El alzado se funde en el interior de la caja (la pieza no se mueve), el
+    // frente sube por delante y, al final, la hoja se posa sobre él.
+    const rBack = smooth(clamp(r / 0.35));
+    const rFront = smooth(clamp((r - 0.25) / 0.5));
+    const rSheet = smooth(clamp((r - 0.78) / 0.22));
     put(p6, "d", r > 0 ? "block" : "none");
     if (r > 0) {
       setT(p6, K * landS, panX, panY);
-      put(p6, "o", r.toFixed(3));
+      put(p6, "o", rBack.toFixed(3));
+    }
+    put(p6front, "d", rFront > 0 ? "block" : "none");
+    if (rFront > 0) {
+      setT(p6front, K * landS, panX, panY + (1 - rFront) * viewH * 0.7);
+      put(p6front, "o", "1");
+    }
+    put(p6sheet, "d", rSheet > 0 ? "block" : "none");
+    if (rSheet > 0) {
+      setT(p6sheet, K * landS, panX, panY - (1 - rSheet) * 28);
+      put(p6sheet, "o", rSheet.toFixed(3));
     }
 
     // Aterrizaje 6 → 7: la ficha va pegada a la hoja (misma escala relativa, mismo centro).
@@ -480,6 +499,10 @@ export default function ZoomPlates() {
           ))}
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img data-relay-in="" data-src="/zoom/6-caja.svg" alt="" aria-hidden="true" />
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img data-relay-front="" data-src="/zoom/7-caja-frente.svg" alt="" aria-hidden="true" />
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img data-relay-sheet="" data-src="/zoom/8-hoja.svg" alt="" aria-hidden="true" />
         </div>
 
         {/* Plano 7: la ficha. Texto vivo, en el DOM desde el principio. */}

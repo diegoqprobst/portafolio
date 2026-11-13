@@ -59,7 +59,7 @@ def nest(content, size):
 def wrap(content):
     return (
         '<svg xmlns="http://www.w3.org/2000/svg" viewBox="-600 -600 1200 1200" '
-        'stroke-linejoin="miter" stroke-linecap="butt">' + content + "</svg>\n"
+        'stroke-linejoin="miter" stroke-miterlimit="2" stroke-linecap="butt">' + content + "</svg>\n"
     )
 
 
@@ -77,20 +77,34 @@ def luminaire_body():
     ])
 
 
+def label(x, y, text, size=17, fill=INK, anchor="middle", spacing=3):
+    return (
+        f'<text x="{n(x)}" y="{n(y)}" font-family="Montserrat, Helvetica Neue, Arial, sans-serif" font-weight="700" '
+        f'font-size="{n(size)}" letter-spacing="{n(spacing)}" text-anchor="{anchor}" fill="{fill}" stroke="none">{text}</text>'
+    )
+
+
 def luminaire():
     cables = "".join(
         rect(x - 3, -600, x + 3, -64, INK, None) + rect(x - 9, -84, x + 9, -45, RUST, INK, 2)
         for x in (-300, 300)
     )
-    beam = poly([(-440, 40), (440, 40), (560, 300), (-560, 300)], "#F7E7C6", None)
-    axis = lines([(0, -150, 0, 470)], sw=1.5, extra=' stroke-dasharray="26 8 4 8"')
+    beam = poly([(-440, 40), (440, 40), (530, 208), (-530, 208)], "#F7E7C6", None)
+    axis = lines([(0, -150, 0, 222)], sw=1.5, extra=' stroke-dasharray="26 8 4 8"')
     dims = lines([
-        (-450, 70, -450, 400), (450, 70, 450, 400), (-450, 380, 450, 380),
-        (-462, 392, -438, 368), (438, 392, 462, 368),
+        (-450, 60, -450, 254), (450, 60, 450, 254), (-450, 238, 450, 238),
+        (-462, 250, -438, 226), (438, 250, 462, 226),
         (470, -45, 540, -45), (470, 40, 540, 40), (520, -45, 520, 40),
         (508, -33, 532, -57), (508, 52, 532, 28),
     ], RUST, 2)
-    return rect(-600, -600, 600, 600, PAPER, None) + beam + axis + cables + luminaire_body() + dims
+    figures = rect(-52, 225, 52, 251, PAPER, None) + label(1.5, 245, "1200", 20, RUST) + \
+        label(548, 4, "90", 20, RUST, "start")
+    marks = lines([(x - 9, y, x + 9, y) for x in (-560, 560) for y in (-150, 200)]
+                  + [(x, y - 9, x, y + 9) for x in (-560, 560) for y in (-150, 200)], INK, 1.5)
+    # El cajetín queda por encima de y = 300: en una pantalla apaisada se ve hasta ahí.
+    block = rect(-450, 262, 450, 298, "none", INK, 2) + lines([(-150, 262, -150, 298), (150, 262, 150, 298)], INK, 2) + \
+        label(-300, 286, "PLATE 01", 15) + label(0, 286, "ELEVATION", 15) + label(300, 286, "SCALE 1:10", 15)
+    return rect(-600, -600, 600, 600, PAPER, None) + beam + axis + marks + cables + luminaire_body() + dims + figures + block
 
 
 # ───────────────────────── 6 · la caja (relevo; mismo sitio que el alzado) ─────────────────────────
@@ -98,14 +112,9 @@ def luminaire():
 SHEET = {"w": 170, "h": 130, "cx": 120, "cy": 315}  # = PAPER en ZoomPlates.tsx
 
 
-def carton():
-    x0, y0 = SHEET["cx"] - SHEET["w"] / 2, SHEET["cy"] - SHEET["h"] / 2
-    x1, y1 = x0 + SHEET["w"], y0 + SHEET["h"]
-    # En blanco a propósito: la ficha de verdad se funde encima al aterrizar.
-    sheet = rect(x0, y0, x1, y1, WHITE, INK, 2)
-    arrows = "".join(
-        path(f"M{x} 380V270M{x - 22} 296L{x} 268L{x + 22} 296", sw=6) for x in (-250, -180)
-    ) + lines([(-285, 392, -145, 392)], sw=6)
+def carton_back():
+    """Lo que queda detrás de la luminaria: fondo, solapas e interior. Sustituye al alzado por fundido;
+    la pieza está en el mismo sitio en los dos, así que solo cambia lo de alrededor."""
     return "".join([
         rect(-600, -600, 600, 600, PAPER, None),
         poly([(-500, -100), (500, -100), (540, -300), (-540, -300)], ORANGE_L),  # solapa trasera
@@ -113,11 +122,25 @@ def carton():
         poly([(500, -100), (540, 90), (600, 60), (590, -130)], ORANGE_L),
         poly([(-500, -100), (500, -100), (540, 90), (-540, 90)], RUST),  # interior
         luminaire_body(),
-        rect(-540, 90, 540, 430, ORANGE),  # frente
+    ])
+
+
+def carton_front():
+    """El frente de la caja, sin fondo: sube por delante de la luminaria."""
+    arrows = "".join(
+        path(f"M{x} 380V270M{x - 22} 296L{x} 268L{x + 22} 296", sw=6) for x in (-250, -180)
+    ) + lines([(-285, 392, -145, 392)], sw=6)
+    return "".join([
+        rect(-540, 90, 540, 430, ORANGE),
         poly([(-540, 90), (540, 90), (520, 205), (-520, 205)], ORANGE_L),  # solapa delantera
         arrows,
-        sheet,
     ])
+
+
+def carton_sheet():
+    """La hoja pegada al frente. En blanco a propósito: la ficha de verdad se funde encima al aterrizar."""
+    x0, y0 = SHEET["cx"] - SHEET["w"] / 2, SHEET["cy"] - SHEET["h"] / 2
+    return rect(x0, y0, x0 + SHEET["w"], y0 + SHEET["h"], WHITE, INK, 2)
 
 
 # ───────────────────────── 4 · la sala ─────────────────────────
@@ -175,6 +198,33 @@ def side_wall_works():
     return "".join(out)
 
 
+def studio():
+    """Lo que hay en el suelo: tablero de dibujo y taburete, rollos de planos, cajas de muestras y
+    catálogos sobre la mesa. Nada entra en el cuadrado central, que es de la luminaria."""
+    board = "".join([
+        lines([(-322, 228, -330, 304), (-200, 228, -192, 304), (-326, 270, -196, 270),
+               (-300, 180, -300, 228), (-222, 180, -222, 228)]),
+        poly([(-336, 232), (-186, 232), (-172, 172), (-322, 172)], WHITE),
+        poly([(-312, 222), (-232, 222), (-222, 182), (-302, 182)], NIGHT, INK, 1.5),
+        lines([(-300, 212, -246, 212), (-296, 196, -262, 196), (-262, 196, -262, 212)], PAPER, 1.5),
+        lines([(-214, 224, -196, 180)], RUST, 4),  # regla
+    ])
+    stool = lines([(-158, 262, -166, 310), (-126, 262, -118, 310), (-162, 290, -122, 290)]) + \
+        f'<ellipse cx="-142" cy="260" rx="22" ry="7" fill="{RUST}" stroke="{INK}" stroke-width="3"/>'
+    rolls = "".join(
+        poly([(x, 150), (x + 9, 150), (x + 9 + lean, top), (x + lean, top)], c, INK, 1.5)
+        for x, top, lean, c in [(113, 108, -4, WHITE), (122, 116, 2, ORANGE_L), (130, 104, 5, WHITE)]
+    ) + rect(110, 142, 142, 170, SHADE)
+    cartons = "".join([
+        rect(272, 214, 344, 270, ORANGE), lines([(272, 230, 344, 230), (308, 214, 308, 230)], sw=1.5),
+        rect(288, 172, 338, 214, ORANGE_L), lines([(288, 186, 338, 186), (313, 172, 313, 186)], sw=1.5),
+        rect(352, 236, 400, 276, ORANGE_L), lines([(352, 248, 400, 248)], sw=1.5),
+    ])
+    catalogs = rect(28, 107, 74, 112, RUST, INK, 1.2) + rect(32, 103, 72, 107, INK, INK, 1.2) + \
+        rect(30, 100.5, 68, 103, ORANGE, INK, 1)
+    return rolls + cartons + board + stool + catalogs
+
+
 def room(center):
     k = 392.31  # donde las aristas cortan el borde: 600 · 170 / 260
     ceiling_grid = lines(
@@ -206,14 +256,14 @@ def room(center):
         ceiling_grid, floor_grid,
         lines([(-260, -170, -600, -k), (260, -170, 600, -k), (-260, 170, -600, k), (260, 170, 600, k)]),
         rect(-260, -170, 260, 170),
-        side_window, works, door, desk, hangers,
+        side_window, works, door, desk, studio(), hangers,
         nest(center, NEST["luminaire"]),
     ])
 
 
 # ───────────────────────── 3 · la ventana ─────────────────────────
 
-def window(center):
+def window(center, blinds=True):
     """Marco con un paño central grande; `center` es lo que se ve por él (ocupa -300..300)."""
     cols = [(-570, -320), (-300, 300), (320, 570)]
     out = [rect(-600, -600, 600, 600, WHITE, None)]
@@ -222,7 +272,7 @@ def window(center):
             if i == 1 and j == 1:
                 continue
             out.append(rect(x0, y0, x1, y1, NIGHT, None))
-            if j == 0:  # persiana a medio bajar en la fila de arriba
+            if j == 0 and blinds:  # persiana a medio bajar en la fila de arriba
                 out.append(lines([(x0, y, x1, y) for y in range(y0 + 22, y1 - 60, 26)], PAPER, 9))
             else:
                 w = x1 - x0
@@ -243,6 +293,10 @@ def pane(fill):
 # ───────────────────────── 2 · la fachada ─────────────────────────
 
 def lit(r, c):
+    """Ventanas con la luz dada. Las vecinas de la ventana de destino quedan apagadas para que
+    esa, la única con la persiana subida, se distinga desde lejos."""
+    if max(abs(r), abs(c)) <= 1:
+        return False
     return (r * 7 + c * 13 + 3) % 6 == 0
 
 
@@ -273,49 +327,125 @@ def facade(center, rows, cols):
 
 # ───────────────────────── 1 · la ciudad ─────────────────────────
 
-def block(x, w, top, base=220, rows=True, d=14):
-    """Un edificio: frente de papel, costado en sombra, hileras de ventanas."""
+def block(x, w, top, base=220, d=14, seed=0):
+    """Un edificio cercano: cornisa, ventanas con marco y parteluz, bajo comercial, costado en sombra.
+    Las líneas son finas a propósito: la cámara lo amplía seis veces al pasar a su lado."""
+    fine = 1.2
     out = [
-        poly([(x + w, top), (x + w + d, top - d * 0.7), (x + w + d, base), (x + w, base)], SHADE),
-        poly([(x, top), (x + d, top - d * 0.7), (x + w + d, top - d * 0.7), (x + w, top)], WHITE),
-        rect(x, top, x + w, base, PAPER),
+        poly([(x + w, top), (x + w + d, top - d * 0.7), (x + w + d, base), (x + w, base)], SHADE, INK, fine),
+        poly([(x, top), (x + d, top - d * 0.7), (x + w + d, top - d * 0.7), (x + w, top)], WHITE, INK, fine),
+        rect(x, top, x + w, base, PAPER, INK, fine),
+        rect(x - 2, top, x + w + 2, top + 5, WHITE, INK, fine),  # cornisa
     ]
-    if rows:
-        ys = range(int(top) + 22, int(base) - 14, 26)
-        out.append(lines([(x + 10, y, x + w - 10, y) for y in ys], INK, 7, ' stroke-dasharray="9 7"'))
+    # costado: una línea por planta
+    floors = list(range(int(top) + 14, int(base) - 30, 20))
+    out.append(lines([(x + w, y + 14, x + w + d, y + 14 - d * 0.7) for y in floors], INK, 0.6))
+    # ventanas
+    cols = max(3, int((w - 12) // 15))
+    pitch = (w - 12) / cols
+    dark, litp, mull = [], [], []
+    for r, y in enumerate(floors):
+        for c in range(cols):
+            wx = x + 6 + c * pitch + (pitch - 9) / 2
+            box = f"M{n(wx)} {n(y)}h9v12h-9z"
+            (litp if (r * 5 + c * 3 + seed) % 7 == 0 else dark).append(box)
+            mull.append((wx + 4.5, y, wx + 4.5, y + 12))
+            mull.append((wx - 1, y + 13, wx + 10, y + 13))  # alféizar
+    out.append(f'<path d="{"".join(dark)}" fill="{NIGHT}" stroke="{INK}" stroke-width="0.6"/>')
+    if litp:
+        out.append(f'<path d="{"".join(litp)}" fill="{ORANGE}" stroke="{INK}" stroke-width="0.6"/>')
+    out.append(lines(mull, PAPER, 0.7))
+    # bajo comercial: escaparates, puerta y toldo
+    gy = base - 24
+    out.append(lines([(x, gy - 3, x + w, gy - 3)], INK, fine))
+    out.append(rect(x + 6, gy + 3, x + w / 2 - 7, base - 3, NIGHT, INK, 0.6))
+    out.append(rect(x + w / 2 + 7, gy + 3, x + w - 6, base - 3, NIGHT, INK, 0.6))
+    out.append(rect(x + w / 2 - 5, gy + 5, x + w / 2 + 5, base, RUST, INK, 0.6))
+    out.append(poly([(x + 4, gy), (x + w / 2 - 5, gy), (x + w / 2 - 8, gy + 5), (x + 2, gy + 5)], ORANGE, INK, 0.6))
+    # azotea: caseta o depósito
+    if seed % 2:
+        out.append(rect(x + w * 0.55, top - 12, x + w * 0.8, top, SHADE, INK, fine))
+    else:
+        tx = x + w * 0.3
+        out.append(lines([(tx - 5, top, tx - 5, top - 6), (tx + 5, top, tx + 5, top - 6)], INK, fine))
+        out.append(rect(tx - 8, top - 18, tx + 8, top - 6, ORANGE_L, INK, fine))
     return "".join(out)
+
+
+def far_block(x, w, top, seed=0):
+    """Un edificio lejano: silueta en bruma con sus hileras de ventanas apenas marcadas."""
+    out = [rect(x, top, x + w, 222, HAZE, None)]
+    cols = max(3, int(w // 13))
+    pitch = w / cols
+    wins = "".join(
+        f"M{n(x + c * pitch + pitch / 2 - 2.5)} {y}h5v7h-5z"
+        for y in range(int(top) + 10, 214, 15) for c in range(cols) if (c + y + seed) % 5
+    )
+    out.append(f'<path d="{wins}" fill="{INK}" stroke="none" opacity="0.55"/>')
+    out.append(lines([(x, top, x + w, top), (x + w, top, x + w, 222)], INK, 0.8))
+    return "".join(out)
+
+
+def sky():
+    """Cielo de grabado: rayas horizontales que se aprietan hacia el horizonte, nubes hechas de
+    barras y el sol con su aro."""
+    ys, y, gap = [], 214.0, 5.0
+    while y > -600:
+        ys.append(y)
+        y -= gap
+        gap = min(gap * 1.09, 30)
+    hatch = lines([(-600, v, 600, v) for v in ys], HAZE, 1, ' opacity="0.55"')
+
+    def cloud(cx, cy, k=1.0):
+        bars = [(-70, 0, 150), (-110, 13, 230), (-40, 26, 120), (-20, -13, 90)]
+        return "".join(
+            f'<rect x="{n(cx + dx * k)}" y="{n(cy + dy * k)}" width="{n(w * k)}" height="{n(9 * k)}" '
+            f'rx="{n(4.5 * k)}" fill="{PAPER}" stroke="none"/>' for dx, dy, w in bars
+        )
+
+    sun = (
+        f'<circle cx="205" cy="-235" r="58" fill="none" stroke="{ORANGE}" stroke-width="1.5"/>'
+        f'<circle cx="205" cy="-235" r="44" fill="{ORANGE}"/>'
+    )
+    return hatch + sun + cloud(-360, -265) + cloud(430, -300, 0.8) + cloud(-120, -330, 0.6)
 
 
 def city(center):
     far = "".join(
-        rect(x, top, x + w, 222, HAZE, None)
-        for x, w, top in [(-600, 90, -60), (-505, 70, -150), (-430, 100, -30), (-325, 80, -110), (-240, 70, -190),
-                          (-165, 60, -70), (105, 75, -160), (185, 90, -50), (280, 70, -130), (355, 95, -210),
-                          (455, 70, -80), (530, 80, -140)]
+        far_block(x, w, top, k)
+        for k, (x, w, top) in enumerate([
+            (-600, 96, -60), (-505, 76, -150), (-430, 106, -30), (-325, 86, -110), (-240, 76, -190),
+            (-165, 70, -70), (100, 86, -160), (185, 96, -50), (280, 76, -130), (355, 101, -210),
+            (455, 76, -80), (530, 80, -140)])
     )
-    near = "".join(block(x, w, top) for x, w, top in [
+    near = "".join(block(x, w, top, seed=k) for k, (x, w, top) in enumerate([
         (-590, 100, 40), (-470, 110, -40), (-345, 90, 80), (-245, 96, 0),
         (140, 92, 20), (250, 104, 90), (366, 96, -50), (476, 110, 50),
-    ])
+    ]))
     tower = "".join([
-        poly([(100, -300), (126, -318), (126, 220), (100, 220)], SHADE),
-        rect(-70, -330, 70, -300, PAPER), rect(-40, -354, 40, -330, PAPER),
-        lines([(0, -354, 0, -430)], sw=4),
+        poly([(100, -300), (126, -318), (126, 220), (100, 220)], SHADE, INK, 1.2),
+        lines([(100, y, 126, y - 18) for y in range(-260, 220, 40)], INK, 0.6),  # una línea por planta
+        rect(-70, -330, 70, -300, PAPER, INK, 1.2), rect(-40, -354, 40, -330, PAPER, INK, 1.2),
+        lines([(-70, -322, 70, -322), (-40, -346, 40, -346)], INK, 0.6),
+        lines([(0, -354, 0, -430)], sw=2),
         f'<g transform="scale({1 / 6:.6f})">{facade(center, list(range(-7, 6)), list(range(-2, 3)))}</g>',
-        rect(-100, -300, 100, 220),
+        rect(-100, -300, 100, 220, sw=1.2),
     ])
     trees = "".join(
-        f'<path d="M{x} {y}v-16" stroke="{INK}" stroke-width="3"/><circle cx="{x}" cy="{y - 26}" r="13" fill="{NIGHT}"/>'
+        f'<path d="M{x} {y}v-16" stroke="{INK}" stroke-width="2"/><circle cx="{x}" cy="{y - 26}" r="13" fill="{NIGHT}"/>'
+        f'<circle cx="{x - 4}" cy="{y - 30}" r="5" fill="{INK}"/>'
         for x, y in [(-190, 262), (-255, 318), (190, 262), (255, 318), (-330, 388), (330, 388)]
     )
     return "".join([
         rect(-600, -600, 600, 600, INK, None),
-        f'<circle cx="205" cy="-235" r="44" fill="{ORANGE}"/>',
+        sky(),
         far,
         rect(-600, 220, 600, 600, SHADE, None),
-        poly([(-130, 220), (130, 220), (330, 600), (-330, 600)], PAPER),
+        poly([(-130, 220), (130, 220), (330, 600), (-330, 600)], PAPER, INK, 1.2),
         lines([(0, 250, 0, 290), (0, 330, 0, 390), (0, 450, 0, 540)], sw=4),
-        lines([(-600, 220, 600, 220)]),
+        lines([(-600, 220, 600, 220)], sw=1.2),
+        # acera y bordillo a los lados de la avenida
+        lines([(-150, 220, -372, 600), (150, 220, 372, 600)], sw=1.2),
         near, tower, trees,
     ])
 
@@ -324,11 +454,12 @@ def main():
     OUT.mkdir(parents=True, exist_ok=True)
     p5 = luminaire()
     p4 = room(p5)
-    p3 = window(nest(p4, NEST["room"]))
+    p3 = window(nest(p4, NEST["room"]), blinds=False)
     p2_center = nest(p3, NEST["window"])
     p2 = facade(p2_center, [-2, -1, 0, 1, 2], [-2, -1, 0, 1, 2])
     p1 = city(p2_center)
-    plates = {"1-ciudad": p1, "2-edificio": p2, "3-ventana": p3, "4-sala": p4, "5-luminaria": p5, "6-caja": carton()}
+    plates = {"1-ciudad": p1, "2-edificio": p2, "3-ventana": p3, "4-sala": p4, "5-luminaria": p5,
+              "6-caja": carton_back(), "7-caja-frente": carton_front(), "8-hoja": carton_sheet()}
     for name, content in plates.items():
         f = OUT / f"{name}.svg"
         f.write_text(wrap(content))
