@@ -52,6 +52,10 @@ const PAPER = { w: 170, h: 130, cx: 120, cy: 315, bleed: 1.06 };
 // los planos dibujados uno dentro de otro, el siguiente siempre está en el centro.
 const FOCUS: [number, number][] = [];
 
+// La luminaria y la caja son muy alargadas: ocupan este ancho del plano (de 1200). En pantallas
+// verticales la cámara se queda un poco más lejos para que quepan enteras.
+const WIDE_CONTENT = 1120;
+
 const PLATES = ["1-ciudad", "2-edificio", "3-ventana", "4-sala", "5-luminaria"];
 
 /* ============================ MOTOR ============================ */
@@ -93,23 +97,29 @@ function startZoom(root: HTMLElement): () => void {
   // La cámara: una sola curva de log-zoom en el tiempo (cúbica monótona). Pasa exactamente por cada
   // junta, no retrocede y su velocidad es continua; extremos y tramos planos, a velocidad 0.
   const KX = [0];
-  const KY = [0];
-  SEG.forEach((s) => {
-    KX.push(s.start + s.dur);
-    KY.push(KY[KY.length - 1] + (s.type === "zoom" ? Math.log(s.zoom ?? 1) : 0));
-  });
+  SEG.forEach((s) => KX.push(s.start + s.dur));
+  const KY = new Array<number>(KX.length).fill(0);
   const KD = new Array<number>(KX.length).fill(0);
-  for (let k = 1; k < KX.length - 1; k++) {
-    const h0 = KX[k] - KX[k - 1];
-    const h1 = KX[k + 1] - KX[k];
-    const s0 = (KY[k] - KY[k - 1]) / h0;
-    const s1 = (KY[k + 1] - KY[k]) / h1;
-    if (s0 * s1 > 0) {
-      const w1 = 2 * h1 + h0;
-      const w2 = h1 + 2 * h0;
-      KD[k] = (w1 + w2) / (w1 / s0 + w2 / s1);
+  let K = 1; // escala a la que se detiene el último plano: 1, o menos si la pantalla es vertical
+  const lastZoom = zoomSegs[zoomSegs.length - 1];
+  const buildCam = () => {
+    SEG.forEach((s, k) => {
+      const z = s.type === "zoom" ? (s.zoom ?? 1) * (s === lastZoom ? K : 1) : 1;
+      KY[k + 1] = KY[k] + Math.log(z);
+    });
+    KD.fill(0);
+    for (let k = 1; k < KX.length - 1; k++) {
+      const h0 = KX[k] - KX[k - 1];
+      const h1 = KX[k + 1] - KX[k];
+      const s0 = (KY[k] - KY[k - 1]) / h0;
+      const s1 = (KY[k + 1] - KY[k]) / h1;
+      if (s0 * s1 > 0) {
+        const w1 = 2 * h1 + h0;
+        const w2 = h1 + 2 * h0;
+        KD[k] = (w1 + w2) / (w1 / s0 + w2 / s1);
+      }
     }
-  }
+  };
   const camL = (now: number) => {
     let k = 0;
     while (k < KX.length - 2 && now > KX[k + 1]) k++;
@@ -163,7 +173,9 @@ function startZoom(root: HTMLElement): () => void {
     const H = probe.clientHeight;
     const S = Math.max(W, H);
     U = S / VIEWBOX;
-    Z = PAPER.bleed * Math.max(W / (PAPER.w * U), H / (PAPER.h * U));
+    K = Math.min(1, (W / S) * (VIEWBOX / WIDE_CONTENT));
+    buildCam();
+    Z = PAPER.bleed * Math.max(W / (PAPER.w * U * K), H / (PAPER.h * U * K));
     stage.style.setProperty("--uz-s", `${S}px`);
     if (mode !== "auto") {
       runway.style.height = `${(mode === "scroll" ? SCROLL_SCREENS : GESTURE_SCREENS) * 100}vh`;
@@ -182,8 +194,8 @@ function startZoom(root: HTMLElement): () => void {
     const e = segT(landSeg, now);
     const landS = Math.pow(Z, e);
     // La hoja viaja en línea recta desde su sitio hasta el centro mientras la cámara se acerca.
-    const px = PAPER.cx * U;
-    const py = PAPER.cy * U;
+    const px = PAPER.cx * U * K;
+    const py = PAPER.cy * U * K;
     const panX = px * (1 - e - landS);
     const panY = py * (1 - e - landS);
     const lastI = planes.length - 1;
@@ -192,7 +204,9 @@ function startZoom(root: HTMLElement): () => void {
       const p = planes[j];
       // visible desde que el anterior empieza a crecer hasta que el siguiente llena el cuadro;
       // el último queda tapado por la caja cuando esta ya se ha fundido del todo
-      const on = (j === 0 || L > offs[j - 1]) && (j === lastI ? r < 1 : L < offs[j + 1]);
+      // (en vertical el penúltimo sigue alrededor del último, que no llega a llenar el cuadro, y se
+      // va con él en el relevo)
+      const on = (j === 0 || L > offs[j - 1]) && (j >= lastI - 1 ? r < 1 : true) && (j === lastI || L < offs[j + 1]);
       put(p, "d", on ? "block" : "none");
       if (!on) continue;
       const s = Math.exp(L - offs[j]);
@@ -208,13 +222,14 @@ function startZoom(root: HTMLElement): () => void {
         const k = (1 - smooth(clamp((L - offs[j]) / (offs[j + 1] - offs[j]))) - s) * U;
         setT(p, s, fx * k, fy * k);
       }
-      put(p, "o", j ? clamp((L - offs[j - 1]) / (offs[j] - offs[j - 1]) / FADE_IN).toFixed(3) : "1");
+      const fadeIn = j ? clamp((L - offs[j - 1]) / (offs[j] - offs[j - 1]) / FADE_IN) : 1;
+      put(p, "o", (j === lastI - 1 ? fadeIn * (1 - r) : fadeIn).toFixed(3));
     }
 
     // Relevo 5 → 6: nada cambia de escala; un dibujo se funde en el otro.
     put(p6, "d", r > 0 ? "block" : "none");
     if (r > 0) {
-      setT(p6, landS, panX, panY);
+      setT(p6, K * landS, panX, panY);
       put(p6, "o", r.toFixed(3));
     }
 
