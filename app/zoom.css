@@ -19,6 +19,8 @@
 .uz .uz-runway,
 .uz .uz-probe,
 .uz .uz-hint,
+.uz .uz-hud,
+.uz .uz-intro,
 .uz .uz-skip { display: none; }
 
 .uz-stage { background: var(--u-paper); }
@@ -81,6 +83,47 @@
 }
 .uz.is-live.is-auto .uz-hint { display: none; }
 
+/* Etiqueta de lámina y escala: arriba a la izquierda, bajo la cabecera fija. */
+.uz.is-live .uz-hud {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  position: absolute;
+  left: 14px; top: 62px;
+  z-index: 3;
+  margin: 0;
+  padding: 8px 12px;
+  background: var(--u-paper);
+  color: var(--u-ink);
+  border: 2px solid var(--u-ink);
+  font-size: 10px; font-weight: 700;
+  letter-spacing: 0.2em; text-transform: uppercase;
+  white-space: nowrap;
+  pointer-events: none;
+}
+.uz-hud-scale {
+  padding-left: 12px;
+  border-left: 2px solid var(--u-ink);
+  min-width: 6.5ch;
+  font-variant-numeric: tabular-nums;
+}
+/* Título de entrada: se va con el primer gesto de scroll. */
+.uz.is-live .uz-intro {
+  display: block;
+  position: absolute;
+  left: 14px; top: 112px;
+  z-index: 3;
+  margin: 0;
+  max-width: 13ch;
+  padding: 14px 18px 16px;
+  background: var(--u-ink);
+  color: var(--u-white);
+  box-shadow: 6px 6px 0 var(--uz-orange);
+  font-size: clamp(24px, 3.6vw, 46px); font-weight: 800;
+  line-height: 1.02; letter-spacing: -0.01em; text-transform: uppercase;
+  pointer-events: none;
+}
+
 /* Saltar la animación: visible desde el principio. Va abajo a la derecha porque arriba está la cabecera fija. */
 .uz.is-live .uz-skip {
   display: inline-flex;
@@ -105,6 +148,8 @@
 .uz.is-live .uz-stage.is-landed { height: auto; min-height: 100vh; min-height: 100svh; overflow: visible; }
 .uz.is-live .uz-stage.is-landed .uz-art,
 .uz.is-live .uz-stage.is-landed .uz-hint,
+.uz.is-live .uz-stage.is-landed .uz-hud,
+.uz.is-live .uz-stage.is-landed .uz-intro,
 .uz.is-live .uz-stage.is-landed .uz-skip { display: none; }
 .uz.is-live .uz-stage.is-landed .uz-doc {
   height: auto;

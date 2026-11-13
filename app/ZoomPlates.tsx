@@ -56,6 +56,20 @@ const FOCUS: [number, number][] = [];
 // verticales la cámara se queda un poco más lejos para que quepan enteras.
 const WIDE_CONTENT = 1120;
 
+// Escala del dibujo en la primera lámina. Con los acercamientos de 6 · 6 · 2 · 6 deja el alzado de
+// la luminaria en 1:10, que es lo que dice su cajetín.
+const SCALE_AT_START = 4320;
+
+const HUD_NAMES: Array<{ en: string; es: string }> = [
+  { en: "Plate 1 · City", es: "Lámina 1 · Ciudad" },
+  { en: "Plate 2 · Facade", es: "Lámina 2 · Fachada" },
+  { en: "Plate 3 · Window", es: "Lámina 3 · Ventana" },
+  { en: "Plate 4 · Studio", es: "Lámina 4 · Estudio" },
+  { en: "Plate 5 · Luminaire", es: "Lámina 5 · Luminaria" },
+  { en: "Plate 6 · Carton", es: "Lámina 6 · Caja" },
+  { en: "Plate 7 · Spec sheet", es: "Lámina 7 · Ficha" },
+];
+
 const PLATES = ["1-ciudad", "2-edificio", "3-ventana", "4-sala", "5-luminaria"];
 
 /* ============================ MOTOR ============================ */
@@ -139,8 +153,18 @@ function startZoom(root: HTMLElement): () => void {
   const p6 = art.querySelector<HTMLElement>("[data-relay-in]");
   const p6front = art.querySelector<HTMLElement>("[data-relay-front]");
   const p6sheet = art.querySelector<HTMLElement>("[data-relay-sheet]");
-  if (!p6 || !p6front || !p6sheet || planes.length !== zoomSegs.length + 1) return () => {};
-  const touched: HTMLElement[] = [...planes, p6, p6front, p6sheet, doc, ...(hint ? [hint] : [])];
+  const p6ink = art.querySelector<HTMLElement>("[data-relay-ink]");
+  const light = art.querySelector<HTMLElement>("[data-light]");
+  const intro = q(".uz-intro");
+  const hud = q(".uz-hud");
+  const hudNames = hud ? Array.from(hud.querySelectorAll<HTMLElement>("[data-name]")) : [];
+  const hudScale = hud?.querySelector<HTMLElement>(".uz-hud-scale") ?? null;
+  if (!p6 || !p6front || !p6sheet || !p6ink || !light || planes.length !== zoomSegs.length + 1) return () => {};
+  const touched: HTMLElement[] = [
+    ...planes, p6, p6front, p6sheet, p6ink, light, doc,
+    ...(hint ? [hint] : []), ...(intro ? [intro] : []), ...(hud ? [hud] : []), ...hudNames,
+  ];
+  let shownScale = "";
 
   // Las imágenes no se piden hasta que la sección se acerca: la portada no las paga antes.
   const images = Array.from(art.querySelectorAll<HTMLImageElement>("img[data-src]"));
@@ -214,7 +238,10 @@ function startZoom(root: HTMLElement): () => void {
       put(p, "d", on ? "block" : "none");
       if (!on) continue;
       const s = Math.exp(L - offs[j]);
-      if (j === lastI) setT(p, s * landS, panX, panY);
+      if (j === lastI) {
+        setT(p, s * landS, panX, panY);
+        setT(light, s * landS, panX, panY);
+      }
       else if (L < offs[j]) {
         // entrando: sentado en el punto de mira del plano anterior, que va camino del centro
         const [fx, fy] = FOCUS[j - 1] ?? [0, 0];
@@ -231,6 +258,12 @@ function startZoom(root: HTMLElement): () => void {
     }
 
     // Relevo 5 → 6: nada cambia de escala; un dibujo se funde en el otro.
+    // La luminaria se enciende cuando la cámara ya va hacia ella, y se apaga al entrar en la caja.
+    const toLast = clamp((L - offs[lastI - 1]) / (offs[lastI] + Math.log(K) - offs[lastI - 1]));
+    const lit = clamp((toLast - 0.35) / 0.3);
+    put(light, "d", lit > 0 && r < 1 ? "block" : "none");
+    put(light, "o", lit.toFixed(3));
+
     // en tres tiempos. El alzado se funde en el interior de la caja (la pieza no se mueve), el
     // frente sube por delante y, al final, la hoja se posa sobre él.
     const rBack = smooth(clamp(r / 0.35));
@@ -252,11 +285,36 @@ function startZoom(root: HTMLElement): () => void {
       put(p6sheet, "o", rSheet.toFixed(3));
     }
 
+    // La maqueta dibujada en la hoja llega con ella y se borra al acercarse, antes de la ficha real.
+    const ink = rSheet * (1 - clamp(e / 0.3));
+    put(p6ink, "d", ink > 0 ? "block" : "none");
+    if (ink > 0) {
+      setT(p6ink, K * landS, panX, panY - (1 - rSheet) * 28);
+      put(p6ink, "o", ink.toFixed(3));
+    }
+
     // Aterrizaje 6 → 7: la ficha va pegada a la hoja (misma escala relativa, mismo centro).
     setT(doc, Math.pow(Z, e - 1), px * (1 - e), py * (1 - e));
     put(doc, "o", clamp((e - 0.2) / 0.45).toFixed(3));
 
     if (hint) put(hint, "o", (1 - clamp(x * 40)).toFixed(3));
+    if (intro) put(intro, "o", (1 - clamp((x - 0.01) * 30)).toFixed(3));
+
+    // Etiqueta: qué lámina se está viendo y a qué escala. La escala es la del dibujo en pantalla,
+    // contada hacia atrás desde la ciudad hasta el 1:1 de la ficha.
+    if (hud) {
+      let idx = 0;
+      for (let j = 1; j <= lastI; j++) if (L >= (offs[j - 1] + offs[j]) / 2) idx = j;
+      if (r > 0.5) idx = lastI + 1;
+      if (e > 0.5) idx = lastI + 2;
+      hudNames.forEach((el, k) => put(el, "d", k === idx ? "inline" : "none"));
+      const drawn = SCALE_AT_START / Math.exp(L);
+      const d = Math.pow(drawn, 1 - e);
+      const step = d >= 1000 ? 100 : d >= 100 ? 10 : d >= 20 ? 5 : 1;
+      const text = `1:${Math.max(1, Math.round(d / step) * step)}`;
+      if (hudScale && text !== shownScale) hudScale.textContent = shownScale = text;
+      put(hud, "o", (1 - clamp((e - 0.7) / 0.2)).toFixed(3));
+    }
 
     const isLanded = x >= 1;
     if (isLanded !== landed) {
@@ -498,11 +556,15 @@ export default function ZoomPlates() {
             <img key={name} data-plane={i + 1} data-src={`/zoom/${name}.svg`} alt="" aria-hidden="true" />
           ))}
           {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img data-light="" data-src="/zoom/5-luz.svg" alt="" aria-hidden="true" />
+          {/* eslint-disable-next-line @next/next/no-img-element */}
           <img data-relay-in="" data-src="/zoom/6-caja.svg" alt="" aria-hidden="true" />
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img data-relay-front="" data-src="/zoom/7-caja-frente.svg" alt="" aria-hidden="true" />
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img data-relay-sheet="" data-src="/zoom/8-hoja.svg" alt="" aria-hidden="true" />
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img data-relay-ink="" data-src="/zoom/9-hoja-tinta.svg" alt="" aria-hidden="true" />
         </div>
 
         {/* Plano 7: la ficha. Texto vivo, en el DOM desde el principio. */}
@@ -605,12 +667,25 @@ export default function ZoomPlates() {
               <p className="uz-closing">
                 <T en="The real world, set down as documentation." es="El mundo real, puesto en un documento." />
               </p>
-              <a className="uz-btn" href="#work">
-                <T en="See the work" es="Ver el trabajo" />
+              <a className="uz-btn" href="/saratoga">
+                <T en="See a real submittal" es="Ver un submittal real" />
               </a>
             </div>
           </div>
         </article>
+
+        {/* Etiqueta y título de entrada: decorativos, como los planos. */}
+        <p className="uz-hud" aria-hidden="true">
+          {HUD_NAMES.map((nm, i) => (
+            <span key={nm.en} data-name="" style={i ? { display: "none" } : undefined}>
+              <T en={nm.en} es={nm.es} />
+            </span>
+          ))}
+          <span className="uz-hud-scale">1:4300</span>
+        </p>
+        <p className="uz-intro" aria-hidden="true">
+          <T en="From the city to the spec sheet." es="De la ciudad a la ficha." />
+        </p>
 
         <p className="uz-hint" aria-hidden="true">
           <T en="Scroll" es="Desplaza" />

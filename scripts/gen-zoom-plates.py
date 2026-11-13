@@ -73,8 +73,15 @@ def luminaire_body():
         rect(-450, -45, -424, 25, SHADE),
         rect(424, -45, 450, 25, SHADE),
         lines([(-424, -10, 424, -10)], sw=1.5),
-        rect(-440, 25, 440, 40, ORANGE),  # difusor encendido
+        rect(-440, 25, 440, 40, SHADE),  # difusor apagado; la luz va en su propia capa
     ])
+
+
+def luminaire_light():
+    """La luz, sin fondo: el difusor encendido y el haz. Se superpone al alzado cuando la cámara
+    se acerca. El haz es translúcido para que las cotas y el eje se sigan leyendo debajo."""
+    return rect(-440, 25, 440, 40, ORANGE) + \
+        f'<polygon points="-440,40 440,40 530,208 -530,208" fill="{ORANGE}" opacity="0.2"/>'
 
 
 def label(x, y, text, size=17, fill=INK, anchor="middle", spacing=3):
@@ -89,7 +96,6 @@ def luminaire():
         rect(x - 3, -600, x + 3, -64, INK, None) + rect(x - 9, -84, x + 9, -45, RUST, INK, 2)
         for x in (-300, 300)
     )
-    beam = poly([(-440, 40), (440, 40), (530, 208), (-530, 208)], "#F7E7C6", None)
     axis = lines([(0, -150, 0, 222)], sw=1.5, extra=' stroke-dasharray="26 8 4 8"')
     dims = lines([
         (-450, 60, -450, 254), (450, 60, 450, 254), (-450, 238, 450, 238),
@@ -104,7 +110,7 @@ def luminaire():
     # El cajetín queda por encima de y = 300: en una pantalla apaisada se ve hasta ahí.
     block = rect(-450, 262, 450, 298, "none", INK, 2) + lines([(-150, 262, -150, 298), (150, 262, 150, 298)], INK, 2) + \
         label(-300, 286, "PLATE 01", 15) + label(0, 286, "ELEVATION", 15) + label(300, 286, "SCALE 1:10", 15)
-    return rect(-600, -600, 600, 600, PAPER, None) + beam + axis + marks + cables + luminaire_body() + dims + figures + block
+    return rect(-600, -600, 600, 600, PAPER, None) + axis + marks + cables + luminaire_body() + dims + figures + block
 
 
 # ───────────────────────── 6 · la caja (relevo; mismo sitio que el alzado) ─────────────────────────
@@ -141,6 +147,33 @@ def carton_sheet():
     """La hoja pegada al frente. En blanco a propósito: la ficha de verdad se funde encima al aterrizar."""
     x0, y0 = SHEET["cx"] - SHEET["w"] / 2, SHEET["cy"] - SHEET["h"] / 2
     return rect(x0, y0, x0 + SHEET["w"], y0 + SHEET["h"], WHITE, INK, 2)
+
+
+def carton_sheet_ink():
+    """La maqueta de la ficha, en pequeño, sobre la hoja: cabecera, lámina azul, cifras clave, tabla
+    y pie. Se desvanece al acercarse la cámara, justo antes de que aparezca la ficha de verdad."""
+    x0, y0 = SHEET["cx"] - SHEET["w"] / 2, SHEET["cy"] - SHEET["h"] / 2
+    x1, y1 = x0 + SHEET["w"], y0 + SHEET["h"]
+    rows = [(x0 + 10, y0 + 70 + i * 8, x0 + 80, y0 + 70 + i * 8) for i in range(4)] + \
+           [(x0 + 90, y0 + 70 + i * 8, x1 - 10, y0 + 70 + i * 8) for i in range(4)]
+    return "".join([
+        rect(x0 + 10, y0 + 10, x0 + 78, y0 + 12, INK, None),
+        rect(x0 + 10, y0 + 18, x0 + 66, y0 + 25, INK, None),
+        lines([(x0 + 10, y0 + 31, x0 + 72, y0 + 31)], sw=1.2),
+        rect(x0 + 10, y0 + 40, x0 + 30, y0 + 56, ORANGE, INK, 1.2),
+        rect(x0 + 34, y0 + 40, x0 + 54, y0 + 56, "none", INK, 1.2),
+        rect(x0 + 58, y0 + 40, x0 + 78, y0 + 56, "none", INK, 1.2),
+        rect(x0 + 91, y0 + 13, x1 - 7, y0 + 59, ORANGE, None),
+        rect(x0 + 88, y0 + 10, x1 - 10, y0 + 56, NIGHT, None),
+        lines([(x0 + 96, y0 + 34, x0 + 132, y0 + 34), (x0 + 100, y0 + 22, x0 + 100, y0 + 34),
+               (x0 + 128, y0 + 22, x0 + 128, y0 + 34)], PAPER, 1.2),
+        rect(x0 + 97, y0 + 34, x0 + 131, y0 + 37, ORANGE, None),
+        lines(rows, sw=1, extra=' stroke-dasharray="1.5 1.5"'),
+        lines([(x0 + 10, y1 - 26, x1 - 10, y1 - 26)], sw=1.5),
+        rect(x0 + 10, y1 - 18, x0 + 96, y1 - 14, INK, None),
+        rect(x1 - 42, y1 - 19, x1 - 8, y1 - 9, ORANGE, None),
+        rect(x1 - 44, y1 - 21, x1 - 10, y1 - 11, INK, None),
+    ])
 
 
 # ───────────────────────── 4 · la sala ─────────────────────────
@@ -459,7 +492,8 @@ def main():
     p2 = facade(p2_center, [-2, -1, 0, 1, 2], [-2, -1, 0, 1, 2])
     p1 = city(p2_center)
     plates = {"1-ciudad": p1, "2-edificio": p2, "3-ventana": p3, "4-sala": p4, "5-luminaria": p5,
-              "6-caja": carton_back(), "7-caja-frente": carton_front(), "8-hoja": carton_sheet()}
+              "5-luz": luminaire_light(), "6-caja": carton_back(), "7-caja-frente": carton_front(),
+              "8-hoja": carton_sheet(), "9-hoja-tinta": carton_sheet_ink()}
     for name, content in plates.items():
         f = OUT / f"{name}.svg"
         f.write_text(wrap(content))
