@@ -32,7 +32,10 @@ const SEGMENTS: Segment[] = [
   { type: "land", dur: 2400 }, //             6→7 aterrizaje en la ficha
 ];
 
-const SCROLL_SCREENS = 4; //    modo scroll: pantallas de recorrido que dura el zoom entero
+const SCROLL_SCREENS = 4; //    modo scroll: pantallas de recorrido en total, con la sección pegada
+// De ese recorrido, la última parte es reposo: el zoom ya terminó y la ficha sigue pegada. Le da al
+// suavizado sitio para asentarse antes de que la sección se suelte, aunque el scroll vaya rápido.
+const SCROLL_END_HOLD = 0.6; // en pantallas
 const GESTURE_SCREENS = 1.5; // modo gesture: pantallas que la sección queda pegada
 const SCROLL_SMOOTHING = 0.18; // 1 = sin suavizado; no toca el scroll nativo
 const FADE_IN = 0.35; //        fracción del tramo en la que el plano entrante termina de fundirse
@@ -148,6 +151,7 @@ function startZoom(root: HTMLElement): () => void {
   let Z = 8; //       zoom del aterrizaje: lo que hace falta para que la hoja cubra el cuadro
   let U = 1; //       px de pantalla por unidad de VIEWBOX
   let runwayH = 1;
+  let zoomH = 1; //   tramo del recorrido en el que avanza el zoom (el resto es reposo final)
   const measure = () => {
     const W = probe.clientWidth;
     const H = probe.clientHeight;
@@ -158,6 +162,7 @@ function startZoom(root: HTMLElement): () => void {
     if (mode !== "auto") {
       runway.style.height = `${(mode === "scroll" ? SCROLL_SCREENS : GESTURE_SCREENS) * 100}vh`;
       runwayH = runway.offsetHeight || 1;
+      zoomH = mode === "scroll" ? Math.max(1, runwayH - SCROLL_END_HOLD * H) : runwayH;
     }
   };
 
@@ -248,14 +253,18 @@ function startZoom(root: HTMLElement): () => void {
     let cur = 0;
     let last = 0;
     let running = false;
-    const target = () => clamp(-root.getBoundingClientRect().top / runwayH);
+    const target = () => clamp(-root.getBoundingClientRect().top / zoomH);
     const tick = (ts: number) => {
       const dt = last ? Math.min(ts - last, 64) : 16.67;
       last = ts;
       const tg = target();
-      const k = SCROLL_SMOOTHING >= 1 ? 1 : 1 - Math.pow(1 - SCROLL_SMOOTHING, dt / 16.67);
+      // Con el scroll ya en el reposo final, se alcanza el final algo más deprisa.
+      const ease = tg >= 1 ? Math.max(SCROLL_SMOOTHING, 0.3) : SCROLL_SMOOTHING;
+      const k = ease >= 1 ? 1 : 1 - Math.pow(1 - ease, dt / 16.67);
       cur += (tg - cur) * k;
-      if (Math.abs(tg - cur) < 0.0003) cur = tg;
+      // Si el scroll ya ha soltado la sección (un gesto brusco), la ficha sale terminada: a esa
+      // velocidad el salto no se ve, y una ficha a medio ampliar alejándose sí.
+      if (Math.abs(tg - cur) < 0.002 || -root.getBoundingClientRect().top >= runwayH) cur = tg;
       render(cur);
       if (cur !== tg) raf = requestAnimationFrame(tick);
       else {
