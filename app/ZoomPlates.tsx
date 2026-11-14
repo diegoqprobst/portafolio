@@ -54,7 +54,10 @@ const FOCUS: [number, number][] = [];
 
 // La luminaria y la caja son muy alargadas: ocupan este ancho del plano (de 1200). En pantallas
 // verticales la cámara se queda un poco más lejos para que quepan enteras.
-const WIDE_CONTENT = 1120;
+const WIDE_CONTENT = 1180;
+// Hasta dónde baja lo que debe verse de la caja (flechas y hoja), en unidades de VIEWBOX. En
+// pantallas apaisadas no cabe, así que la cámara baja un poco mientras sube el frente.
+const CARTON_BOTTOM = 400;
 
 // Escala del dibujo en la primera lámina. Con los acercamientos de 6 · 6 · 2 · 6 deja el alzado de
 // la luminaria en 1:10, que es lo que dice su cajetín.
@@ -193,6 +196,7 @@ function startZoom(root: HTMLElement): () => void {
   let Z = 8; //       zoom del aterrizaje: lo que hace falta para que la hoja cubra el cuadro
   let U = 1; //       px de pantalla por unidad de VIEWBOX
   let viewH = 1;
+  let tilt = 0; //    px que baja la cámara para que quepa el frente de la caja
   let runwayH = 1;
   let zoomH = 1; //   tramo del recorrido en el que avanza el zoom (el resto es reposo final)
   const measure = () => {
@@ -203,6 +207,7 @@ function startZoom(root: HTMLElement): () => void {
     viewH = H;
     K = Math.min(1, (W / S) * (VIEWBOX / WIDE_CONTENT));
     buildCam();
+    tilt = Math.max(0, CARTON_BOTTOM * U * K + 10 - H / 2);
     Z = PAPER.bleed * Math.max(W / (PAPER.w * U * K), H / (PAPER.h * U * K));
     stage.style.setProperty("--uz-s", `${S}px`);
     if (mode !== "auto") {
@@ -225,7 +230,8 @@ function startZoom(root: HTMLElement): () => void {
     const px = PAPER.cx * U * K;
     const py = PAPER.cy * U * K;
     const panX = px * (1 - e - landS);
-    const panY = py * (1 - e - landS);
+    const rFront = smooth(clamp((r - 0.25) / 0.5));
+    const panY = py * (1 - e - landS) - tilt * rFront * (1 - e);
     const lastI = planes.length - 1;
 
     for (let j = 0; j <= lastI; j++) {
@@ -251,7 +257,7 @@ function startZoom(root: HTMLElement): () => void {
         // saliendo: crece alrededor de su punto de mira mientras lo lleva al centro
         const [fx, fy] = FOCUS[j] ?? [0, 0];
         const k = (1 - smooth(clamp((L - offs[j]) / (offs[j + 1] - offs[j]))) - s) * U;
-        setT(p, s, fx * k, fy * k);
+        setT(p, s, fx * k, fy * k - (j === lastI - 1 ? tilt * rFront : 0));
       }
       const fadeIn = j ? clamp((L - offs[j - 1]) / (offs[j] - offs[j - 1]) / FADE_IN) : 1;
       put(p, "o", (j === lastI - 1 ? fadeIn * (1 - r) : fadeIn).toFixed(3));
@@ -267,7 +273,6 @@ function startZoom(root: HTMLElement): () => void {
     // en tres tiempos. El alzado se funde en el interior de la caja (la pieza no se mueve), el
     // frente sube por delante y, al final, la hoja se posa sobre él.
     const rBack = smooth(clamp(r / 0.35));
-    const rFront = smooth(clamp((r - 0.25) / 0.5));
     const rSheet = smooth(clamp((r - 0.78) / 0.22));
     put(p6, "d", r > 0 ? "block" : "none");
     if (r > 0) {
