@@ -58,6 +58,10 @@ const WIDE_CONTENT = 1180;
 // Hasta dónde baja lo que debe verse de la caja (flechas y hoja), en unidades de VIEWBOX. En
 // pantallas apaisadas no cabe, así que la cámara baja un poco mientras sube el frente.
 const CARTON_BOTTOM = 375;
+// Dónde empieza la caja por arriba (la solapa trasera) y cuánto ocupa la cabecera fija, en px. En
+// ventanas bajas la caja se detiene más pequeña para caber entera bajo la cabecera.
+const CARTON_TOP = -265;
+const HEADER_PX = 56;
 
 // Escala del dibujo en la primera lámina. Con los acercamientos de 6 · 6 · 2 · 6 deja el alzado de
 // la luminaria en 1:10, que es lo que dice su cajetín.
@@ -205,7 +209,7 @@ function startZoom(root: HTMLElement): () => void {
     const S = Math.max(W, H);
     U = S / VIEWBOX;
     viewH = H;
-    K = Math.min(1, (W / S) * (VIEWBOX / WIDE_CONTENT));
+    K = Math.min(1, (W / S) * (VIEWBOX / WIDE_CONTENT), (H - HEADER_PX - 20) / ((CARTON_BOTTOM - CARTON_TOP) * U));
     buildCam();
     tilt = Math.max(0, CARTON_BOTTOM * U * K + 10 - H / 2);
     Z = PAPER.bleed * Math.max(W / (PAPER.w * U * K), H / (PAPER.h * U * K));
