@@ -115,7 +115,7 @@ def luminaire():
 
 # ───────────────────────── 6 · la caja (relevo; mismo sitio que el alzado) ─────────────────────────
 
-SHEET = {"w": 170, "h": 130, "cx": 120, "cy": 315}  # = PAPER en ZoomPlates.tsx
+SHEET = {"w": 170, "h": 130, "cx": 120, "cy": 290}  # = PAPER en ZoomPlates.tsx
 
 
 def carton_back():
@@ -123,7 +123,7 @@ def carton_back():
     la pieza está en el mismo sitio en los dos, así que solo cambia lo de alrededor."""
     return "".join([
         rect(-600, -600, 600, 600, PAPER, None),
-        poly([(-500, -100), (500, -100), (540, -300), (-540, -300)], ORANGE_L),  # solapa trasera
+        poly([(-500, -100), (500, -100), (533, -265), (-533, -265)], ORANGE_L),  # solapa trasera
         poly([(-500, -100), (-540, 90), (-600, 60), (-590, -130)], ORANGE_L),
         poly([(500, -100), (540, 90), (600, 60), (590, -130)], ORANGE_L),
         poly([(-500, -100), (500, -100), (540, 90), (-540, 90)], RUST),  # interior
@@ -134,8 +134,8 @@ def carton_back():
 def carton_front():
     """El frente de la caja, sin fondo: sube por delante de la luminaria."""
     arrows = "".join(
-        path(f"M{x} 380V270M{x - 22} 296L{x} 268L{x + 22} 296", sw=6) for x in (-250, -180)
-    ) + lines([(-285, 392, -145, 392)], sw=6)
+        path(f"M{x} 355V245M{x - 22} 271L{x} 243L{x + 22} 271", sw=6) for x in (-250, -180)
+    ) + lines([(-285, 367, -145, 367)], sw=6)
     return "".join([
         rect(-540, 90, 540, 430, ORANGE),
         poly([(-540, 90), (540, 90), (520, 205), (-520, 205)], ORANGE_L),  # solapa delantera

@@ -123,6 +123,10 @@
   line-height: 1.02; letter-spacing: -0.01em; text-transform: uppercase;
   pointer-events: none;
 }
+/* En vertical el título baja a la calzada, que está vacía, y deja ver la torre. */
+@media (max-width: 640px) {
+  .uz.is-live .uz-intro { top: auto; bottom: 84px; padding: 10px 14px 12px; font-size: 22px; box-shadow: 4px 4px 0 var(--uz-orange); }
+}
 
 /* Saltar la animación: visible desde el principio. Va abajo a la derecha porque arriba está la cabecera fija. */
 .uz.is-live .uz-skip {

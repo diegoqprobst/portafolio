@@ -46,7 +46,7 @@ const VIEWBOX = 1200; //        lado de cada plano en unidades propias
 // La hoja que aterriza, tal como está en el plano 6, en unidades de VIEWBOX: el rectángulo blanco que
 // cabe dentro de ella y su centro respecto al centro del plano. No está en el centro del dibujo, así
 // que el aterrizaje acerca y desplaza la cámara a la vez.
-const PAPER = { w: 170, h: 130, cx: 120, cy: 315, bleed: 1.06 };
+const PAPER = { w: 170, h: 130, cx: 120, cy: 290, bleed: 1.06 };
 
 // Hacia dónde apunta la cámara al salir de cada plano, en unidades de VIEWBOX desde su centro. Con
 // los planos dibujados uno dentro de otro, el siguiente siempre está en el centro.
@@ -57,7 +57,7 @@ const FOCUS: [number, number][] = [];
 const WIDE_CONTENT = 1180;
 // Hasta dónde baja lo que debe verse de la caja (flechas y hoja), en unidades de VIEWBOX. En
 // pantallas apaisadas no cabe, así que la cámara baja un poco mientras sube el frente.
-const CARTON_BOTTOM = 400;
+const CARTON_BOTTOM = 375;
 
 // Escala del dibujo en la primera lámina. Con los acercamientos de 6 · 6 · 2 · 6 deja el alzado de
 // la luminaria en 1:10, que es lo que dice su cajetín.
