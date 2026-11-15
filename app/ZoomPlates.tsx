@@ -236,6 +236,7 @@ function startZoom(root: HTMLElement): () => void {
     const panX = px * (1 - e - landS);
     const rFront = smooth(clamp((r - 0.25) / 0.5));
     const panY = py * (1 - e - landS) - tilt * rFront * (1 - e);
+    const rBack = smooth(clamp(r / 0.35));
     const lastI = planes.length - 1;
 
     for (let j = 0; j <= lastI; j++) {
@@ -264,7 +265,9 @@ function startZoom(root: HTMLElement): () => void {
         setT(p, s, fx * k, fy * k - (j === lastI - 1 ? tilt * rFront : 0));
       }
       const fadeIn = j ? clamp((L - offs[j - 1]) / (offs[j] - offs[j - 1]) / FADE_IN) : 1;
-      put(p, "o", (j === lastI - 1 ? fadeIn * (1 - r) : fadeIn).toFixed(3));
+      // el penúltimo se va al ritmo al que entra la caja: si esta se detiene más pequeña que el
+      // cuadro, no deja restos a los lados mientras sube el frente
+      put(p, "o", (j === lastI - 1 ? fadeIn * (1 - rBack) : fadeIn).toFixed(3));
     }
 
     // Relevo 5 → 6: nada cambia de escala; un dibujo se funde en el otro.
@@ -276,7 +279,6 @@ function startZoom(root: HTMLElement): () => void {
 
     // en tres tiempos. El alzado se funde en el interior de la caja (la pieza no se mueve), el
     // frente sube por delante y, al final, la hoja se posa sobre él.
-    const rBack = smooth(clamp(r / 0.35));
     const rSheet = smooth(clamp((r - 0.78) / 0.22));
     put(p6, "d", r > 0 ? "block" : "none");
     if (r > 0) {
