@@ -144,39 +144,11 @@ def carton_front():
 
 
 def carton_sheet():
-    """La hoja pegada al frente. En blanco a propósito: la ficha de verdad se funde encima al aterrizar."""
+    """La hoja pegada al frente, del color del papel de la página: la ficha de verdad va encima desde
+    que se posa, en pequeño, y solo crece al aterrizar."""
     x0, y0 = SHEET["cx"] - SHEET["w"] / 2, SHEET["cy"] - SHEET["h"] / 2
-    return rect(x0, y0, x0 + SHEET["w"], y0 + SHEET["h"], WHITE, INK, 2)
+    return rect(x0, y0, x0 + SHEET["w"], y0 + SHEET["h"], PAPER, INK, 2)
 
-
-def carton_sheet_ink():
-    """La maqueta de la ficha, en pequeño, sobre la hoja: cabecera, lámina azul, cifras clave, tabla
-    y pie. Se desvanece al acercarse la cámara, justo antes de que aparezca la ficha de verdad."""
-    x0, y0 = SHEET["cx"] - SHEET["w"] / 2, SHEET["cy"] - SHEET["h"] / 2
-    x1, y1 = x0 + SHEET["w"], y0 + SHEET["h"]
-    rows = [(x0 + 10, y0 + 70 + i * 8, x0 + 80, y0 + 70 + i * 8) for i in range(4)] + \
-           [(x0 + 90, y0 + 70 + i * 8, x1 - 10, y0 + 70 + i * 8) for i in range(4)]
-    return "".join([
-        rect(x0 + 10, y0 + 10, x0 + 78, y0 + 12, INK, None),
-        rect(x0 + 10, y0 + 18, x0 + 66, y0 + 25, INK, None),
-        lines([(x0 + 10, y0 + 31, x0 + 72, y0 + 31)], sw=1.2),
-        rect(x0 + 10, y0 + 40, x0 + 30, y0 + 56, ORANGE, INK, 1.2),
-        rect(x0 + 34, y0 + 40, x0 + 54, y0 + 56, "none", INK, 1.2),
-        rect(x0 + 58, y0 + 40, x0 + 78, y0 + 56, "none", INK, 1.2),
-        rect(x0 + 91, y0 + 13, x1 - 7, y0 + 59, ORANGE, None),
-        rect(x0 + 88, y0 + 10, x1 - 10, y0 + 56, NIGHT, None),
-        lines([(x0 + 96, y0 + 34, x0 + 132, y0 + 34), (x0 + 100, y0 + 22, x0 + 100, y0 + 34),
-               (x0 + 128, y0 + 22, x0 + 128, y0 + 34)], PAPER, 1.2),
-        rect(x0 + 97, y0 + 34, x0 + 131, y0 + 37, ORANGE, None),
-        lines(rows, sw=1, extra=' stroke-dasharray="1.5 1.5"'),
-        lines([(x0 + 10, y1 - 26, x1 - 10, y1 - 26)], sw=1.5),
-        rect(x0 + 10, y1 - 18, x0 + 96, y1 - 14, INK, None),
-        rect(x1 - 42, y1 - 19, x1 - 8, y1 - 9, ORANGE, None),
-        rect(x1 - 44, y1 - 21, x1 - 10, y1 - 11, INK, None),
-    ])
-
-
-# ───────────────────────── 4 · la sala ─────────────────────────
 
 def back_wall_works():
     """Dos trabajos colgados de frente, a la izquierda de la luminaria."""
@@ -493,7 +465,7 @@ def main():
     p1 = city(p2_center)
     plates = {"1-ciudad": p1, "2-edificio": p2, "3-ventana": p3, "4-sala": p4, "5-luminaria": p5,
               "5-luz": luminaire_light(), "6-caja": carton_back(), "7-caja-frente": carton_front(),
-              "8-hoja": carton_sheet(), "9-hoja-tinta": carton_sheet_ink()}
+              "8-hoja": carton_sheet()}
     for name, content in plates.items():
         f = OUT / f"{name}.svg"
         f.write_text(wrap(content))

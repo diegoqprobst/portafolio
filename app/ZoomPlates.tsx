@@ -160,15 +160,14 @@ function startZoom(root: HTMLElement): () => void {
   const p6 = art.querySelector<HTMLElement>("[data-relay-in]");
   const p6front = art.querySelector<HTMLElement>("[data-relay-front]");
   const p6sheet = art.querySelector<HTMLElement>("[data-relay-sheet]");
-  const p6ink = art.querySelector<HTMLElement>("[data-relay-ink]");
   const light = art.querySelector<HTMLElement>("[data-light]");
   const intro = q(".uz-intro");
   const hud = q(".uz-hud");
   const hudNames = hud ? Array.from(hud.querySelectorAll<HTMLElement>("[data-name]")) : [];
   const hudScale = hud?.querySelector<HTMLElement>(".uz-hud-scale") ?? null;
-  if (!p6 || !p6front || !p6sheet || !p6ink || !light || planes.length !== zoomSegs.length + 1) return () => {};
+  if (!p6 || !p6front || !p6sheet || !light || planes.length !== zoomSegs.length + 1) return () => {};
   const touched: HTMLElement[] = [
-    ...planes, p6, p6front, p6sheet, p6ink, light, doc,
+    ...planes, p6, p6front, p6sheet, light, doc,
     ...(hint ? [hint] : []), ...(intro ? [intro] : []), ...(hud ? [hud] : []), ...hudNames,
   ];
   let shownScale = "";
@@ -296,17 +295,10 @@ function startZoom(root: HTMLElement): () => void {
       put(p6sheet, "o", rSheet.toFixed(3));
     }
 
-    // La maqueta dibujada en la hoja llega con ella y se borra al acercarse, antes de la ficha real.
-    const ink = rSheet * (1 - clamp(e / 0.3));
-    put(p6ink, "d", ink > 0 ? "block" : "none");
-    if (ink > 0) {
-      setT(p6ink, K * landS, panX, panY - (1 - rSheet) * 28);
-      put(p6ink, "o", ink.toFixed(3));
-    }
-
     // Aterrizaje 6 → 7: la ficha va pegada a la hoja (misma escala relativa, mismo centro).
-    setT(doc, Math.pow(Z, e - 1), px * (1 - e), py * (1 - e));
-    put(doc, "o", clamp((e - 0.2) / 0.45).toFixed(3));
+    // Es la misma ficha desde que la hoja se posa: llega con ella, en pequeño, y solo crece.
+    setT(doc, Math.pow(Z, e - 1), px * (1 - e), py * (1 - e) - tilt * (1 - e) - (1 - rSheet) * 28);
+    put(doc, "o", rSheet.toFixed(3));
 
     if (hint) put(hint, "o", (1 - clamp(x * 40)).toFixed(3));
     if (intro) put(intro, "o", (1 - clamp((x - 0.01) * 30)).toFixed(3));
@@ -574,8 +566,6 @@ export default function ZoomPlates() {
           <img data-relay-front="" data-src="/zoom/7-caja-frente.svg" alt="" aria-hidden="true" />
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img data-relay-sheet="" data-src="/zoom/8-hoja.svg" alt="" aria-hidden="true" />
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img data-relay-ink="" data-src="/zoom/9-hoja-tinta.svg" alt="" aria-hidden="true" />
         </div>
 
         {/* Plano 7: la ficha. Texto vivo, en el DOM desde el principio. */}
