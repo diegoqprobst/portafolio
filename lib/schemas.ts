@@ -31,6 +31,7 @@ export const clientCreate = z.object({
   source: ShortText().default(""),
   tags: z.array(z.string().max(50)).max(20).default([]),
   notes: LongText().default(""),
+  next_contact_at: z.string().date().nullable().optional(),
 });
 export const clientUpdate = clientCreate.partial();
 

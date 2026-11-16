@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { Plus, Trash2, Edit2, Loader2, Save, Mail, Phone, Building2 } from "lucide-react";
+import { Plus, Trash2, Edit2, Loader2, Save, Mail, Phone, Building2, CalendarClock } from "lucide-react";
 import { useCollection } from "@/components/admin/useCollection";
 import { Loading, ErrorState, PageHeader, Modal, Field, StatusBadge } from "@/components/admin/ui";
 import { Client, CLIENT_STATUS, money } from "@/lib/business";
@@ -16,6 +16,23 @@ const EMPTY: Client = {
   source: "",
   tags: [],
   notes: "",
+  next_contact_at: null,
+};
+
+// La fecha puede llegar como "2026-11-19" o como ISO completo según el driver:
+// nos quedamos siempre con los diez primeros caracteres.
+const dayOf = (d?: string | null) => (d ? d.slice(0, 10) : "");
+
+const today = () => {
+  const n = new Date();
+  const p = (x: number) => String(x).padStart(2, "0");
+  return `${n.getFullYear()}-${p(n.getMonth() + 1)}-${p(n.getDate())}`;
+};
+
+// "19 nov 2026", construida como fecha local para que no se corra un día por zona horaria.
+const prettyDay = (d: string) => {
+  const [y, m, day] = d.split("-").map(Number);
+  return new Date(y, m - 1, day).toLocaleDateString("es", { day: "numeric", month: "short", year: "numeric" });
 };
 
 export default function ClientsPage() {
@@ -24,10 +41,29 @@ export default function ClientsPage() {
   const [saving, setSaving] = useState(false);
   const [filter, setFilter] = useState<string>("all");
 
-  const filtered = useMemo(
-    () => (filter === "all" ? items : items.filter((c) => c.status === filter)),
-    [items, filter]
-  );
+  const filtered = useMemo(() => {
+    const now = today();
+    const list =
+      filter === "all"
+        ? items
+        : filter === "due"
+          ? items.filter((c) => dayOf(c.next_contact_at) && dayOf(c.next_contact_at) <= now)
+          : items.filter((c) => c.status === filter);
+    // Primero quien tiene fecha de contacto, la más próxima arriba; el resto conserva su orden.
+    return [...list].sort((a, b) => {
+      const da = dayOf(a.next_contact_at);
+      const db = dayOf(b.next_contact_at);
+      if (da && db) return da.localeCompare(db);
+      if (da) return -1;
+      if (db) return 1;
+      return 0;
+    });
+  }, [items, filter]);
+
+  const dueCount = useMemo(() => {
+    const now = today();
+    return items.filter((c) => dayOf(c.next_contact_at) && dayOf(c.next_contact_at) <= now).length;
+  }, [items]);
 
   const totalValue = useMemo(
     () => items.reduce((s, c) => s + Number(c.value || 0), 0),
@@ -37,8 +73,9 @@ export default function ClientsPage() {
   async function save() {
     if (!editing) return;
     setSaving(true);
-    if (editing.id) await update(editing.id, editing);
-    else await create(editing);
+    const payload = { ...editing, next_contact_at: dayOf(editing.next_contact_at) || null };
+    if (editing.id) await update(editing.id, payload);
+    else await create(payload);
     setSaving(false);
     setEditing(null);
   }
@@ -64,6 +101,12 @@ export default function ClientsPage() {
       {/* Filtros */}
       <div className="flex gap-2 mb-6 flex-wrap">
         <FilterChip label="Todos" active={filter === "all"} onClick={() => setFilter("all")} />
+        <FilterChip
+          label={`Toca contactar (${dueCount})`}
+          active={filter === "due"}
+          color="#F97316"
+          onClick={() => setFilter("due")}
+        />
         {Object.entries(CLIENT_STATUS).map(([key, { label, color }]) => (
           <FilterChip
             key={key}
@@ -128,6 +171,15 @@ export default function ClientsPage() {
                 {c.phone && (
                   <span className="flex items-center gap-1.5">
                     <Phone className="w-3 h-3" /> {c.phone}
+                  </span>
+                )}
+                {dayOf(c.next_contact_at) && (
+                  <span
+                    className={`flex items-center gap-1.5 ${
+                      dayOf(c.next_contact_at) <= today() ? "text-orange-400 font-bold" : ""
+                    }`}
+                  >
+                    <CalendarClock className="w-3 h-3" /> Próximo contacto: {prettyDay(dayOf(c.next_contact_at))}
                   </span>
                 )}
               </div>
@@ -237,6 +289,14 @@ export default function ClientsPage() {
               />
             </Field>
           </div>
+          <Field label="Próximo contacto">
+            <input
+              className="input"
+              type="date"
+              value={dayOf(editing.next_contact_at)}
+              onChange={(e) => setEditing({ ...editing, next_contact_at: e.target.value || null })}
+            />
+          </Field>
           <Field label="Etiquetas (separadas por coma)">
             <input
               className="input"

@@ -39,6 +39,8 @@ export type Client = {
   source: string;
   tags: string[];
   notes: string;
+  // Fecha (YYYY-MM-DD) en que toca volver a escribirle. null = sin seguimiento pendiente.
+  next_contact_at?: string | null;
   created_at?: string;
 };
 
