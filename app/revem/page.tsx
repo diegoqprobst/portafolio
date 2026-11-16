@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import "./revem.css";
+import "../case-study.css";
 
 export const metadata: Metadata = {
   title: "Case Study: Revem — One Product Master, Every Touchpoint · Diego Quinde",

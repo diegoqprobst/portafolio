@@ -43,16 +43,16 @@ export const FEATURED_WORK: FeaturedWork[] = [
     kind: "case-study",
   },
   {
-    title: "Luxarmonie Product Intelligence",
+    title: "Luxarmonie — Catalog Audit",
     year: "2026",
     client: "Lighting e-commerce · France",
     service: {
-      en: "AI extraction · Product data · Content operations",
-      es: "Extracción con IA · Datos de producto · Operaciones de contenido",
+      en: "Catalog audit · Product data · AI workflow",
+      es: "Auditoría de catálogo · Datos de producto · Flujo con IA",
     },
     outcome: {
-      en: "Reduced manual catalog processing from 40 to 10 hours per month while preserving 99.2% data integrity.",
-      es: "Reduje el procesamiento manual de catálogos de 40 a 10 horas al mes, manteniendo 99,2 % de integridad de datos.",
+      en: "Rebuilt the technical data of a 170-product catalog; returns fell from 33% to 14% and monthly sales grew from €30K to €45K in three months.",
+      es: "Reconstruí los datos técnicos de un catálogo de 170 productos; las devoluciones bajaron de 33 % a 14 % y las ventas mensuales subieron de €30K a €45K en tres meses.",
     },
     image: "/assets/projects/1.jpg",
     href: "/luxarmonie",

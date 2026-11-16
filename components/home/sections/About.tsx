@@ -128,12 +128,10 @@ export default function About({ metrics, aboutParasEn, aboutParasEs }: { metrics
                 </div>
                 <div className="sub">
                   <span data-en="">
-                    Average across automation projects. Luxarmonie: 40h/month →
-                    10h.
+                    Average across automation projects.
                   </span>
                   <span data-es="">
-                    Promedio en proyectos de automatización. Luxarmonie: 40h/mes
-                    → 10h.
+                    Promedio en proyectos de automatización.
                   </span>
                 </div>
               </div>

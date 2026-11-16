@@ -30,24 +30,24 @@ export default function Projects({ openProject, toggleProject }: { openProject: 
             <ProjectRow
               id="p1"
               num="01"
-              title="Luxarmonie Product Intelligence"
-              tags={["Python", "Claude API", "E-commerce", "France"]}
-              metricVal="−75%"
-              metricLbl={{ en: "Manual load", es: "Carga manual" }}
+              title="Luxarmonie — Catalog Audit"
+              tags={["Shopify", "Claude Code", "E-commerce", "France"]}
+              metricVal="33→14%"
+              metricLbl={{ en: "Return rate", es: "Tasa de devoluciones" }}
               isOpen={openProject === "p1"}
               onToggle={() => toggleProject("p1")}
               delay={undefined}
-              descEn="French e-commerce with Chinese supplier catalogs in inconsistent formats. Manual spec extraction was 40 hours/month, error-prone, and impossible to scale. Built an intelligent extraction pipeline that reads supplier PDFs, normalises specs, and generates e-commerce-ready product descriptions automatically."
-              descEs="E-commerce francés con catálogos de proveedores chinos en formatos inconsistentes. La extracción manual de specs era 40 horas/mes, propensa a errores e imposible de escalar. Construí un pipeline de extracción inteligente que lee PDFs de proveedor, normaliza specs y genera descripciones de producto listas para e-commerce automáticamente."
+              descEn="French lighting e-commerce whose listings had wrong variants, materials, sizes and colour temperatures, so one in three orders came back. I audited and rebuilt the technical data of the 170-product Shopify catalog in French, with a Claude Code workflow that does one product in a single pass."
+              descEs="E-commerce francés de iluminación cuyos listings tenían variantes, materiales, medidas y temperaturas de color equivocadas, así que uno de cada tres pedidos volvía. Audité y reconstruí en francés los datos técnicos de su catálogo de 170 productos en Shopify, con un flujo en Claude Code que resuelve cada producto en una sola pasada."
               resultsEn={[
-                "Manual load: 40h/month → 10h/month (−75%)",
-                "Data integrity: 99.2%",
-                "E-commerce descriptions generated automatically",
+                "Return rate: 33% → 14% (April–June 2026)",
+                "Monthly sales: €30K → €45K",
+                "170 products audited, spec sheets in French",
               ]}
               resultsEs={[
-                "Carga manual: 40h/mes → 10h/mes (−75%)",
-                "Integridad de datos: 99.2%",
-                "Descripciones e-commerce generadas automáticamente",
+                "Devoluciones: 33% → 14% (abril–junio 2026)",
+                "Ventas mensuales: €30K → €45K",
+                "170 productos auditados, fichas en francés",
               ]}
               imgSrc="/assets/projects/1.jpg"
               imgAlt="Luxarmonie dashboard"
