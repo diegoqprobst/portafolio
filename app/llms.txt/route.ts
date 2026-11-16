@@ -40,10 +40,10 @@ GitHub: https://github.com/diegoqprobst
   public infrastructure, United States. Fragmented product data turned into a
   committee-ready bid package aligned with municipal, IES and NFPA
   requirements.
-- [Luxarmonie Product Intelligence](https://diegoquinde.com/luxarmonie):
-  lighting e-commerce, France. AI extraction and content operations cut manual
-  catalog processing from 40 to 10 hours per month while holding 99.2% data
-  integrity.
+- [Luxarmonie Catalog Audit](https://diegoquinde.com/luxarmonie):
+  lighting e-commerce, France. A technical audit of a 170-product Shopify
+  catalog, rebuilt in French; returns fell from 33% to 14% and monthly sales
+  grew from €30K to €45K between April and June 2026.
 - [Wellness Commerce Sales Deck](https://diegoquinde.com/wellnova-sales-deck.pdf):
   healthcare B2B. A 14-slide decision deck connecting patient journey, revenue
   cascade and a $15.4M commercial model.

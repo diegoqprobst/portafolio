@@ -200,11 +200,11 @@ const JSON_LD = {
           position: 2,
           item: {
             "@type": "CreativeWork",
-            name: "Luxarmonie Product Intelligence",
+            name: "Luxarmonie Catalog Audit",
             url: `${SITE}/luxarmonie`,
             dateCreated: "2026",
             about:
-              "AI extraction pipeline that cut lighting catalog processing from 40 to 10 hours per month at 99.2% data integrity",
+              "Technical audit of a 170-product lighting e-commerce catalog; returns fell from 33% to 14% and monthly sales grew from €30K to €45K between April and June 2026",
             creator: { "@id": PERSON_ID },
           },
         },
