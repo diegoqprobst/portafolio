@@ -31,11 +31,8 @@
 
 /* ─── ADMIN / BUSINESS OS UTILITIES ──────────────────────── */
 .gradient-text {
-  background: linear-gradient(120deg, #1E90FF 0%, #6FD3FF 100%);
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-  color: transparent;
+  /* Tinta sólida: sin degradado (regla visual del sitio). */
+  color: #1E90FF;
 }
 .input {
   width: 100%;
@@ -446,7 +443,6 @@ a.hero-badge:hover { border-color: oklch(68% 0.18 155 / 0.5); transform: transla
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--r-lg);
-  border-left: 3px solid var(--accent);
 }
 .metric-big .val {
   font-family: var(--font-display);
