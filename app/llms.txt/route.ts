@@ -44,6 +44,10 @@ GitHub: https://github.com/diegoqprobst
   lighting e-commerce, France. A technical audit of a 170-product Shopify
   catalog, rebuilt in French; returns fell from 33% to 14% and monthly sales
   grew from €30K to €45K between April and June 2026.
+- [Xicato Datasheets](https://diegoquinde.com/xicato):
+  premium LED lighting, United States. Sales training, six product datasheets
+  and a launch SKU shortlist for a new LED tape-light line, with every value
+  traced to a source.
 - [Wellness Commerce Sales Deck](https://diegoquinde.com/wellnova-sales-deck.pdf):
   healthcare B2B. A 14-slide decision deck connecting patient journey, revenue
   cascade and a $15.4M commercial model.
