@@ -57,6 +57,15 @@ The home page carries a Video.js player skinned to the site's own printing
 system, with a short personal clip as sample footage. It is a build
 demonstration, not client work.
 
+- [Kelvin — Video Player for Looking at Light](https://diegoquinde.com/kelvin):
+  personal project, 2026. A Video.js v10 player skin, designed and built by
+  Diego, that turns a paused frame into a catalog page: a loupe that reads
+  colour and temperature, a colour timeline and notes.
+
+The home page also shows a spec sheet for a "Linear LS-1200" luminaire. It is
+sample data drawn to show the format: not a real product, not a client, and
+its certifications are placeholders.
+
 ## Tools
 
 - [Free lumen calculator](https://diegoquinde.com/tools/lumen-calculator):

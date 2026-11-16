@@ -232,6 +232,19 @@ const JSON_LD = {
             creator: { "@id": PERSON_ID },
           },
         },
+        {
+          "@type": "ListItem",
+          position: 5,
+          item: {
+            "@type": "CreativeWork",
+            name: "Kelvin — Video Player for Looking at Light",
+            url: `${SITE}/kelvin`,
+            dateCreated: "2026",
+            about:
+              "Personal project: a Video.js v10 player skin that turns a paused frame into a catalog page, with a loupe that reads colour and temperature",
+            creator: { "@id": PERSON_ID },
+          },
+        },
       ],
     },
   ],
