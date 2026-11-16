@@ -46,7 +46,7 @@ Confirmed by Diego (2026-11-16):
 - **Traceability at assembly: ~2 h → under 15 min.** Goal: every product stays identifiable, with a record that lasts its 10-year life.
 - **Offers and pre-sale quotes: ~3 days → under 30 min.**
 
-- **AI product imagery launch: ~$5K typical sales day → $200K** **[confirm: in one day, or over what period? what else ran at the same time — promo, price, stock?]**.
+- **$200K in sales in one day vs a typical ~$5K day.** It closed a month of pre-sale work built on AI product imagery; the container was sold out before it arrived.
 - **Promoted to Director of Design & Marketing in January 2026 because of the automation work.**
 
 Dropped: the old CV figures (10x, ~30%, +25%). They compared against Diego's own earlier manual work, with no recorded baseline, so they would not survive a reviewer asking "measured how?".

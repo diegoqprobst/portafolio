@@ -150,7 +150,7 @@ export default function Page() {
               <li>Product data model and the 514-SKU master</li>
               <li>Catalog system, spec sheets, packaging and label standard</li>
               <li>QR traceability system, built in Python</li>
-              <li>AI product imagery and launch campaigns</li>
+              <li>AI product imagery for pre-sales, before stock had arrived</li>
             </ul>
           </div>
         </section>
@@ -262,10 +262,13 @@ export default function Page() {
               <strong>2 h → under 15 min</strong>
               <span>to register products for traceability at assembly</span>
             </li>
-            {/* TODO(diego): confirm the period and what else ran alongside before publishing */}
             <li>
-              <strong>~$5K → $200K</strong>
-              <span>sales on the launch using AI product imagery, against a typical day</span>
+              <strong>$200K in one day</strong>
+              <span>
+                against a typical ~$5K day, closing a month-long pre-sale built
+                on AI product imagery. The container was sold out before it
+                arrived.
+              </span>
             </li>
             <li>
               <strong>Promoted</strong>
