@@ -157,6 +157,7 @@ export default function Projects({ openProject, toggleProject }: { openProject: 
               ]}
               imgSrc="/assets/projects/revem.jpg"
               imgAlt="Revem operations"
+              caseStudyHref="/revem"
             />
 
             <ProjectRow

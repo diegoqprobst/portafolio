@@ -8,6 +8,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${base}/lumen`, changeFrequency: "monthly", priority: 0.9 },
     { url: `${base}/saratoga`, changeFrequency: "yearly", priority: 0.8 },
     { url: `${base}/luxarmonie`, changeFrequency: "yearly", priority: 0.8 },
+    { url: `${base}/revem`, changeFrequency: "yearly", priority: 0.8 },
     { url: `${base}/kelvin`, changeFrequency: "yearly", priority: 0.8 },
     { url: `${base}/tools/lumen-calculator`, changeFrequency: "monthly", priority: 0.7 },
     { url: `${base}/privacidad`, changeFrequency: "yearly", priority: 0.3 },

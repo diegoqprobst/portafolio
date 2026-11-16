@@ -14,7 +14,7 @@ I joined Revem, a commercial LED lighting company in Ecuador, when it was starti
 
 ## My role and what I owned
 
-- **Role:** first designer, later Director of Design & Marketing (April 2024 – present).
+- **Role:** first designer (January 2025), promoted to Director of Design & Marketing in January 2026 for the automation work.
 - **Owned end to end, built from zero:** both brands — Revem (the company) and Aura Iluminación LED (its product brand: logo, brand manual, type system Jost + Manrope), product data model, catalog system, spec sheets, packaging dielines and label standard for factories in China, QR traceability site, AI product imagery.
 - **Worked with:** sales, purchasing, and factories in China. **[confirm: anyone else on the design side?]**
 
@@ -46,7 +46,10 @@ Confirmed by Diego (2026-11-16):
 - **Traceability at assembly: ~2 h → under 15 min.** Goal: every product stays identifiable, with a record that lasts its 10-year life.
 - **Offers and pre-sale quotes: ~3 days → under 30 min.**
 
-Dropped (no data to back them): the "AI-imagery products sold out" claim and the old CV figures (10x, ~30%, +25%).
+- **AI product imagery launch: ~$5K typical sales day → $200K** **[confirm: in one day, or over what period? what else ran at the same time — promo, price, stock?]**.
+- **Promoted to Director of Design & Marketing in January 2026 because of the automation work.**
+
+Dropped: the old CV figures (10x, ~30%, +25%). They compared against Diego's own earlier manual work, with no recorded baseline, so they would not survive a reviewer asking "measured how?".
 
 ## Visuals to include
 
