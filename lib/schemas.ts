@@ -32,6 +32,9 @@ export const clientCreate = z.object({
   tags: z.array(z.string().max(50)).max(20).default([]),
   notes: LongText().default(""),
   next_contact_at: z.string().date().nullable().optional(),
+  stage: z.enum(["contacted", "replied", "talking", "proposal"]).nullable().optional(),
+  last_contact_at: z.string().date().nullable().optional(),
+  touches: z.coerce.number().int().min(0).max(99).optional(),
 });
 export const clientUpdate = clientCreate.partial();
 

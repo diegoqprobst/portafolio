@@ -41,8 +41,16 @@ export type Client = {
   notes: string;
   // Fecha (YYYY-MM-DD) en que toca volver a escribirle. null = sin seguimiento pendiente.
   next_contact_at?: string | null;
+  // Etapa del embudo de prospección. null = sin etapa (clientes que no vienen de prospección).
+  stage?: ClientStage | null;
+  // Fecha (YYYY-MM-DD) del último mensaje enviado por nosotros.
+  last_contact_at?: string | null;
+  // Cuántos mensajes le hemos enviado.
+  touches?: number;
   created_at?: string;
 };
+
+export type ClientStage = "contacted" | "replied" | "talking" | "proposal";
 
 export type BusinessProject = {
   id?: number;
@@ -80,6 +88,14 @@ export const CLIENT_STATUS: Record<Client["status"], { label: string; color: str
   paused: { label: "En pausa", color: "#F97316" },
   closed: { label: "Cerrado", color: "#6B7280" },
 };
+
+// Orden del embudo, de arriba abajo. "Respondió" es una persona, no una respuesta automática.
+export const CLIENT_STAGES: { key: ClientStage; label: string; color: string }[] = [
+  { key: "contacted", label: "Contactado", color: "#94A3B8" },
+  { key: "replied", label: "Respondió", color: "#1E90FF" },
+  { key: "talking", label: "En conversación", color: "#A855F7" },
+  { key: "proposal", label: "Propuesta enviada", color: "#22C55E" },
+];
 
 export const PROJECT_STATUS: Record<BusinessProject["status"], { label: string; color: string }> = {
   planning: { label: "Planeación", color: "#EAB308" },

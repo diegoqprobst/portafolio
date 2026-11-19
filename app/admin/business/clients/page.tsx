@@ -1,10 +1,10 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { Plus, Trash2, Edit2, Loader2, Save, Mail, Phone, Building2, CalendarClock } from "lucide-react";
+import { Plus, Trash2, Edit2, Loader2, Save, Mail, Phone, Building2, CalendarClock, Send } from "lucide-react";
 import { useCollection } from "@/components/admin/useCollection";
 import { Loading, ErrorState, PageHeader, Modal, Field, StatusBadge } from "@/components/admin/ui";
-import { Client, CLIENT_STATUS, money } from "@/lib/business";
+import { Client, ClientStage, CLIENT_STATUS, CLIENT_STAGES, money } from "@/lib/business";
 
 const EMPTY: Client = {
   name: "",
@@ -17,7 +17,12 @@ const EMPTY: Client = {
   tags: [],
   notes: "",
   next_contact_at: null,
+  stage: null,
+  last_contact_at: null,
+  touches: 0,
 };
+
+const stageOf = (key?: ClientStage | null) => CLIENT_STAGES.find((s) => s.key === key);
 
 // La fecha puede llegar como "2026-11-19" o como ISO completo según el driver:
 // nos quedamos siempre con los diez primeros caracteres.
@@ -48,7 +53,9 @@ export default function ClientsPage() {
         ? items
         : filter === "due"
           ? items.filter((c) => dayOf(c.next_contact_at) && dayOf(c.next_contact_at) <= now)
-          : items.filter((c) => c.status === filter);
+          : filter.startsWith("stage:")
+            ? items.filter((c) => c.stage === filter.slice(6))
+            : items.filter((c) => c.status === filter);
     // Primero quien tiene fecha de contacto, la más próxima arriba; el resto conserva su orden.
     return [...list].sort((a, b) => {
       const da = dayOf(a.next_contact_at);
@@ -65,6 +72,14 @@ export default function ClientsPage() {
     return items.filter((c) => dayOf(c.next_contact_at) && dayOf(c.next_contact_at) <= now).length;
   }, [items]);
 
+  // Embudo: cuántos hay en cada etapa y qué parte de los contactados ha respondido.
+  const funnel = useMemo(() => {
+    const counts = CLIENT_STAGES.map((s) => ({ ...s, count: items.filter((c) => c.stage === s.key).length }));
+    const total = counts.reduce((n, s) => n + s.count, 0);
+    const answered = total - (counts[0]?.count ?? 0);
+    return { counts, total, answered, rate: total ? Math.round((answered / total) * 100) : 0 };
+  }, [items]);
+
   const totalValue = useMemo(
     () => items.reduce((s, c) => s + Number(c.value || 0), 0),
     [items]
@@ -73,7 +88,13 @@ export default function ClientsPage() {
   async function save() {
     if (!editing) return;
     setSaving(true);
-    const payload = { ...editing, next_contact_at: dayOf(editing.next_contact_at) || null };
+    const payload = {
+      ...editing,
+      next_contact_at: dayOf(editing.next_contact_at) || null,
+      last_contact_at: dayOf(editing.last_contact_at) || null,
+      stage: editing.stage || null,
+      touches: Number(editing.touches) || 0,
+    };
     if (editing.id) await update(editing.id, payload);
     else await create(payload);
     setSaving(false);
@@ -97,6 +118,34 @@ export default function ClientsPage() {
           </button>
         }
       />
+
+      {/* Embudo de prospección */}
+      {funnel.total > 0 && (
+        <div className="mb-6">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+            {funnel.counts.map((s) => {
+              const key = `stage:${s.key}`;
+              const active = filter === key;
+              return (
+                <button
+                  key={s.key}
+                  onClick={() => setFilter(active ? "all" : key)}
+                  className="text-left bg-white/5 border rounded-2xl px-4 py-3 transition-all hover:border-white/20"
+                  style={{ borderColor: active ? `${s.color}88` : "rgba(255,255,255,.1)" }}
+                >
+                  <div className="text-2xl font-black" style={{ color: s.color }}>
+                    {s.count}
+                  </div>
+                  <div className="text-xs text-white/50 mt-0.5">{s.label}</div>
+                </button>
+              );
+            })}
+          </div>
+          <p className="text-xs text-white/40 mt-2">
+            {funnel.answered} de {funnel.total} contactados han respondido ({funnel.rate}%).
+          </p>
+        </div>
+      )}
 
       {/* Filtros */}
       <div className="flex gap-2 mb-6 flex-wrap">
@@ -153,10 +202,15 @@ export default function ClientsPage() {
               </div>
 
               <div className="flex items-center justify-between mb-3">
-                <StatusBadge
-                  label={CLIENT_STATUS[c.status].label}
-                  color={CLIENT_STATUS[c.status].color}
-                />
+                <div className="flex flex-wrap items-center gap-1.5">
+                  <StatusBadge
+                    label={CLIENT_STATUS[c.status].label}
+                    color={CLIENT_STATUS[c.status].color}
+                  />
+                  {stageOf(c.stage) && (
+                    <StatusBadge label={stageOf(c.stage)!.label} color={stageOf(c.stage)!.color} />
+                  )}
+                </div>
                 {Number(c.value) > 0 && (
                   <span className="text-sm font-black text-electric">{money(c.value)}</span>
                 )}
@@ -171,6 +225,15 @@ export default function ClientsPage() {
                 {c.phone && (
                   <span className="flex items-center gap-1.5">
                     <Phone className="w-3 h-3" /> {c.phone}
+                  </span>
+                )}
+                {(dayOf(c.last_contact_at) || Number(c.touches) > 0) && (
+                  <span className="flex items-center gap-1.5">
+                    <Send className="w-3 h-3" />
+                    {dayOf(c.last_contact_at)
+                      ? `Último contacto: ${prettyDay(dayOf(c.last_contact_at))}`
+                      : "Sin fecha de último contacto"}
+                    {Number(c.touches) > 0 && ` · ${c.touches} ${Number(c.touches) === 1 ? "toque" : "toques"}`}
                   </span>
                 )}
                 {dayOf(c.next_contact_at) && (
@@ -289,14 +352,51 @@ export default function ClientsPage() {
               />
             </Field>
           </div>
-          <Field label="Próximo contacto">
-            <input
-              className="input"
-              type="date"
-              value={dayOf(editing.next_contact_at)}
-              onChange={(e) => setEditing({ ...editing, next_contact_at: e.target.value || null })}
-            />
-          </Field>
+          <div className="grid grid-cols-2 gap-4">
+            <Field label="Etapa del embudo">
+              <select
+                className="input"
+                value={editing.stage ?? ""}
+                onChange={(e) =>
+                  setEditing({ ...editing, stage: (e.target.value || null) as ClientStage | null })
+                }
+              >
+                <option value="">Sin etapa</option>
+                {CLIENT_STAGES.map((s) => (
+                  <option key={s.key} value={s.key}>
+                    {s.label}
+                  </option>
+                ))}
+              </select>
+            </Field>
+            <Field label="Toques enviados">
+              <input
+                className="input"
+                type="number"
+                min={0}
+                value={editing.touches ?? 0}
+                onChange={(e) => setEditing({ ...editing, touches: Number(e.target.value) })}
+              />
+            </Field>
+          </div>
+          <div className="grid grid-cols-2 gap-4">
+            <Field label="Último contacto">
+              <input
+                className="input"
+                type="date"
+                value={dayOf(editing.last_contact_at)}
+                onChange={(e) => setEditing({ ...editing, last_contact_at: e.target.value || null })}
+              />
+            </Field>
+            <Field label="Próximo contacto">
+              <input
+                className="input"
+                type="date"
+                value={dayOf(editing.next_contact_at)}
+                onChange={(e) => setEditing({ ...editing, next_contact_at: e.target.value || null })}
+              />
+            </Field>
+          </div>
           <Field label="Etiquetas (separadas por coma)">
             <input
               className="input"
