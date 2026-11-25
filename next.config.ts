@@ -87,6 +87,12 @@ const nextConfig: NextConfig = {
         source: "/:path*",
         headers: securityHeaders,
       },
+      // El CV en PDF lleva teléfono: se comparte por enlace directo, pero no
+      // queremos que los buscadores lo indexen.
+      {
+        source: "/cv/:path*",
+        headers: [{ key: "X-Robots-Tag", value: "noindex, nofollow" }],
+      },
     ];
   },
 };
